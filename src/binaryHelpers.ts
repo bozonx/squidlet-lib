@@ -44,7 +44,7 @@ export function withoutFirstItemUint8Arr(arr: Uint8Array): Uint8Array {
 }
 
 /**
- * Make a new Uint8Array with the new item on the first position and other items is moved right
+ * Make a new Uint8Array with the new item on the first position and other items are moved right
  */
 export function addFirstItemUint8Arr(arr: Uint8Array, itemToAdd: number): Uint8Array {
   if (!(arr instanceof Uint8Array)) {
