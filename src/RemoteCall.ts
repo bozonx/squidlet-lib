@@ -34,20 +34,27 @@ export class RemoteCall {
 
     await this.sendMessage(host, uri, completePayload)
 
-    const handlerIndex = this.events.addListener(REMOTE_CALL_EVENTS.incomeMessage, (
-      uri: string,
-      payload: Uint8Array,
-      fromHost: string
-    ) => {
-      const incomeRequestId = this.extractRequestIdFromPayload(payload)
+    return new Promise((resolve, reject) => {
+      const handlerIndex = this.events.addListener(REMOTE_CALL_EVENTS.incomeMessage, (
+        uri: string,
+        payload: Uint8Array,
+        fromHost: string
+      ) => {
+        const incomeRequestId = this.extractRequestIdFromPayload(payload)
 
-      if (incomeRequestId !== requestId) return
+        if (incomeRequestId !== requestId) return
 
-      this.events.removeListener(handlerIndex)
+        this.events.removeListener(handlerIndex)
+        // Extract only payload, path doesn't matter
+        const decodedPayload = this.decodePayload(payload)
 
+        resolve(decodedPayload)
+      })
+
+      // TODO: add timeout
     })
 
-    // TODO: add timeout
+
   }
 
   async on(): Promise<number> {
@@ -74,7 +81,7 @@ export class RemoteCall {
     // TODO: преобразовать аргументы в Uint8Arr
   }
 
-  private decodePayload(payload: Uint8Array): [string, JsonTypes | Uint8Array] {
+  private decodePayload(payload: Uint8Array): JsonTypes | Uint8Array {
     // TODO: add
   }
 
