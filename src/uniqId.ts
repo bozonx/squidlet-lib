@@ -41,8 +41,10 @@ export function getRuntimeId(): string {
 /**
  * Make always a unique id which contains of 8 chars.
  */
-// TODO: добавить задание числа байт
-export function makeUniqId(): string {
+export function makeUniqId(bytes: number = 8): string {
+
+  // TODO: добавить задание числа байт
+
   const str: string = getRuntimeId() + String(makeUniqNumber());
 
   return hashSum(str);
