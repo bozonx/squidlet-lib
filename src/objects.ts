@@ -159,29 +159,29 @@ export function clearObject(obj: {[index: string]: any}) {
  * If you obviously set undefined to one of top's param - it will removes this key from the result object.
  * Arrays will be cloned.
  */
-export function mergeDeepObjects(
-  top: {[index: string]: any} = {},
-  bottom: {[index: string]: any} = {}
-): {[index: string]: any} {
-  const result: {[index: string]: any} = {};
-  const topUndefinedKeys: string[] = [];
+export function mergeDeepObjects<T = Record<string, any>>(
+  top: Record<string, any> = {},
+  bottom: Record<string, any> = {}
+): T {
+  const result: Record<string, any> = {}
+  const topUndefinedKeys: string[] = []
 
   if (typeof top !== 'object' || typeof bottom !== 'object') {
-    throw new Error(`mergeDeepObjects: top and bottom has to be objects`);
+    throw new Error(`mergeDeepObjects: top and bottom has to be objects`)
   }
 
   // Sort undefined keys.
   // Get only not undefined values to result and collect keys which has a undefined values.
   for (let key of Object.keys(top)) {
     if (typeof top[key] === 'undefined') {
-      topUndefinedKeys.push(key);
+      topUndefinedKeys.push(key)
     }
     else {
       if (Array.isArray(top[key])) {
-        result[key] = cloneDeepArray(top[key]);
+        result[key] = cloneDeepArray(top[key])
       }
       else {
-        result[key] = top[key];
+        result[key] = top[key]
       }
     }
   }
@@ -191,27 +191,29 @@ export function mergeDeepObjects(
       // set value which is absent on top but exist on the bottom.
       // only if it obviously doesn't mark as undefined
       if (Array.isArray(bottom[key])) {
-        result[key] = cloneDeepArray(bottom[key]);
+        result[key] = cloneDeepArray(bottom[key])
       }
       else {
-        result[key] = bottom[key];
+        result[key] = bottom[key]
       }
     }
     // go deeper if bottom and top are objects
     else if (isPlainObject(result[key]) && isPlainObject(bottom[key])) {
-      result[key] = mergeDeepObjects(result[key], bottom[key]);
+      result[key] = mergeDeepObjects(result[key], bottom[key])
     }
     // else - skip
   }
 
-  return result;
+  return result as T
 }
 
 /**
  * Clone object deeply.
  */
-export function cloneDeepObject(obj?: {[index: string]: any}): {[index: string]: any} {
-  return mergeDeepObjects({}, obj);
+export function cloneDeepObject<T = Record<string, any>>(
+obj?: {[index: string]: any}
+): T {
+  return mergeDeepObjects<T>({}, obj)
 }
 
 /**
