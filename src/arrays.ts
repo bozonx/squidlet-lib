@@ -140,6 +140,53 @@ export function stringArrayToNumber(arr: string[]): number[] {
   return arr.map((item) => Number(item));
 }
 
+export function filterBlackList(allItems: string[], blackList: string[] = []): string[] {
+  if (!blackList || !blackList.length) return allItems
+
+  let whiteList: string[] = []
+
+  // TODO: better to use kind of interception function
+  for (let item of allItems) {
+    if (!blackList.includes(item)) whiteList.push(item)
+  }
+
+  return whiteList
+}
+
+
+// export function combineWhiteAndBlackLists(
+//   allItems: string[],
+//   whiteList: string[],
+//   blackList: string[]
+// ): string[] {
+//   if (!whiteList.length && !blackList.length) return [];
+//   // only white
+//   if (whiteList.length && !blackList.length) {
+//     // TODO: по хорошему нужно фильтрануть allItems
+//     return whiteList;
+//   }
+//   // only black list
+//   if (!whiteList.length && blackList.length) {
+//     const result: string[] = [];
+//     // TODO: better to use kind of interception function
+//     for (let item of allItems) {
+//       if (!blackList.includes(item)) result.push(item);
+//     }
+//
+//     return result;
+//   }
+//
+//   // and black and white - filter white list
+//   const result: string[] = [];
+//   // TODO: по хорошему нужно фильтрануть allItems
+//   // TODO: better to use kind of interception function
+//   for (let item of whiteList) {
+//     if (!blackList.includes(item)) result.push(item);
+//   }
+//
+//   return result;
+// }
+
 // /**
 //  * Like lodash's compact. It removes undefined, null and '' from array.
 //  * It make a new array.
