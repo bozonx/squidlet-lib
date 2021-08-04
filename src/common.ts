@@ -1,5 +1,6 @@
 import {isEqualUint8Array} from './binaryHelpers';
 import {concatUniqStrArrays} from './arrays';
+import {LOG_LEVELS, LogLevel} from './interfaces/Logger'
 
 
 /**
@@ -133,9 +134,17 @@ export function isPromise(toCheck: any): boolean {
   return toCheck
     && typeof toCheck === 'object'
     && typeof toCheck.then === 'function'
-    || false;
+    || false
 }
 
+/**
+ * Makes ['info', 'warn', 'error'] if log level is 'info'
+ */
+export function calcAllowedLogLevels(logLevel: LogLevel): LogLevel[] {
+  const currentLevelIndex: number = LOG_LEVELS.indexOf(logLevel)
+
+  return LOG_LEVELS.slice(currentLevelIndex) as LogLevel[]
+}
 
 // /**
 //  * When undefined, null, '', [] or {}.

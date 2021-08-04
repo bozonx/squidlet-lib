@@ -1,6 +1,10 @@
-export default interface Logger {
-  debug: (message: string) => void;
-  info: (message: string) => void;
-  warn: (message: string) => void;
-  error: (message: string) => void;
+export type LogLevel = 'debug' | 'info' | 'warn' | 'error'
+
+export const LOG_LEVELS = ['debug', 'info', 'warn', 'error']
+
+export interface Logger {
+  debug: (msg: string) => void
+  info: (msg: string) => void
+  warn: (msg: string) => void
+  error: (msg: string) => void
 }
