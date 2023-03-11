@@ -1,4 +1,4 @@
-import {trimChar, trimCharEnd, trimCharStart} from './strings';
+import {trimChar, trimCharEnd, trimCharStart} from './strings.js';
 
 
 export const PATH_SEP = '/';

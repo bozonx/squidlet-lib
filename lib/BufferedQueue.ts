@@ -1,7 +1,7 @@
-import {DEFAULT_JOB_TIMEOUT_SEC} from '../../../../squidlet-lib/lib/constants';
-import Promised from '../../../../squidlet-lib/lib/Promised';
-import {isEmptyObject} from '../../../../squidlet-lib/lib/objects';
-import {callSafely} from '../../../../squidlet-lib/lib/common';
+import {DEFAULT_JOB_TIMEOUT_SEC} from './constants.js';
+import Promised from './Promised.js';
+import {isEmptyObject} from './objects.js';
+import {callSafely} from './common.js';
 
 
 // TODO: test

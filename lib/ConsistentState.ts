@@ -1,9 +1,9 @@
-import {cloneDeepObject, isEmptyObject, mergeDeepObjects} from '../../../../squidlet-lib/lib/objects';
-import {concatUniqStrArrays} from '../../../../squidlet-lib/lib/arrays';
-import {Dictionary} from '../interfaces/Types';
-import Queue, {JobId} from '../../../../squidlet-lib/lib/Queue';
-import {pickObj} from '../../../../squidlet-lib/lib/objects';
-import {arraysDifference} from '../../../../squidlet-lib/lib/arrays';
+import {cloneDeepObject, isEmptyObject, mergeDeepObjects} from './objects.js';
+import {concatUniqStrArrays} from './arrays.js';
+import {Dictionary} from './interfaces/Types.js';
+import Queue, {JobId} from './Queue.js';
+import {pickObj} from './objects.js';
+import {arraysDifference} from './arrays.js';
 
 
 export type Initialize = () => Promise<Dictionary>;

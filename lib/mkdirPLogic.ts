@@ -1,5 +1,5 @@
-import {pathDirname, pathBasename, pathIsAbsolute, PATH_SEP} from '../../../../squidlet-lib/lib/paths';
-import {trimCharEnd} from '../../../../squidlet-lib/lib/strings';
+import {pathDirname, pathBasename, pathIsAbsolute, PATH_SEP} from './paths.js';
+import {trimCharEnd} from './strings.js';
 
 
 export default async function mkdirPLogic (

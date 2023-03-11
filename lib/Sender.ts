@@ -1,4 +1,4 @@
-import {makeUniqNumber} from '../../../../squidlet-lib/lib/uniqId';
+import {makeUniqNumber} from './uniqId.js';
 
 
 class SenderRequest {

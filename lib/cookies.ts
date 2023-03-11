@@ -1,5 +1,5 @@
-import {Primitives} from '../interfaces/Types';
-import {parseValue} from './common';
+import {Primitives} from '../interfaces/Types.js';
+import {parseValue} from './common.js';
 
 
 /**

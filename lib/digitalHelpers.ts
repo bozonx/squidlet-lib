@@ -5,7 +5,7 @@ import {
   InputResistorMode,
   OutputResistorMode,
   PinDirection,
-} from '../interfaces/gpioTypes';
+} from './interfaces/gpioTypes.js';
 
 /*
  * Helpers for digital drivers, devices and IOs.

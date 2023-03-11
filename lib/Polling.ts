@@ -1,4 +1,4 @@
-import IndexedEventEmitter from './IndexedEventEmitter';
+import {IndexedEventEmitter} from './IndexedEventEmitter.js';
 
 
 const DEFAULT_ID = 'defaultUniqId';

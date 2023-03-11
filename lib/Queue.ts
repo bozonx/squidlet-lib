@@ -1,7 +1,7 @@
 type Timeout = NodeJS.Timeout;
 
-import {DEFAULT_JOB_TIMEOUT_SEC} from './constants';
-import IndexedEventEmitter from './IndexedEventEmitter';
+import {DEFAULT_JOB_TIMEOUT_SEC} from './constants.js';
+import {IndexedEventEmitter} from './IndexedEventEmitter.js';
 
 
 type QueuedCb = () => Promise<void>;

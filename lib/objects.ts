@@ -1,4 +1,4 @@
-import {cloneDeepArray, removeItemFromArray} from './arrays';
+import {cloneDeepArray, removeItemFromArray} from './arrays.js';
 
 
 // TODO: test
