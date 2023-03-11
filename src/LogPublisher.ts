@@ -4,7 +4,7 @@ import {LogLevel} from '@/interfaces/Logger'
 type EventHandler = (logLevel: LogLevel, msg: string) => void
 
 
-export default class LogPublisher {
+export class LogPublisher {
   private readonly eventHandler: EventHandler
 
 

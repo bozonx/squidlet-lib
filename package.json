@@ -1,11 +1,13 @@
 {
   "name": "squidlet-lib",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Common lib for squidlet projects",
   "author": "Ivan Kozyrin <ipkozyrin@gmail.com>",
   "repository": "git@github.com:bozonx/squidlet-lib.git",
+  "exports": "./src/index.js",
+  "type": "module",
   "engines": {
-    "node": ">=13.0.0"
+    "node": ">=18.14.0"
   },
   "license": "MIT",
   "scripts": {

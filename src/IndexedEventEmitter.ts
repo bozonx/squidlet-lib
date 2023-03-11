@@ -3,7 +3,7 @@ import {isPromise} from './common'
 export type DefaultHandler = (...args: any[]) => void
 
 
-export default class IndexedEventEmitter<T extends DefaultHandler = DefaultHandler> {
+export class IndexedEventEmitter<T extends DefaultHandler = DefaultHandler> {
   // all the handlers by index, removed handlers are empty
   private handlers: (T | undefined)[] = []
   // indexes by event names
