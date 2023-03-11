@@ -1,7 +1,7 @@
 import {Dictionary} from '../interfaces/Types';
-import IndexedEvents from '../../../../squidlet-lib/src/IndexedEvents';
-import {mergeDeepObjects} from '../../../../squidlet-lib/src/objects';
-import {isEqual} from '../../../../squidlet-lib/src/common';
+import IndexedEvents from '../../../../squidlet-lib/lib/IndexedEvents';
+import {mergeDeepObjects} from '../../../../squidlet-lib/lib/objects';
+import {isEqual} from '../../../../squidlet-lib/lib/common';
 
 
 type ChangeHandler = (category: number, stateName: string, changedParams: string[]) => void;

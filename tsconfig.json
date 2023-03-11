@@ -126,7 +126,7 @@
 //    "forceConsistentCasingInFileNames": true,
 //    "paths": {
 //      "@/*": [
-//        "src/*"
+//        "lib/*"
 //      ]
 //    }
 //  },

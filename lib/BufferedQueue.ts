@@ -1,7 +1,7 @@
-import {DEFAULT_JOB_TIMEOUT_SEC} from '../../../../squidlet-lib/src/constants';
-import Promised from '../../../../squidlet-lib/src/Promised';
-import {isEmptyObject} from '../../../../squidlet-lib/src/objects';
-import {callSafely} from '../../../../squidlet-lib/src/common';
+import {DEFAULT_JOB_TIMEOUT_SEC} from '../../../../squidlet-lib/lib/constants';
+import Promised from '../../../../squidlet-lib/lib/Promised';
+import {isEmptyObject} from '../../../../squidlet-lib/lib/objects';
+import {callSafely} from '../../../../squidlet-lib/lib/common';
 
 
 // TODO: test

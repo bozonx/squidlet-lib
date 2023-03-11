@@ -1,4 +1,4 @@
-import DebounceCall from '../../../../squidlet-lib/src/debounceCall/DebounceCall';
+import DebounceCall from '../../../../squidlet-lib/lib/debounceCall/DebounceCall';
 
 
 export default class BufferedRequest {
