@@ -1,6 +1,12 @@
-export type LogLevel = 'debug' | 'info' | 'warn' | 'error' | 'log'
+export const LOG_LEVELS = {
+  debug: 'debug',
+  info: 'info',
+  warn: 'warn',
+  error: 'error',
+  log: 'log',
+}
 
-export const LOG_LEVELS = ['debug', 'info', 'warn', 'error', 'log']
+export type LogLevel = keyof typeof LOG_LEVELS
 
 export interface Logger {
   debug: (msg: string) => void

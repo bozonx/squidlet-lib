@@ -2,7 +2,7 @@ import {Logger, LogLevel} from './interfaces/Logger.js'
 import {calcAllowedLogLevels} from './common.js'
 
 
-export default class ConsoleLogger implements Logger {
+export class ConsoleLogger implements Logger {
   private readonly allowDebug: boolean
   private readonly allowInfo: boolean
   private readonly allowWarn: boolean

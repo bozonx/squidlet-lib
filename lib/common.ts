@@ -1,6 +1,6 @@
 import {isEqualUint8Array} from './binaryHelpers.js';
 import {concatUniqStrArrays} from './arrays.js';
-import {LOG_LEVELS, LogLevel} from './interfaces/Logger.js'
+import {LOG_LEVELS, Logger, LogLevel} from './interfaces/Logger.js'
 
 
 /**
@@ -141,9 +141,10 @@ export function isPromise(toCheck: any): boolean {
  * Makes ['info', 'warn', 'error'] if log level is 'info'
  */
 export function calcAllowedLogLevels(logLevel: LogLevel): LogLevel[] {
-  const currentLevelIndex: number = LOG_LEVELS.indexOf(logLevel)
+  const logLevels = Object.keys(LOG_LEVELS)
+  const currentLevelIndex: number = logLevels.indexOf(logLevel)
 
-  return LOG_LEVELS.slice(currentLevelIndex) as LogLevel[]
+  return logLevels.slice(currentLevelIndex) as LogLevel[]
 }
 
 // /**
@@ -151,3 +152,22 @@ export function calcAllowedLogLevels(logLevel: LogLevel): LogLevel[] {
 //  * 0 is not empty!
 //  * @param toCheck
 //  */
+
+
+// TODO: test
+export function handleLogEvent(logger: Logger) {
+  return (logLevel: LogLevel, msg: string) => {
+    switch (logLevel) {
+      case 'debug':
+        return logger.debug(msg)
+      case 'info':
+        return logger.info(msg)
+      case 'warn':
+        return logger.warn(msg)
+      case 'error':
+        return logger.error(msg)
+      case 'log':
+        return logger.log(msg)
+    }
+  }
+}
