@@ -39,4 +39,8 @@ export default class ConsoleLogger implements Logger {
     console.error(`ERROR: ${message}`)
   }
 
+  log = (message: string) => {
+    console.info(`LOG: ${message}`)
+  }
+
 }
