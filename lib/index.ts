@@ -1,2 +1,2 @@
 export * from './IndexedEventEmitter.js'
-export * from './IndexedEvents.js'
+export * from './LogPublisher.js'
