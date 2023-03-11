@@ -17,29 +17,29 @@ export class ConsoleLogger implements Logger {
   }
 
 
-  debug = (message: string) => {
+  debug(message: string) {
     if (!this.allowDebug) return
 
     console.info(`DEBUG: ${message}`)
   }
 
-  info = (message: string) => {
+  info(message: string) {
     if (!this.allowInfo) return
 
     console.info(`INFO: ${message}`)
   }
 
-  warn = (message: string) => {
+  warn(message: string) {
     if (!this.allowWarn) return
 
     console.warn(`WARNING: ${message}`)
   }
 
-  error = (message: string | Error) => {
+  error(message: string | Error) {
     console.error(`ERROR: ${message}`)
   }
 
-  log = (message: string) => {
+  log(message: string) {
     console.info(`LOG: ${message}`)
   }
 

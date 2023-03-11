@@ -13,25 +13,25 @@ export class LogPublisher {
   }
 
 
-  debug = (message: string) => {
-    this.eventHandler('debug', message);
+  debug(message: string) {
+    this.eventHandler('debug', message)
   }
 
 
-  log = (message: string) => {
-    this.eventHandler('log', message);
+  log(message: string) {
+    this.eventHandler('log', message)
   }
 
-  info = (message: string) => {
-    this.eventHandler('info', message);
+  info(message: string) {
+    this.eventHandler('info', message)
   }
 
-  warn = (message: string) => {
-    this.eventHandler('warn', message);
+  warn(message: string) {
+    this.eventHandler('warn', message)
   }
 
-  error = (message: string | Error) => {
-    this.eventHandler('error', String(message));
+  error(message: string | Error) {
+    this.eventHandler('error', String(message))
   }
 
 }
