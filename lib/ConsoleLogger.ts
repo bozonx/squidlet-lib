@@ -43,4 +43,8 @@ export class ConsoleLogger implements Logger {
     console.info(`LOG: ${message}`)
   }
 
+  handler(level: LogLevel, message: string) {
+    this[level](message)
+  }
+
 }
