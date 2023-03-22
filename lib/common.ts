@@ -107,16 +107,19 @@ export function callSafely(
   method: (...params: any[]) => Promise<any>,
   ...params: any[]
 ): Promise<any> {
-  return new Promise((resolve, reject) => {
-    try {
-      method(...params)
-        .then(resolve)
-        .catch(reject);
+  try {
+    const result = method(...params)
+
+    if (isPromise(result)) {
+      return result
     }
-    catch (err) {
-      reject(err);
+    else {
+      return Promise.resolve(result)
     }
-  });
+  }
+  catch (e) {
+    return Promise.reject(e)
+  }
 }
 
 /**
