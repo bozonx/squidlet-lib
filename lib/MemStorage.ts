@@ -11,8 +11,15 @@ type ChangeEventHandler = (dir: string, name: string, value: any, oldValue: any)
 export class MemStorage {
   readonly changeEvent = new IndexedEvents<ChangeEventHandler>()
 
-  private readonly storage: Record<string, any> = {}
+  private storage: Record<string, Record<string, any>> = {}
 
+
+  /**
+   * If need you can init storage for example loaded from file
+   */
+  async initStorage(storage: Record<string, Record<string, any>>) {
+    this.storage = storage
+  }
 
   async get(dir: string, name: string): Promise<any> {
     return this.storage[dir][name]
