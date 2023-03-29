@@ -60,3 +60,7 @@ export function pathBasename(pathToDirOrFile: string): string {
 
   return pathParts[pathParts.length - 1];
 }
+
+export function clearRelPathLeft(rawPath: string): string {
+  return rawPath.replace(/^[\s.\\~\/]*/, '')
+}
