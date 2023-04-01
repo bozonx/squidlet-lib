@@ -3,7 +3,7 @@ import {isPromise} from './common.js';
 export type AnyHandler = (...args: any[]) => void;
 
 
-export default class IndexedEvents<T extends AnyHandler> {
+export class IndexedEvents<T extends AnyHandler> {
   // all the handlers by index, removed handlers are empty
   private handlers: (T | undefined)[] = [];
 

@@ -1,4 +1,5 @@
 export * from './IndexedEventEmitter.js'
+export * from './IndexedEvents.js'
 export * from './LogPublisher.js'
 export * from './ConsoleLogger.js'
 export * from './interfaces/Logger.js'
