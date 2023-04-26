@@ -85,6 +85,7 @@ export class IndexedEvents<T extends AnyHandler> {
   }
 
   destroy() {
+    // @ts-ignore
     delete this.handlers;
   }
 

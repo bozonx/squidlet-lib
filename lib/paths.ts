@@ -64,3 +64,17 @@ export function pathBasename(pathToDirOrFile: string): string {
 export function clearRelPathLeft(rawPath: string): string {
   return rawPath.replace(/^[\s.\\~\/]*/, '')
 }
+
+export function pathTrimExt(fileName: string): string {
+  if (fileName.indexOf('.') < 0) return fileName
+
+  const splat = fileName.split('.')
+
+  splat.pop()
+
+  return splat.join('.')
+}
+
+export function replaceExt(fileName: string, newExt: string): string {
+  return `${pathTrimExt(fileName)}.${newExt}`
+}

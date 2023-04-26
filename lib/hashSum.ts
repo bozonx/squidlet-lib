@@ -56,7 +56,7 @@ function foldValue (input: any, value: any, key: any, seen: any) {
 
     try {
       return fold(objHash, String(value.valueOf()));
-    } catch (err) {
+    } catch (err: any) {
       return fold(objHash, '[valueOf exception]' + (err.stack || err.message));
     }
   }
