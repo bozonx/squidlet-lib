@@ -76,5 +76,5 @@ export function pathTrimExt(fileName: string): string {
 }
 
 export function replaceExt(fileName: string, newExt: string): string {
-  return `${pathTrimExt(fileName)}.${newExt}`
+  return `${pathTrimExt(fileName)}.${trimCharStart(newExt, '.')}`
 }
