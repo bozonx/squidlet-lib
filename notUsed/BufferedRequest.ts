@@ -1,4 +1,4 @@
-import DebounceCall from './debounceCall/DebounceCall.js';
+import DebounceCall from './debounceCall/DebounceCall';
 
 
 export default class BufferedRequest {

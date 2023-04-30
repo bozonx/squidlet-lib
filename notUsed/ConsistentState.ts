@@ -1,9 +1,9 @@
-import {cloneDeepObject, isEmptyObject, mergeDeepObjects} from '../lib/objects.js';
-import {concatUniqStrArrays} from '../lib/arrays.js';
-import {Dictionary} from '../lib/interfaces/Types.js';
-import Queue, {JobId} from './Queue.js';
-import {pickObj} from '../lib/objects.js';
-import {arraysDifference} from '../lib/arrays.js';
+import {cloneDeepObject, isEmptyObject, mergeDeepObjects} from '../lib/objects';
+import {concatUniqStrArrays} from '../lib/arrays';
+import {Dictionary} from '../lib/interfaces/Types';
+import Queue, {JobId} from '../lib/Queue';
+import {pickObj} from '../lib/objects';
+import {arraysDifference} from '../lib/arrays';
 
 
 export type Initialize = () => Promise<Dictionary>;
