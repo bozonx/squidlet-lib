@@ -1,6 +1,6 @@
 type Timeout = NodeJS.Timeout;
 
-import {Promised} from '../Promised.js';
+import {Promised} from '../../lib/Promised';
 
 
 export const DEFAULT_ID = 'default';

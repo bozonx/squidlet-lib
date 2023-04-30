@@ -1,7 +1,7 @@
-import {DEFAULT_JOB_TIMEOUT_SEC} from '../lib/constants.js';
-import Promised from './Promised.js';
-import {isEmptyObject} from '../lib/objects.js';
-import {callSafely} from '../lib/common.js';
+import {DEFAULT_JOB_TIMEOUT_SEC} from './constants.js';
+import {Promised} from './Promised.js';
+import {isEmptyObject} from './objects.js';
+import {callSafely} from './common.js';
 
 
 // TODO: test

@@ -1,6 +1,6 @@
 type Timeout = NodeJS.Timeout;
 
-import Promised from './Promised.js';
+import Promised from '../lib/Promised';
 import {DEFAULT_JOB_TIMEOUT_SEC} from '../lib/constants.js';
 
 

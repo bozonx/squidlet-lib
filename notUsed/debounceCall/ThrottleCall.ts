@@ -1,4 +1,4 @@
-import {Promised} from '../Promised.js';
+import {Promised} from '../../lib/Promised';
 import {DebounceCb, DebounceItem, ItemPosition} from './DebounceCall.js';
 
 

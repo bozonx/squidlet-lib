@@ -12,7 +12,7 @@ export class Promised<T = any> {
 
 
   constructor() {
-    this._promise = new Promise<T>((resolve, reject) => {
+    this._promise = new Promise<T>((resolve: any, reject) => {
       this.promiseResolve = resolve;
       this.promiseReject = reject;
     });
