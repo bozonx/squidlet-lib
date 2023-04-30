@@ -169,6 +169,9 @@ export class IndexedEventEmitter<T extends DefaultHandler = DefaultHandler> {
       return
     }
 
+
+    // TODO: если не указан eventName - то не работает
+
     // find the event name and remove it's index.
     for (let eventName of Object.keys(this.indexes)) {
       const found: number | undefined = this.indexes[eventName].find((item) => item === handlerIndex)
