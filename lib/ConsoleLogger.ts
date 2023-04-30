@@ -1,4 +1,4 @@
-import {Logger, LogLevel} from './interfaces/Logger.js'
+import {Logger, LogLevel, LOG_LEVELS} from './interfaces/Logger.js'
 import {calcAllowedLogLevels} from './common.js'
 
 
@@ -11,35 +11,35 @@ export class ConsoleLogger implements Logger {
   constructor(level: LogLevel = 'info') {
     const allowedLogLevels: LogLevel[] = calcAllowedLogLevels(level)
 
-    this.allowDebug = allowedLogLevels.includes('debug')
-    this.allowInfo = allowedLogLevels.includes('info')
-    this.allowWarn = allowedLogLevels.includes('warn')
+    this.allowDebug = allowedLogLevels.includes(LOG_LEVELS.debug);
+    this.allowInfo = allowedLogLevels.includes(LOG_LEVELS.info);
+    this.allowWarn = allowedLogLevels.includes(LOG_LEVELS.warn);
   }
 
 
-  debug(message: string) {
+  debug = (message: string) => {
     if (!this.allowDebug) return
 
     console.info(`DEBUG: ${message}`)
   }
 
-  info(message: string) {
+  info = (message: string) => {
     if (!this.allowInfo) return
 
     console.info(`INFO: ${message}`)
   }
 
-  warn(message: string) {
+  warn = (message: string) => {
     if (!this.allowWarn) return
 
     console.warn(`WARNING: ${message}`)
   }
 
-  error(message: string | Error) {
+  error = (message: string | Error) => {
     console.error(`ERROR: ${message}`)
   }
 
-  log(message: string) {
+  log = (message: string) => {
     console.info(`LOG: ${message}`)
   }
 
