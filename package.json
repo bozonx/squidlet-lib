@@ -6,9 +6,6 @@
   "repository": "git@github.com:bozonx/squidlet-lib.git",
   "exports": "./distr/index.js",
   "type": "module",
-  "engines": {
-    "node": ">=18.14.0"
-  },
   "license": "MIT",
   "scripts": {
     "start": "ts-node ./control/index.ts",
