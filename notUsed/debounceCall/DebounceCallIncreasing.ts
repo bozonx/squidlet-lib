@@ -1,4 +1,4 @@
-import DebounceCall, {DebounceCb, DebounceItem, ItemPosition} from './DebounceCall';
+import DebounceCall, {DebounceCb, DebounceItem, ItemPosition} from './DebounceCall.js';
 
 
 /**

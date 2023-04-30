@@ -1,4 +1,4 @@
-import {makeUniqNumber} from './uniqId.js';
+import {makeUniqNumber} from '../lib/uniqId.js';
 
 
 class SenderRequest {

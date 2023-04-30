@@ -1,7 +1,7 @@
-import {Dictionary} from './interfaces/Types.js';
-import {IndexedEvents} from './IndexedEvents.js';
-import {mergeDeepObjects} from './objects.js';
-import {isEqual} from './common.js';
+import {Dictionary} from '../lib/interfaces/Types.js';
+import {IndexedEvents} from '../lib/IndexedEvents.js';
+import {mergeDeepObjects} from '../lib/objects.js';
+import {isEqual} from '../lib/common.js';
 
 
 type ChangeHandler = (category: number, stateName: string, changedParams: string[]) => void;

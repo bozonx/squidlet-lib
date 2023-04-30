@@ -1,6 +1,6 @@
-import {JsonTypes} from './interfaces/Types.js'
-import {makeUniqId} from './uniqId.js'
-import {IndexedEventEmitter} from './IndexedEventEmitter.js'
+import {JsonTypes} from '../lib/interfaces/Types.js'
+import {makeUniqId} from '../lib/uniqId.js'
+import {IndexedEventEmitter} from '../lib/IndexedEventEmitter.js'
 
 export type RemoteCallSendMessage = (host: string, uri: string, payload: Uint8Array) => void
 

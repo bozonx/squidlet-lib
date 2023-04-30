@@ -1,4 +1,4 @@
-import {concatUint8Arr, int32ToUint8Arr, uint8ToNum} from './binaryHelpers.js';
+import {concatUint8Arr, int32ToUint8Arr, uint8ToNum} from '../lib/binaryHelpers';
 
 
 const BIN_MARK = '!BIN!';
