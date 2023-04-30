@@ -258,6 +258,36 @@ export function objGet(obj?: {[index: string]: any}, pathTo?: string, defaultVal
 
 // TODO: test
 /**
+ * Set value deeply to object and create nodes if need.
+ * It mutates the object
+ * @param obj
+ * @param pathTo - path like parnent.node1.node2
+ * @param value
+ */
+export function objSetMutate(obj: Record<string, any>, pathTo: string, value: any) {
+  const pathSplat: string[] = pathTo.split('.')
+  let currentDir = obj
+
+  for (const index in pathSplat) {
+    const curDirName = pathSplat[index]
+
+    if (Number(index) === pathSplat.length - 1) {
+      // the last element
+      currentDir[curDirName] = value
+    }
+    else {
+      // in the middle
+      // create dir if not exist
+      if (!currentDir[curDirName]) {
+        currentDir[curDirName] = {}
+        currentDir = currentDir[curDirName]
+      }
+    }
+  }
+}
+
+// TODO: test
+/**
  * Sort keys of object recursively.
  * Arrays won't be sorted.
  */
