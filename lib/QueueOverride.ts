@@ -54,6 +54,7 @@ export default class QueueOverride {
       this.clearTimeout();
     }
 
+    // @ts-ignore
     delete this.items;
   }
 

@@ -36,6 +36,7 @@ export default class BufferedQueue {
   destroy() {
     if (this.queuePromised) this.queuePromised.destroy();
 
+    // @ts-ignore
     delete this.savedState;
     delete this.queuePromised;
     delete this.queuedCb;

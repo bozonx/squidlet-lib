@@ -1,5 +1,5 @@
 import {Dictionary} from './interfaces/Types.js';
-import IndexedEvents from './IndexedEvents.js';
+import {IndexedEvents} from './IndexedEvents.js';
 import {mergeDeepObjects} from './objects.js';
 import {isEqual} from './common.js';
 

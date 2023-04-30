@@ -1,5 +1,5 @@
-import Promised from '../Promised';
-import {DebounceCb, DebounceItem, ItemPosition} from './DebounceCall';
+import {Promised} from '../Promised.js';
+import {DebounceCb, DebounceItem, ItemPosition} from './DebounceCall.js';
 
 
 export const DEFAULT_ID = 'default';

@@ -12,6 +12,7 @@
   "license": "MIT",
   "scripts": {
     "start": "ts-node ./control/index.ts",
+    "build": "tsc",
     "test": "mocha",
     "lint": "tslint -p tsconfig.json"
   },

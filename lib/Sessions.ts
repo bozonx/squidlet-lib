@@ -1,6 +1,6 @@
 type Timeout = NodeJS.Timeout;
 
-import IndexedEvents from './IndexedEvents.js';
+import {IndexedEvents} from './IndexedEvents.js';
 import {JsonTypes} from './interfaces/Types.js';
 
 

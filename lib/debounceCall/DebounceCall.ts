@@ -1,6 +1,6 @@
 type Timeout = NodeJS.Timeout;
 
-import Promised from '../Promised';
+import {Promised} from '../Promised.js';
 
 
 export const DEFAULT_ID = 'default';
@@ -81,6 +81,7 @@ export default class DebounceCall {
     }
 
     // TODO: test
+    // @ts-ignore
     delete this.items;
   }
 

@@ -1,4 +1,4 @@
-export default class Promised<T = any> {
+export class Promised<T = any> {
   get promise(): Promise<T> {
     return this._promise;
   }
@@ -21,6 +21,7 @@ export default class Promised<T = any> {
   destroy() {
     delete this.promiseResolve;
     delete this.promiseReject;
+    // @ts-ignore
     delete this._promise;
   }
 
