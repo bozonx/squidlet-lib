@@ -57,7 +57,9 @@ export class IndexedEvents {
         return wrapperIndex;
     }
     removeListener(handlerIndex) {
-        if (!this.handlers[handlerIndex])
+        if (typeof handlerIndex === 'undefined')
+            return;
+        else if (!this.handlers[handlerIndex])
             return;
         delete this.handlers[handlerIndex];
     }

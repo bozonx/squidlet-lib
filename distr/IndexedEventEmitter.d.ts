@@ -17,7 +17,7 @@ export declare class IndexedEventEmitter<T extends DefaultHandler = DefaultHandl
      * Remove handler by index.
      * You can omit eventName, but if you defined it then removing will be faster.
      */
-    removeListener(handlerIndex: number, eventName?: string | number): void;
+    removeListener(handlerIndex?: number, eventName?: string | number): void;
     removeAllListeners(eventName: string | number): void;
     destroy(): void;
 }

@@ -15,7 +15,7 @@ export declare class IndexedEvents<T extends AnyHandler> {
      */
     addListener(handler: T): number;
     once(handler: T): number;
-    removeListener(handlerIndex: number): void;
+    removeListener(handlerIndex?: number): void;
     removeAll(): void;
     destroy(): void;
 }
