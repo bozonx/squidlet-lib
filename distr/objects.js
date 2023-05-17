@@ -179,6 +179,7 @@ export function mergeDeepObjects(top = {}, bottom = {}) {
 export function cloneDeepObject(obj) {
     return mergeDeepObjects({}, obj);
 }
+// TODO: поидее не собо нужно так как не поддерживает массивы. Вместо него использовать deepGet
 /**
  * Get value from deep object.
  * If there isn't a value or node undefined or default value will be returned.

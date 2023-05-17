@@ -14,3 +14,4 @@ export * from './strings.js';
 export * from './MemStorage.js';
 export * from './uniqId.js';
 export * from './mkdirPLogic.js';
+export * from './deepManipulate.js';
