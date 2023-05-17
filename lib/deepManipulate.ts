@@ -29,7 +29,17 @@ export function deepGet(
     }
   }
   else if (typeof src === 'object') {
-    const [currentKey, restPath] = splitFirstElement(pathTo, DEEP_PATH_SEPARATOR)
+    const arrMatch = pathTo.match(/^([^.]+)\[/)
+    let currentKey: string
+    let restPath: string | undefined
+
+    if (arrMatch) {
+      currentKey = arrMatch[1]
+      restPath = pathTo.split(currentKey)[1]
+    }
+    else {
+      [currentKey, restPath] = splitFirstElement(pathTo, DEEP_PATH_SEPARATOR)
+    }
 
     if (!currentKey) {
       return defaultValue
