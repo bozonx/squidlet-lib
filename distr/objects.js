@@ -132,6 +132,7 @@ export function clearObject(obj) {
  * It doesn't mutate any object.
  * If you obviously set undefined to one of top's param - it will removes this key from the result object.
  * Arrays will be cloned.
+ * It clones the top object.
  */
 export function mergeDeepObjects(top = {}, bottom = {}) {
     const result = {};

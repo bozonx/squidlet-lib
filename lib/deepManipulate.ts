@@ -58,3 +58,22 @@ export function deepGet(
     return defaultValue
   }
 }
+
+export function deepSet(
+  src?: Record<any, any> | Record<any, any>[],
+  pathTo?: string,
+  value?: any
+): any {
+
+}
+
+export function deepDelete(
+  src?: Record<any, any> | Record<any, any>[],
+  pathTo?: string,
+): any {
+  //const [child, pathToParent] = splitLastElement(path, '.')
+
+  // TODO: взять родителя и у него удалить потомка
+  // TODO: поддержка массивов
+
+}

@@ -47,3 +47,10 @@ export function deepGet(src, pathTo, defaultValue) {
         return defaultValue;
     }
 }
+export function deepSet(src, pathTo, value) {
+}
+export function deepDelete(src, pathTo) {
+    //const [child, pathToParent] = splitLastElement(path, '.')
+    // TODO: взять родителя и у него удалить потомка
+    // TODO: поддержка массивов
+}
