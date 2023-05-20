@@ -1,5 +1,6 @@
 export declare function fill(array: any[], value: any): any[];
 export declare function lastItem(arr: any[]): any;
+export declare function isLastIndex(arr: any[], currentIndex: number | string): boolean;
 /**
  * Make a new array which contains items which are different in samples.
  * Examples:

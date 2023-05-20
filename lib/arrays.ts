@@ -23,6 +23,11 @@ export function lastItem(arr: any[]): any {
   return arr[arr.length - ARRAY_INDEX_SHIFT];
 }
 
+// TODO: test
+export function isLastIndex(arr: any[], currentIndex: number | string): boolean {
+  return (arr.length -1) === Number(currentIndex)
+}
+
 /**
  * Make a new array which contains items which are different in samples.
  * Examples:

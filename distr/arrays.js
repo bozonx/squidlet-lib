@@ -16,6 +16,9 @@ export function lastItem(arr) {
     const ARRAY_INDEX_SHIFT = 1;
     return arr[arr.length - ARRAY_INDEX_SHIFT];
 }
+export function isLastIndex(arr, currentIndex) {
+    return (arr.length - 1) === Number(currentIndex);
+}
 /**
  * Make a new array which contains items which are different in samples.
  * Examples:
