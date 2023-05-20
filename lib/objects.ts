@@ -1,4 +1,5 @@
 import {cloneDeepArray, removeItemFromArray} from './arrays.js';
+import {deepGet} from './deepManipulate.js';
 
 
 // TODO: test
@@ -315,6 +316,43 @@ export function sortObject(preObj: Record<string, any>): Record<string, any> {
   return result;
 }
 
+// TODO: test
+export function collectObjValues(
+  src: Record<any, any>,
+  keyPath: string,
+  skipUndefined: boolean = true
+): Record<string, any> {
+  const res: Record<string, any> = {}
+
+  for (const key of Object.keys(src)) {
+    const val = deepGet(src[key], keyPath)
+
+    if (skipUndefined && typeof val === 'undefined') continue
+
+    res[key] = val
+  }
+
+  return res
+}
+
+// TODO: test
+export function collectEachObjValues(
+  src: Record<any, any>,
+  handler: (item: Record<any, any>, key: string) => any,
+  skipUndefined: boolean = true
+): Record<string, any> {
+  const res: Record<string, any> = {}
+
+  for (const key of Object.keys(src)) {
+    const val = handler(src[key], key)
+
+    if (skipUndefined && typeof val === 'undefined') continue
+
+    res[key] = val
+  }
+
+  return res
+}
 
 
 // /**

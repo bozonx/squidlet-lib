@@ -1,4 +1,5 @@
 import { cloneDeepArray } from './arrays.js';
+import { deepGet } from './deepManipulate.js';
 // TODO: test
 /**
  * Get all the class members include prototype's exclude "constructor".
@@ -266,6 +267,28 @@ export function sortObject(preObj) {
         }
     }
     return result;
+}
+// TODO: test
+export function collectObjValues(src, keyPath, skipUndefined = true) {
+    const res = {};
+    for (const key of Object.keys(src)) {
+        const val = deepGet(src[key], keyPath);
+        if (skipUndefined && typeof val === 'undefined')
+            continue;
+        res[key] = val;
+    }
+    return res;
+}
+// TODO: test
+export function collectEachObjValues(src, handler, skipUndefined = true) {
+    const res = {};
+    for (const key of Object.keys(src)) {
+        const val = handler(src[key], key);
+        if (skipUndefined && typeof val === 'undefined')
+            continue;
+        res[key] = val;
+    }
+    return res;
 }
 // /**
 //  * Compare 2 objects and collect keys whose VALUES are different (not equals to the same key in the sourceObj).

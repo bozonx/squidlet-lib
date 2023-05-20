@@ -90,3 +90,5 @@ export declare function objSetMutate(obj: Record<string, any>, pathTo: string, v
  * Arrays won't be sorted.
  */
 export declare function sortObject(preObj: Record<string, any>): Record<string, any>;
+export declare function collectObjValues(src: Record<any, any>, keyPath: string, skipUndefined?: boolean): Record<string, any>;
+export declare function collectEachObjValues(src: Record<any, any>, handler: (item: Record<any, any>, key: string) => any, skipUndefined?: boolean): Record<string, any>;
