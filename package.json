@@ -10,7 +10,7 @@
   "scripts": {
     "start": "ts-node ./control/index.ts",
     "build": "tsc",
-    "test": "mocha --require coffeescript/register --recursive ./test/main.coffee",
+    "test": "mocha",
     "lint": "tslint -p tsconfig.json"
   },
   "dependencies": {

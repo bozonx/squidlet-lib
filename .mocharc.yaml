@@ -1,0 +1,7 @@
+recursive: true
+extension: ['js', 'cjs', 'mj', 'ts', 'coffee']
+require:
+  - coffeescript/register
+  - ts-node/register
+file: ./test/main.coffee
+spec: ./test/lib/*.spec.coffee
