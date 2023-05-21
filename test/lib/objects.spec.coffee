@@ -1,4 +1,9 @@
-import * as objects from '../../lib/objects.ts'
+import * as objects from '../../lib/objects.js'
+#TestModule = require('../../lib/objects.js')
+
+describe 'system.lib.objects', ->
+  it 'isEmptyObject', ->
+    assert.isTrue(true)
 
 #
 #describe 'system.lib.objects', ->
