@@ -16,6 +16,7 @@ export function lastItem(arr) {
     const ARRAY_INDEX_SHIFT = 1;
     return arr[arr.length - ARRAY_INDEX_SHIFT];
 }
+// TODO: test
 export function isLastIndex(arr, currentIndex) {
     return (arr.length - 1) === Number(currentIndex);
 }

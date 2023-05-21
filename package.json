@@ -10,7 +10,7 @@
   "scripts": {
     "start": "ts-node ./control/index.ts",
     "build": "tsc",
-    "test": "mocha",
+    "test": "tsc && ava",
     "lint": "tslint -p tsconfig.json"
   },
   "directories": {
@@ -19,7 +19,9 @@
   },
   "dependencies": {},
   "devDependencies": {
+    "@ava/typescript": "^4.0.0",
     "@types/node": "^20.2.1",
+    "ava": "^5.2.0",
     "chai": "^4.3.7",
     "chai-as-promised": "^7.1.1",
     "coffee-coverage": "^3.0.1",

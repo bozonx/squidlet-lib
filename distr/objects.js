@@ -218,6 +218,7 @@ export function objGet(obj, pathTo, defaultValue) {
     return result;
 }
 // TODO: test
+// TODO: не особо нужно, так как не работает с массивами
 /**
  * Set value deeply to object and create nodes if need.
  * It mutates the object
