@@ -260,6 +260,7 @@ export function objGet(obj?: {[index: string]: any}, pathTo?: string, defaultVal
 }
 
 // TODO: test
+// TODO: не особо нужно, так как не работает с массивами
 /**
  * Set value deeply to object and create nodes if need.
  * It mutates the object
