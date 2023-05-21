@@ -13,19 +13,22 @@
     "test": "mocha",
     "lint": "tslint -p tsconfig.json"
   },
-  "dependencies": {
+  "directories": {
+    "lib": "./lib",
+    "test": "./test"
   },
+  "dependencies": {},
   "devDependencies": {
-    "rewire": "^6.0.0",
     "@types/node": "^20.2.1",
     "chai": "^4.3.7",
     "chai-as-promised": "^7.1.1",
     "coffee-coverage": "^3.0.1",
     "coffeescript": "^2.7.0",
     "mocha": "^10.2.0",
+    "rewire": "^6.0.0",
     "sinon": "^15.1.0",
     "sinon-chai": "^3.7.0",
-    "ts-node": "10.9.1",
+    "ts-node": "^10.9.1",
     "tslint": "^6.1.3",
     "typescript": "^5.0.4"
   }

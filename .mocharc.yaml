@@ -3,5 +3,6 @@ extension: ['js', 'cjs', 'mj', 'ts', 'coffee']
 require:
   - coffeescript/register
   - ts-node/register
+  - coffee-coverage/register
 file: ./test/main.coffee
 spec: ./test/lib/*.spec.coffee
