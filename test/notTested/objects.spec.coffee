@@ -7,27 +7,10 @@ describe 'system.lib.objects', ->
 
 #
 #describe 'system.lib.objects', ->
-#  it 'isEmptyObject', ->
-#    assert.isTrue(objects.isEmptyObject(undefined))
-#    assert.isTrue(objects.isEmptyObject(null))
-#    assert.isTrue(objects.isEmptyObject(''))
-#    assert.isTrue(objects.isEmptyObject([]))
-#    assert.isTrue(objects.isEmptyObject({}))
-#    assert.isTrue(objects.isEmptyObject(0))
-#    assert.isTrue(objects.isEmptyObject('a'))
-#    assert.isTrue(objects.isEmptyObject([1]))
-#    assert.isTrue(objects.isEmptyObject(false))
-#    assert.isFalse(objects.isEmptyObject({a:1}))
-#
-#  it 'omitObj', ->
-#    assert.deepEqual(objects.omitObj({a: 0, b: 1, c: 2}, 'a', 'b'), {c: 2})
-#
-#  it 'omitUndefined', ->
-#    assert.deepEqual(objects.omitUndefined({a: 0, b: undefined, c: 2}), {a: 0, c: 2})
-#
-#  it 'pickObj', ->
-#    assert.deepEqual(objects.pickObj({a: 0, b: 1, c: 2}, 'b', 'c'), {b: 1, c: 2})
-#
+
+
+
+
 #  it 'findObj', ->
 #    objCb = (item, index) => item == 1
 #    assert.equal(objects.findObj({a: 0, b: 1}, objCb), 1)

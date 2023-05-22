@@ -10,7 +10,7 @@
   "scripts": {
     "start": "ts-node ./control/index.ts",
     "build": "tsc",
-    "test": "tsc && ava",
+    "test": "mocha",
     "lint": "tslint -p tsconfig.json"
   },
   "directories": {

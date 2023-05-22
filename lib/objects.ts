@@ -1,8 +1,7 @@
-import {cloneDeepArray, removeItemFromArray} from './arrays.js';
+import {cloneDeepArray} from './arrays.js';
 import {deepGet} from './deepManipulate.js';
 
 
-// TODO: test
 /**
  * Get all the class members include prototype's exclude "constructor".
  */
@@ -49,8 +48,12 @@ export function isEmptyObject(toCheck: {[index: string]: any} = {}): boolean {
 /**
  * Make a new object which doesn't include specified keys
  */
-export function omitObj(obj: {[index: string]: any} | null | undefined, ...keysToExclude: string[]): {[index: string]: any} {
-  if (!obj) return {};
+export function omitObj(
+  obj: Record<any, any> | null | undefined,
+  ...keysToExclude: string[]
+): Record<any, any> {
+  if (!obj) return {}
+  else if (typeof obj !== 'object') return {}
 
   const result: {[index: string]: any} = {};
 
@@ -66,33 +69,40 @@ export function omitObj(obj: {[index: string]: any} | null | undefined, ...keysT
 /**
  * It creates a new object which doesn't include keys which values are undefined.
  */
-export function omitUndefined(obj: {[index: string]: any} | undefined): {[index: string]: any} {
-  if (!obj) return {};
+export function omitUndefined(
+  obj: {[index: string]: any} | null | undefined
+): Record<any, any> {
+  if (!obj) return {}
+  else if (typeof obj !== 'object') return {}
 
-  const result: {[index: string]: any} = {};
+  const result: {[index: string]: any} = {}
 
-  for (let key of Object.keys(obj)) {
-    if (typeof obj[key] === 'undefined') continue;
+  for (const key of Object.keys(obj)) {
+    if (typeof obj[key] === 'undefined') continue
 
-    result[key] = obj[key];
+    result[key] = obj[key]
   }
 
-  return result;
+  return result
 }
 
 /**
  * Create a new object which includes only specified keys
  */
-export function pickObj(obj: {[index: string]: any} | undefined, ...keysToPick: string[]): {[index: string]: any} {
-  if (!obj) return {};
+export function pickObj(
+  obj: Record<any, any> | null | undefined,
+  ...keysToPick: string[]
+): Record<any, any> {
+  if (!obj) return {}
+  else if (typeof obj !== 'object') return {}
 
-  const result: {[index: string]: any} = {};
+  const result: Record<any, any> = {}
 
   for (let key of keysToPick) {
-    result[key] = obj[key];
+    result[key] = obj[key]
   }
 
-  return result;
+  return result
 }
 
 /**
