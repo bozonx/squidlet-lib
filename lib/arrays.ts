@@ -2,7 +2,7 @@
  * Are arrays equal.
  * If one of them not Array then it returns false.
  */
-import {cloneDeepObject} from './objects.js';
+import {cloneDeepObject} from './deepObjects.js';
 
 
 // TODO: test
