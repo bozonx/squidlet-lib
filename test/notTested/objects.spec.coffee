@@ -34,47 +34,7 @@ describe 'system.lib.objects', ->
 #    assert.isUndefined(objects.objGet({a: [1]}, 'a.b'))
 
 
-#  it 'clearObject', ->
-#    obj = {a:1}
-#
-#    objects.clearObject(obj)
-#
-#    assert.deepEqual(obj, {})
-#
-#  it 'mergeDeepObjects', ->
-#    top = {top: 'top', nested: {nestedTop: 'top'}}
-#    bottom = {top: 'bottom', bottom: 'bottom', nested: {nestedTop: 'bottom', nestedBottom: 'bottom'}}
-#
-#    assert.deepEqual(
-#      objects.mergeDeepObjects(top, bottom),
-#      {top: 'top', bottom: 'bottom', nested: {nestedTop: 'top', nestedBottom: 'bottom'}}
-#    )
-#    # not mutated
-#    assert.deepEqual(top, {top: 'top', nested: {nestedTop: 'top'}})
-#    # set undefined obviously
-#    assert.deepEqual(
-#      objects.mergeDeepObjects({top: undefined}, {top: 'top', bottom: 'bottom'}),
-#      {bottom: 'bottom'}
-#    )
-#    assert.deepEqual(
-#      objects.mergeDeepObjects({top: undefined, param: 1}),
-#      {param: 1}
-#    )
-#    assert.deepEqual(
-#      objects.mergeDeepObjects(undefined , {bottom: undefined, param: 1}),
-#      {bottom: undefined, param: 1}
-#    )
-#
-#  it 'mergeDeepObjects - clone arrays - not mutate', ->
-#    arr = [1]
-#    top = {arr}
-#    bottom = {}
-#
-#    result = objects.mergeDeepObjects(top, bottom)
-#
-#    assert.deepEqual(result, {arr: [1]})
-#    assert.isFalse(arr == result.arr)
-#
+
 #  it 'cloneDeepObject', ->
 #    assert.deepEqual(objects.cloneDeepObject(), {})
 #    assert.deepEqual(objects.cloneDeepObject({a: undefined}), {a: undefined})
