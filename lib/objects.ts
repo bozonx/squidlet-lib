@@ -1,4 +1,3 @@
-import {cloneDeepArray} from './arrays.js';
 import {deepGet} from './deepManipulate.js';
 
 
@@ -163,6 +162,7 @@ export function clearObject(obj: {[index: string]: any}) {
 // TODO: test
 export function collectObjValues(
   src: Record<any, any>,
+  // TODO: а зачем тут глубокий путь???
   keyPath: string,
   skipUndefined: boolean = true
 ): Record<string, any> {
