@@ -1,17 +1,10 @@
 recursive: true
-extension: ['coffee', 'ts', 'mjs', 'js', 'cjs']
+extension: ['ts', 'mjs', 'js', 'cjs']
 ui: bdd
 colors: true
-#node-option:
-#  - experimental-specifier-resolution=node
-  #- loader=ts-node/esm
-#loader:
-#  - ts-node/esm
-  #- coffeescript/register.js
+loader:
+  - ts-node/esm
 require:
-  - coffeescript/register.js
-  - ./test/main.coffee
-  #- ts-node/register
-  #- coffee-coverage/register
-#file: test/main.coffee
-spec: ./test/lib/*.spec.coffee
+  - ts-node/register
+  - ./test/main.js
+spec: ./test/lib/*.spec.js
