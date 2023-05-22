@@ -4,6 +4,7 @@ import {
   omitObj,
   omitUndefined,
   pickObj,
+  findObj,
 } from '../../lib/objects.js'
 
 
@@ -63,6 +64,11 @@ describe('lib/objects', () => {
     assert.deepEqual(pickObj(5, 'b'), {})
   })
 
+  it('findObj', () => {
+    const objCb = (item, index) => item === 1
 
+    assert.equal(findObj({a: 0, b: 1}, objCb), 1)
+    assert.isUndefined(findObj({a: 0, b: 2}, objCb))
+  })
 
 })

@@ -11,11 +11,7 @@ describe 'system.lib.objects', ->
 
 
 
-#  it 'findObj', ->
-#    objCb = (item, index) => item == 1
-#    assert.equal(objects.findObj({a: 0, b: 1}, objCb), 1)
-#    assert.isUndefined(objects.findObj({a: 0, b: 2}, objCb))
-#
+
 #  it 'isPlainObject', ->
 #    cl = () ->
 #    assert.isTrue(objects.isPlainObject({}))

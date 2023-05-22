@@ -104,25 +104,26 @@ export function pickObj(
  * Find element in object. Like lodash's find function.
  */
 export function findObj<T extends any>(
-  obj: {[index: string]: any},
+  obj: Record<any, any> | null | undefined,
+  // TODO: откуда тут number ???
   cb: (item: any, index: string | number) => any
 ): T | undefined {
-  if (typeof obj === 'undefined') {
-    return;
+  if (obj === null || typeof obj === 'undefined') {
+    return
   }
   else if (typeof obj !== 'object') {
     throw new Error(`findObj: unsupported type of object "${JSON.stringify(obj)}"`);
   }
 
   for (let key of Object.keys(obj)) {
-    const result: any = cb(obj[key], key);
+    const result: any = cb(obj[key], key)
 
-    if (result === false || typeof result === 'undefined') continue;
+    if (result === false || typeof result === 'undefined') continue
 
-    return obj[key];
+    return obj[key]
   }
-
-  return;
+  // if not found then return undefined
+  return
 }
 
 export function isPlainObject(obj: any): boolean {
