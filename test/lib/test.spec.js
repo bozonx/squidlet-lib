@@ -5,6 +5,7 @@ import {
   omitUndefined,
   pickObj,
   findObj,
+  isPlainObject,
 } from '../../lib/objects.js'
 
 
@@ -66,9 +67,24 @@ describe('lib/objects', () => {
 
   it('findObj', () => {
     const objCb = (item, index) => item === 1
-
     assert.equal(findObj({a: 0, b: 1}, objCb), 1)
     assert.isUndefined(findObj({a: 0, b: 2}, objCb))
+    // if not undefined or null then will return undefined
+    assert.isUndefined(findObj(undefined, objCb))
+    assert.isUndefined(findObj(null, objCb))
+    // any other type - error
+    assert.throws(() => findObj(5, objCb))
+  })
+
+  it('isPlainObject', () => {
+    class cl {}
+    assert.isTrue(isPlainObject({}))
+    assert.isFalse(isPlainObject(new cl()))
+    assert.isFalse(isPlainObject([]))
+    assert.isFalse(isPlainObject(''))
+    assert.isFalse(isPlainObject(undefined))
+    assert.isFalse(isPlainObject(null))
+    assert.isFalse(isPlainObject(0))
   })
 
 })

@@ -105,8 +105,7 @@ export function pickObj(
  */
 export function findObj<T extends any>(
   obj: Record<any, any> | null | undefined,
-  // TODO: откуда тут number ???
-  cb: (item: any, index: string | number) => any
+  cb: (item: any, index: string) => any
 ): T | undefined {
   if (obj === null || typeof obj === 'undefined') {
     return
@@ -115,11 +114,11 @@ export function findObj<T extends any>(
     throw new Error(`findObj: unsupported type of object "${JSON.stringify(obj)}"`);
   }
 
-  for (let key of Object.keys(obj)) {
+  for (const key of Object.keys(obj)) {
     const result: any = cb(obj[key], key)
 
     if (result === false || typeof result === 'undefined') continue
-
+    // if found return the item
     return obj[key]
   }
   // if not found then return undefined
@@ -127,11 +126,11 @@ export function findObj<T extends any>(
 }
 
 export function isPlainObject(obj: any): boolean {
-  return obj // not null
-    && typeof obj === 'object' // separate from primitives
-    && obj.constructor === Object // separate instances (Array, DOM, ...)
+  if (!obj || Array.isArray(obj) || typeof obj !== 'object') return false
+
+  return obj.constructor === Object // separate instances (Array, DOM, ...)
     && Object.prototype.toString.call(obj) === '[object Object]' // separate build-in like Math
-    || false;
+    || false
 }
 
 /**

@@ -12,16 +12,7 @@ describe 'system.lib.objects', ->
 
 
 
-#  it 'isPlainObject', ->
-#    cl = () ->
-#    assert.isTrue(objects.isPlainObject({}))
-#    assert.isFalse(objects.isPlainObject(new cl()))
-#    assert.isFalse(objects.isPlainObject([]))
-#    assert.isFalse(objects.isPlainObject(''))
-#    assert.isFalse(objects.isPlainObject(undefined))
-#    assert.isFalse(objects.isPlainObject(null))
-#    assert.isFalse(objects.isPlainObject(0))
-#
+
 #  it 'objGet', ->
 #    obj = {
 #      level1: {
