@@ -32,13 +32,8 @@ describe 'system.lib.objects', ->
 #    assert.isUndefined(objects.objGet(obj, 'level1[1]'))
 #    assert.deepEqual(objects.objGet({a: [1]}, 'a'), [1])
 #    assert.isUndefined(objects.objGet({a: [1]}, 'a.b'))
-#
-#  it 'getKeyOfObject', ->
-#    assert.isUndefined(objects.getKeyOfObject(undefined))
-#    assert.isUndefined(objects.getKeyOfObject({a:1}))
-#    assert.equal(objects.getKeyOfObject({a: 1, b: 2}, 2), 'b')
-#    assert.isUndefined(objects.getKeyOfObject({a: 1, b: 2}, 3))
-#
+
+
 #  it 'clearObject', ->
 #    obj = {a:1}
 #

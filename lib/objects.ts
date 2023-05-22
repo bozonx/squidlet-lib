@@ -134,21 +134,20 @@ export function isPlainObject(obj: any): boolean {
 }
 
 /**
- * Get key by value
+ * Get the first key of value
  * E.g getKeyOfObject({key1: 'value1'}, 'value1') - then it returns 'key1'
  */
-export function getKeyOfObject(obj?: {[index: string]: any}, value?: any): string | undefined {
-  if (!obj || typeof value === 'undefined') return;
-
-  if (typeof obj !== 'object' || Array.isArray(obj)) {
-    throw new Error(`objects.getKeyOfObject: obj param has to be an object!`);
-  }
+export function getKeyOfObject(
+  obj?: Record<any, any>,
+  value?: any
+): string | undefined {
+  if (!obj || Array.isArray(obj) || typeof obj !== 'object') return undefined
 
   for (let key of Object.keys(obj)) {
-    if (obj[key] === value) return key;
+    if (obj[key] === value) return key
   }
 
-  return;
+  return
 }
 
 /**

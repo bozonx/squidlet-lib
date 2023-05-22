@@ -6,6 +6,7 @@ import {
   pickObj,
   findObj,
   isPlainObject,
+  getKeyOfObject,
 } from '../../lib/objects.js'
 
 
@@ -86,5 +87,21 @@ describe('lib/objects', () => {
     assert.isFalse(isPlainObject(null))
     assert.isFalse(isPlainObject(0))
   })
+
+  it('getKeyOfObject', () => {
+    assert.isUndefined(getKeyOfObject({a:1}))
+    assert.equal(getKeyOfObject({a: 1, b: 2}, 2), 'b')
+    assert.isUndefined(getKeyOfObject({a: 1, b: 2}, 3))
+    // it gets only the first key
+    assert.equal(getKeyOfObject({a: 1, b: 1}, 1), 'a')
+    // undefined, null and other types will return undfined
+    assert.isUndefined(getKeyOfObject(undefined))
+    assert.isUndefined(getKeyOfObject(null))
+    assert.isUndefined(getKeyOfObject(5))
+    assert.isUndefined(getKeyOfObject('s'))
+    assert.isUndefined(getKeyOfObject([]))
+  })
+
+
 
 })
