@@ -1,4 +1,4 @@
-import * as objects from '../../lib/objects.js'
+import * as objects from '../../distr/objects'
 #TestModule = require('../../lib/objects.js')
 
 describe 'system.lib.objects', ->

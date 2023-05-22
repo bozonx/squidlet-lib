@@ -10,8 +10,8 @@ colors: true
   #- coffeescript/register.js
 require:
   - coffeescript/register.js
-  - ts-node/register
-  #- ./test/main.coffee
+  - ./test/main.coffee
+  #- ts-node/register
   #- coffee-coverage/register
 #file: test/main.coffee
 spec: ./test/lib/*.spec.coffee
