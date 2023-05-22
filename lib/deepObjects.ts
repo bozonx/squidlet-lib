@@ -1,5 +1,4 @@
 import {cloneDeepArray} from './arrays.js';
-import {deepGet} from './deepManipulate.js';
 import {isPlainObject} from './objects.js';
 
 
@@ -59,6 +58,7 @@ export function mergeDeepObjects<T = Record<string, any>>(
   return result as T
 }
 
+// TODO: review and review tests
 /**
  * Clone object deeply.
  */

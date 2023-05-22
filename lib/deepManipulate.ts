@@ -3,6 +3,8 @@ import {splitFirstElement, trimCharStart} from './strings.js';
 
 const DEEP_PATH_SEPARATOR = '.'
 
+// TODO: cloneDeep - может быть как массив, так и объект
+
 
 export function deepGet(
   src?: Record<any, any> | Record<any, any>[],
