@@ -19,7 +19,6 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@ava/typescript": "^4.0.0",
     "@types/node": "^20.2.1",
     "chai": "^4.3.7",
     "chai-as-promised": "^7.1.1",
