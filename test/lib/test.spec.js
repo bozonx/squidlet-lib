@@ -56,6 +56,11 @@ describe('lib/objects', () => {
 
   it('pickObj', () => {
     assert.deepEqual(pickObj({a: 0, b: 1, c: 2}, 'b', 'c'), {b: 1, c: 2})
+    // if not undefined, null or other type then will return {}
+    assert.deepEqual(pickObj(undefined, 'b'), {})
+    assert.deepEqual(pickObj(null, 'b'), {})
+    assert.deepEqual(pickObj([], 'b'), {})
+    assert.deepEqual(pickObj(5, 'b'), {})
   })
 
 

@@ -37,12 +37,10 @@ export function getAllTheClassMembers(obj: Object, exclude: string[] = []): stri
  * For other types it will return true.
  * Null means an empty object too. Better is not to use null.
  */
-export function isEmptyObject(toCheck: {[index: string]: any} = {}): boolean {
-  if (typeof toCheck !== 'object' || Array.isArray(toCheck)) {
-    return true;
-  }
+export function isEmptyObject(obj: Record<any, any> | null | undefined): boolean {
+  if (!obj || Array.isArray(obj) || typeof obj !== 'object') return true
 
-  return !Object.keys(toCheck || {}).length;
+  return !Object.keys(obj || {}).length
 }
 
 /**
@@ -52,8 +50,7 @@ export function omitObj(
   obj: Record<any, any> | null | undefined,
   ...keysToExclude: string[]
 ): Record<any, any> {
-  if (!obj) return {}
-  else if (typeof obj !== 'object') return {}
+  if (!obj || Array.isArray(obj) || typeof obj !== 'object') return {}
 
   const result: {[index: string]: any} = {};
 
@@ -72,8 +69,7 @@ export function omitObj(
 export function omitUndefined(
   obj: {[index: string]: any} | null | undefined
 ): Record<any, any> {
-  if (!obj) return {}
-  else if (typeof obj !== 'object') return {}
+  if (!obj || Array.isArray(obj) || typeof obj !== 'object') return {}
 
   const result: {[index: string]: any} = {}
 
@@ -93,8 +89,7 @@ export function pickObj(
   obj: Record<any, any> | null | undefined,
   ...keysToPick: string[]
 ): Record<any, any> {
-  if (!obj) return {}
-  else if (typeof obj !== 'object') return {}
+  if (!obj || Array.isArray(obj) || typeof obj !== 'object') return {}
 
   const result: Record<any, any> = {}
 
