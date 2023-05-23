@@ -6,6 +6,12 @@ import {cloneDeepObject} from './deepObjects.js';
 const DEEP_PATH_SEPARATOR = '.'
 
 
+/**
+ * Get value deeply from object or array.
+ * @param src - object or array
+ * @param pathTo - path like obj.arr[0].param
+ * @param defaultValue - value which will be returned in case value not found
+ */
 export function deepGet(
   src?: Record<any, any> | Record<any, any>[],
   pathTo?: string,
@@ -95,7 +101,13 @@ export function deepSet(
   else {
     // it is a child of the top object
     if (Array.isArray(src)) {
-      // TODO: поддержка массива
+      const indexMatch = lastPath.match(/^\[(\d+)\]$/)
+
+      if (!indexMatch) return
+
+      const index: number = Number(indexMatch[1])
+
+      src[index] = value
     }
     else if (typeof src === 'object') {
       src[lastPath] = value

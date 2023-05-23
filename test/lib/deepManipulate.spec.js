@@ -1,5 +1,5 @@
 import {
-  deepGet,
+  deepGet, deepSet,
 } from '../../lib/deepManipulate.js'
 
 
@@ -34,7 +34,22 @@ describe('lib/deepManipulate', () => {
   })
 
   it('deepSet', () => {
-
+    // object
+    let obj
+    obj = {a1: 2}
+    deepSet(obj, 'a1', 2)
+    assert.deepEqual(obj, {a1: 2})
+    obj = {a1: {b2: 2}}
+    deepSet(obj, 'a1.b2', 3)
+    assert.deepEqual(obj, {a1: {b2: 3}})
+    // add value to object
+    obj = {a1: {b1: 1}}
+    deepSet(obj, 'a2', {b3: 3})
+    assert.deepEqual(obj, {a1: {b1: 1}, a2: {b3: 3}})
+    obj = {a1: {b2: 2}}
+    deepSet(obj, 'a1.b3', 3)
+    assert.deepEqual(obj, {a1: {b2: 2, b3: 3}})
+    // wrong data
   })
 
 })
