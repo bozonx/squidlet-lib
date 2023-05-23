@@ -2,8 +2,11 @@
  * Are arrays equal.
  * If one of them not Array then it returns false.
  */
-import { cloneDeepObject } from './objects.js';
-// TODO: test
+import { cloneDeepObject } from './deepObjects.js';
+// shift when you calculates length
+export const ARRAY_INDEX_SHIFT = 1;
+// TODO: test - не нужно, есть же метод Array.fill()
+// TODO: хотя можно этот сделать error safe
 export function fill(array, value) {
     const result = [];
     for (let index in array) {
@@ -11,14 +14,18 @@ export function fill(array, value) {
     }
     return result;
 }
+// TODO: test
+export function fullWithArray(toMutatedArray, fromArray) {
+    for (const index of fromArray) {
+        toMutatedArray[index] = fromArray[index];
+    }
+}
 export function lastItem(arr) {
-    // shift when you calculates length
-    const ARRAY_INDEX_SHIFT = 1;
     return arr[arr.length - ARRAY_INDEX_SHIFT];
 }
 // TODO: test
 export function isLastIndex(arr, currentIndex) {
-    return (arr.length - 1) === Number(currentIndex);
+    return (arr.length - ARRAY_INDEX_SHIFT) === Number(currentIndex);
 }
 /**
  * Make a new array which contains items which are different in samples.

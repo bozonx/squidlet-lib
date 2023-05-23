@@ -1,4 +1,6 @@
+export declare const ARRAY_INDEX_SHIFT = 1;
 export declare function fill(array: any[], value: any): any[];
+export declare function fullWithArray(toMutatedArray: any[], fromArray: any[]): void;
 export declare function lastItem(arr: any[]): any;
 export declare function isLastIndex(arr: any[], currentIndex: number | string): boolean;
 /**

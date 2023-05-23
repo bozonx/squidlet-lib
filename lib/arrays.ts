@@ -5,7 +5,12 @@
 import {cloneDeepObject} from './deepObjects.js';
 
 
-// TODO: test
+// shift when you calculates length
+export const ARRAY_INDEX_SHIFT = 1
+
+
+// TODO: test - не нужно, есть же метод Array.fill()
+// TODO: хотя можно этот сделать error safe
 export function fill(array: any[], value: any): any[] {
   const result: any[] = [];
 
@@ -16,16 +21,20 @@ export function fill(array: any[], value: any): any[] {
   return result;
 }
 
-export function lastItem(arr: any[]): any {
-  // shift when you calculates length
-  const ARRAY_INDEX_SHIFT = 1;
+// TODO: test
+export function fullWithArray(toMutatedArray: any[], fromArray: any[]) {
+  for (const index of fromArray) {
+    toMutatedArray[index] = fromArray[index]
+  }
+}
 
-  return arr[arr.length - ARRAY_INDEX_SHIFT];
+export function lastItem(arr: any[]): any {
+  return arr[arr.length - ARRAY_INDEX_SHIFT]
 }
 
 // TODO: test
 export function isLastIndex(arr: any[], currentIndex: number | string): boolean {
-  return (arr.length -1) === Number(currentIndex)
+  return (arr.length - ARRAY_INDEX_SHIFT) === Number(currentIndex)
 }
 
 /**

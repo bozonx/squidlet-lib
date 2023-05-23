@@ -1,6 +1,4 @@
-import { cloneDeepArray } from './arrays.js';
 import { deepGet } from './deepManipulate.js';
-// TODO: test
 /**
  * Get all the class members include prototype's exclude "constructor".
  */
@@ -33,17 +31,16 @@ export function getAllTheClassMembers(obj, exclude = []) {
  * For other types it will return true.
  * Null means an empty object too. Better is not to use null.
  */
-export function isEmptyObject(toCheck = {}) {
-    if (typeof toCheck !== 'object' || Array.isArray(toCheck)) {
+export function isEmptyObject(obj) {
+    if (!obj || Array.isArray(obj) || typeof obj !== 'object')
         return true;
-    }
-    return !Object.keys(toCheck || {}).length;
+    return !Object.keys(obj || {}).length;
 }
 /**
  * Make a new object which doesn't include specified keys
  */
 export function omitObj(obj, ...keysToExclude) {
-    if (!obj)
+    if (!obj || Array.isArray(obj) || typeof obj !== 'object')
         return {};
     const result = {};
     for (let key of Object.keys(obj)) {
@@ -57,10 +54,10 @@ export function omitObj(obj, ...keysToExclude) {
  * It creates a new object which doesn't include keys which values are undefined.
  */
 export function omitUndefined(obj) {
-    if (!obj)
+    if (!obj || Array.isArray(obj) || typeof obj !== 'object')
         return {};
     const result = {};
-    for (let key of Object.keys(obj)) {
+    for (const key of Object.keys(obj)) {
         if (typeof obj[key] === 'undefined')
             continue;
         result[key] = obj[key];
@@ -71,7 +68,7 @@ export function omitUndefined(obj) {
  * Create a new object which includes only specified keys
  */
 export function pickObj(obj, ...keysToPick) {
-    if (!obj)
+    if (!obj || Array.isArray(obj) || typeof obj !== 'object')
         return {};
     const result = {};
     for (let key of keysToPick) {
@@ -83,37 +80,36 @@ export function pickObj(obj, ...keysToPick) {
  * Find element in object. Like lodash's find function.
  */
 export function findObj(obj, cb) {
-    if (typeof obj === 'undefined') {
+    if (obj === null || typeof obj === 'undefined') {
         return;
     }
     else if (typeof obj !== 'object') {
         throw new Error(`findObj: unsupported type of object "${JSON.stringify(obj)}"`);
     }
-    for (let key of Object.keys(obj)) {
+    for (const key of Object.keys(obj)) {
         const result = cb(obj[key], key);
         if (result === false || typeof result === 'undefined')
             continue;
+        // if found return the item
         return obj[key];
     }
+    // if not found then return undefined
     return;
 }
 export function isPlainObject(obj) {
-    return obj // not null
-        && typeof obj === 'object' // separate from primitives
-        && obj.constructor === Object // separate instances (Array, DOM, ...)
+    if (!obj || Array.isArray(obj) || typeof obj !== 'object')
+        return false;
+    return obj.constructor === Object // separate instances (Array, DOM, ...)
         && Object.prototype.toString.call(obj) === '[object Object]' // separate build-in like Math
         || false;
 }
 /**
- * Get key by value
+ * Get the first key of value
  * E.g getKeyOfObject({key1: 'value1'}, 'value1') - then it returns 'key1'
  */
 export function getKeyOfObject(obj, value) {
-    if (!obj || typeof value === 'undefined')
-        return;
-    if (typeof obj !== 'object' || Array.isArray(obj)) {
-        throw new Error(`objects.getKeyOfObject: obj param has to be an object!`);
-    }
+    if (!obj || Array.isArray(obj) || typeof obj !== 'object')
+        return undefined;
     for (let key of Object.keys(obj)) {
         if (obj[key] === value)
             return key;
@@ -125,152 +121,15 @@ export function getKeyOfObject(obj, value) {
  * It mutates the object.
  */
 export function clearObject(obj) {
+    if (!obj || Array.isArray(obj) || typeof obj !== 'object')
+        return;
     for (let name of Object.keys(obj))
         delete obj[name];
 }
-/**
- * Merges two objects deeply.
- * It doesn't mutate any object.
- * If you obviously set undefined to one of top's param - it will removes this key from the result object.
- * Arrays will be cloned.
- * It clones the top object.
- */
-export function mergeDeepObjects(top = {}, bottom = {}) {
-    const result = {};
-    const topUndefinedKeys = [];
-    if (typeof top !== 'object' || typeof bottom !== 'object') {
-        throw new Error(`mergeDeepObjects: top and bottom has to be objects`);
-    }
-    // Sort undefined keys.
-    // Get only not undefined values to result and collect keys which has a undefined values.
-    for (let key of Object.keys(top)) {
-        if (typeof top[key] === 'undefined') {
-            topUndefinedKeys.push(key);
-        }
-        else {
-            if (Array.isArray(top[key])) {
-                result[key] = cloneDeepArray(top[key]);
-            }
-            else {
-                result[key] = top[key];
-            }
-        }
-    }
-    for (let key of Object.keys(bottom)) {
-        if (!(key in result) && !topUndefinedKeys.includes(key)) {
-            // set value which is absent on top but exist on the bottom.
-            // only if it obviously doesn't mark as undefined
-            if (Array.isArray(bottom[key])) {
-                result[key] = cloneDeepArray(bottom[key]);
-            }
-            else {
-                result[key] = bottom[key];
-            }
-        }
-        // go deeper if bottom and top are objects
-        else if (isPlainObject(result[key]) && isPlainObject(bottom[key])) {
-            result[key] = mergeDeepObjects(result[key], bottom[key]);
-        }
-        // else - skip
-    }
-    return result;
-}
-/**
- * Clone object deeply.
- */
-export function cloneDeepObject(obj) {
-    return mergeDeepObjects({}, obj);
-}
-// TODO: поидее не собо нужно так как не поддерживает массивы. Вместо него использовать deepGet
-/**
- * Get value from deep object.
- * If there isn't a value or node undefined or default value will be returned.
- * WARNING: arrays doesn't supported!
- */
-export function objGet(obj, pathTo, defaultValue) {
-    if (!obj || !pathTo)
-        return defaultValue;
-    const recursive = (currentObj, currentPath) => {
-        for (let itemName of Object.keys(currentObj)) {
-            const pathOfItem = (currentPath) ? [currentPath, itemName].join('.') : itemName;
-            if (pathTo.indexOf(pathOfItem) !== 0) {
-                // lost path
-                return;
-            }
-            else if (pathOfItem === pathTo) {
-                // found
-                return currentObj[itemName];
-            }
-            else if (Array.isArray(currentObj[itemName])) {
-                // arrays aren't supported
-                return;
-            }
-            // got deeper
-            else if (typeof currentObj[itemName] === 'object') {
-                return recursive(currentObj[itemName], pathOfItem);
-            }
-            // else do nothing
-        }
-    };
-    const result = recursive(obj, '');
-    if (typeof result === 'undefined' && typeof defaultValue !== 'undefined')
-        return defaultValue;
-    return result;
-}
 // TODO: test
-// TODO: не особо нужно, так как не работает с массивами
-/**
- * Set value deeply to object and create nodes if need.
- * It mutates the object
- * @param obj
- * @param pathTo - path like parnent.node1.node2
- * @param value
- */
-export function objSetMutate(obj, pathTo, value) {
-    const pathSplat = pathTo.split('.');
-    let currentDir = obj;
-    for (const index in pathSplat) {
-        const curDirName = pathSplat[index];
-        if (Number(index) === pathSplat.length - 1) {
-            // the last element
-            currentDir[curDirName] = value;
-        }
-        else {
-            // in the middle
-            // create dir if not exist
-            if (!currentDir[curDirName]) {
-                currentDir[curDirName] = {};
-                currentDir = currentDir[curDirName];
-            }
-        }
-    }
-}
-// TODO: test
-/**
- * Sort keys of object recursively.
- * Arrays won't be sorted.
- */
-export function sortObject(preObj) {
-    const sortedKeys = Object.keys(preObj).sort();
-    const result = {};
-    for (let key of sortedKeys) {
-        if (Array.isArray(preObj[key])) {
-            // don't sort arrays
-            result[key] = preObj[key];
-        }
-        else if (typeof preObj[key] === 'object') {
-            // sort recursively
-            result[key] = sortObject(preObj[key]);
-        }
-        else {
-            // other primitives
-            result[key] = preObj[key];
-        }
-    }
-    return result;
-}
-// TODO: test
-export function collectObjValues(src, keyPath, skipUndefined = true) {
+export function collectObjValues(src, 
+// TODO: а зачем тут глубокий путь???
+keyPath, skipUndefined = true) {
     const res = {};
     for (const key of Object.keys(src)) {
         const val = deepGet(src[key], keyPath);

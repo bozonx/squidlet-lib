@@ -1,6 +1,7 @@
 import { isEqualUint8Array } from './binaryHelpers.js';
 import { concatUniqStrArrays } from './arrays.js';
 import { LOG_LEVELS } from './interfaces/Logger.js';
+// TODO: add isEmpty - общий для объектов и массивов
 /**
  * Compare any types and check equality of two values.
  */

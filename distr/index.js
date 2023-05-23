@@ -10,6 +10,7 @@ export * from './constants.js';
 export * from './paths.js';
 export * from './arrays.js';
 export * from './objects.js';
+export * from './deepObjects.js';
 export * from './strings.js';
 export * from './MemStorage.js';
 export * from './uniqId.js';

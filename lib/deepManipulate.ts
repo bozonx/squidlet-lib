@@ -80,7 +80,9 @@ export function deepDelete(
 
 }
 
+export function deepClone(src?: any): any {
 
+}
 
 
 // TODO: поидее не собо нужно так как не поддерживает массивы. Вместо него использовать deepGet
