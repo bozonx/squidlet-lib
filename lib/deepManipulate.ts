@@ -26,14 +26,12 @@ export function deepGet(
       return deepGet(src[arrIndex], restPath, defaultValue)
     }
     else {
+      // found final value
       if (isArrayIncludesIndex(src, arrIndex)) {
         return src[arrIndex]
       }
 
       return defaultValue
-
-      // found final value
-      //return src[arrIndex]
     }
   }
   // not null and object
