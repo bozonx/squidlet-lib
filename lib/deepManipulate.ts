@@ -11,7 +11,8 @@ export function deepGet(
   pathTo?: string,
   defaultValue?: any
 ): any {
-  if (!src || !pathTo) return defaultValue
+  if (typeof src === 'undefined') return defaultValue
+  else if (typeof pathTo !== 'string') return defaultValue
 
   if (Array.isArray(src)) {
     const match = pathTo.match(/^\[(\d+)\](.*)$/)
@@ -30,7 +31,8 @@ export function deepGet(
       return src[arrIndex]
     }
   }
-  else if (typeof src === 'object') {
+  // not null and object
+  else if (src && typeof src === 'object') {
     const arrMatch = pathTo.match(/^([^.]+)\[/)
     let currentKey: string
     let restPath: string | undefined
