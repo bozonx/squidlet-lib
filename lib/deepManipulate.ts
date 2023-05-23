@@ -1,9 +1,8 @@
 import {splitFirstElement, trimCharStart} from './strings.js';
+import {arrayKeys, isArrayIncludesIndex} from './arrays.js';
 
 
 const DEEP_PATH_SEPARATOR = '.'
-
-// TODO: cloneDeep - может быть как массив, так и объект
 
 
 export function deepGet(
@@ -27,12 +26,19 @@ export function deepGet(
       return deepGet(src[arrIndex], restPath, defaultValue)
     }
     else {
+      if (isArrayIncludesIndex(src, arrIndex)) {
+        return src[arrIndex]
+      }
+
+      return defaultValue
+
       // found final value
-      return src[arrIndex]
+      //return src[arrIndex]
     }
   }
   // not null and object
   else if (src && typeof src === 'object') {
+    // try to find an array
     const arrMatch = pathTo.match(/^([^.]+)\[/)
     let currentKey: string
     let restPath: string | undefined
@@ -50,7 +56,11 @@ export function deepGet(
     }
     else if (!restPath) {
       // found final value
-      return src[currentKey]
+      if (Object.keys(src).includes(currentKey)) {
+        return src[currentKey]
+      }
+
+      return defaultValue
     }
     else {
       // go deeper
@@ -81,6 +91,8 @@ export function deepDelete(
   // TODO: поддержка массивов
 
 }
+
+// TODO: cloneDeep - может быть как массив, так и объект
 
 export function deepClone(src?: any): any {
 

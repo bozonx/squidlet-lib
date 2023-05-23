@@ -12,14 +12,14 @@ describe('lib/deepManipulate', () => {
     assert.strictEqual(deepGet({a1: {b1: [{c1: null}]}}, 'a1.b1[0].c1'), null)
     assert.strictEqual(deepGet({a1: 0}, 'a1'), 0)
     assert.strictEqual(deepGet({a1: ['']}, 'a1[0]'), '')
+    // TODO: check arrays
     // not found
     assert.isUndefined(deepGet({a1: {b1: 1}}, 'a1.b2'))
     assert.isUndefined(deepGet({a1: {b1: ['c1']}}, 'a1.b1[2]'))
     assert.isUndefined(deepGet({a1: {b1: 1}}, 'a2'))
     // default value
-    // TODO: doesn't work
     assert.equal(deepGet({a1: 5}, 'a2', 2), 2)
-    //assert.equal(deepGet({a1: {b1: ['c1']}}, 'a1.b1[2]', 3), 3)
+    assert.equal(deepGet({a1: {b1: ['c1']}}, 'a1.b1[2]', 3), 3)
     // wrong src
     assert.isUndefined(deepGet(null, 'a2'))
     assert.isUndefined(deepGet(undefined, 'a2'))

@@ -40,6 +40,20 @@ export function lastItem(arr: any[]): any {
 }
 
 // TODO: test
+export function arrayKeys(arr?: any[]): number[] {
+  if (!Array.isArray(arr)) return []
+
+  return arr.map((el, i) => i)
+}
+
+// TODO: test
+export function isArrayIncludesIndex(arr?: any[], index?: number): boolean {
+  if (!Array.isArray(arr) || typeof index !== 'number') return false
+
+  return index >= 0 && index < arr.length
+}
+
+// TODO: test
 export function isLastIndex(arr: any[], currentIndex: number | string): boolean {
   return (arr.length - ARRAY_INDEX_SHIFT) === Number(currentIndex)
 }
