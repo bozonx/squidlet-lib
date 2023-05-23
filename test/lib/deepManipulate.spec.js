@@ -14,6 +14,7 @@ describe('lib/deepManipulate', () => {
     // arrays
     assert.equal(deepGet([1, {a1: 1}], '[1].a1'), 1)
     assert.equal(deepGet([1, 2], '[1]'), 2)
+    assert.equal(deepGet([[2]], '[0][0]'), 2)
     assert.equal(deepGet([1], '[2]', 3), 3)
     assert.equal(deepGet([1, {a1: 1}], '[2].a2', 3), 3)
     // not found
@@ -34,8 +35,9 @@ describe('lib/deepManipulate', () => {
   })
 
   it('deepSet', () => {
-    // object
     let obj
+    let arr
+    // object
     obj = {a1: 2}
     deepSet(obj, 'a1', 2)
     assert.deepEqual(obj, {a1: 2})
@@ -49,6 +51,13 @@ describe('lib/deepManipulate', () => {
     obj = {a1: {b2: 2}}
     deepSet(obj, 'a1.b3', 3)
     assert.deepEqual(obj, {a1: {b2: 2, b3: 3}})
+    // array
+    arr = [1]
+    deepSet(arr, '[0]', 2)
+    assert.deepEqual(arr, [2])
+    arr = [[2]]
+    deepSet(arr, '[0][0]', 3)
+    assert.deepEqual(arr, [[3]])
     // wrong data
   })
 
