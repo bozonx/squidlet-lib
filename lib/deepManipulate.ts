@@ -76,7 +76,7 @@ export function deepSet(
   src?: Record<any, any> | Record<any, any>[],
   pathTo?: string,
   value?: any
-): any {
+) {
   if (!src || (!Array.isArray(src) && typeof src !== 'object')) return
   else if (typeof pathTo !== 'string') return
 
@@ -88,6 +88,9 @@ export function deepSet(
 
   if (prevPath) {
     // get the parent
+    const parent = deepGet(src, prevPath)
+
+    deepSet(parent, lastPath, value)
   }
   else {
     // it is a child of the top object
@@ -98,18 +101,6 @@ export function deepSet(
       src[lastPath] = value
     }
   }
-
-  //const parent = deepGet(src, )
-
-  // if (Array.isArray(src)) {
-  //
-  // }
-  // else if (typeof src === 'object') {
-  //
-  // }
-  // else - unsupported type of src
-
-  // TODO: если value undefined то что ??? удаляем предыдущее значение???
 
   // const pathSplat: string[] = pathTo.split('.')
   // let currentDir = obj
