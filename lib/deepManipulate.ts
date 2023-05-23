@@ -40,20 +40,7 @@ export function deepGet(
   }
   // not null and object
   else if (src && typeof src === 'object') {
-    // // try to find an array
-    // const {
-    //   arrIndex,
-    //   objKey,
-    //   restPath
-    // } = splitDeepPath(pathTo)
-    //
-    // const currentKey: string | number | undefined = objKey || arrIndex
-    //
-    // if (typeof currentKey === 'undefined') {
-    //   return defaultValue
-    // }
-
-    // try to find an array
+    // try to realize is the next item is array
     const arrMatch = pathTo.match(/^([^.]+)\[/)
     let currentKey: string
     let restPath: string | undefined
@@ -96,54 +83,44 @@ export function deepSet(
   if (!src || (!Array.isArray(src) && typeof src !== 'object')) return
   else if (typeof pathTo !== 'string') return
 
-  // TODO: поддержка массива
-  const [ lastPath, prevPath] = splitLastElement(
-    pathTo,
-    DEEP_PATH_SEPARATOR
-  )
+  const lastArrMatch = pathTo.match(/^(.*)\[(\d+)\]$/)
+  let prevPath: string | undefined
+  let lastElIndex: number | undefined
+  let lastPath: string | undefined
+
+  if (lastArrMatch) {
+    // the last element is array's item
+    lastElIndex = Number(lastArrMatch[2])
+    // prev path or '' if no prev path
+    prevPath = lastArrMatch[1] || undefined
+    lastPath = `[${lastElIndex}]`
+  }
+  else {
+    // the last element is object's item
+    const res = splitLastElement(
+      pathTo,
+      DEEP_PATH_SEPARATOR
+    )
+
+    lastPath = res[0]
+    prevPath = res[1]
+  }
 
   if (prevPath) {
-    // get the parent
+    // get the parent and set value to it
     const parent = deepGet(src, prevPath)
 
     deepSet(parent, lastPath, value)
   }
   else {
     // it is a child of the top object
-    if (Array.isArray(src)) {
-      const indexMatch = lastPath.match(/^\[(\d+)\]$/)
-
-      if (!indexMatch) return
-
-      const index: number = Number(indexMatch[1])
-
-      src[index] = value
+    if (Array.isArray(src) && typeof lastElIndex !== 'undefined') {
+      src[lastElIndex] = value
     }
-    else if (typeof src === 'object') {
-      src[lastPath] = value
+    else if (typeof src === 'object' && lastPath) {
+      (src as any)[lastPath] = value
     }
   }
-
-  // const pathSplat: string[] = pathTo.split('.')
-  // let currentDir = obj
-  //
-  // for (const index in pathSplat) {
-  //   const curDirName = pathSplat[index]
-  //
-  //   if (Number(index) === pathSplat.length - 1) {
-  //     // the last element
-  //     currentDir[curDirName] = value
-  //   }
-  //   else {
-  //     // in the middle
-  //     // create dir if not exist
-  //     if (!currentDir[curDirName]) {
-  //       currentDir[curDirName] = {}
-  //       currentDir = currentDir[curDirName]
-  //     }
-  //   }
-  // }
-
 }
 
 export function deepDelete(
