@@ -2,6 +2,8 @@ export declare const ARRAY_INDEX_SHIFT = 1;
 export declare function fill(array: any[], value: any): any[];
 export declare function fullWithArray(toMutatedArray: any[], fromArray: any[], copyLength?: boolean): void;
 export declare function lastItem(arr: any[]): any;
+export declare function arrayKeys(arr?: any[]): number[];
+export declare function isArrayIncludesIndex(arr?: any[], index?: number): boolean;
 export declare function isLastIndex(arr: any[], currentIndex: number | string): boolean;
 /**
  * Make a new array which contains items which are different in samples.

@@ -1,8 +1,11 @@
 import { splitFirstElement, trimCharStart } from './strings.js';
+import { cloneDeepArray, isArrayIncludesIndex } from './arrays.js';
+import { cloneDeepObject } from './deepObjects.js';
 const DEEP_PATH_SEPARATOR = '.';
-// TODO: cloneDeep - может быть как массив, так и объект
 export function deepGet(src, pathTo, defaultValue) {
-    if (!src || !pathTo)
+    if (typeof src === 'undefined')
+        return defaultValue;
+    else if (typeof pathTo !== 'string')
         return defaultValue;
     if (Array.isArray(src)) {
         const match = pathTo.match(/^\[(\d+)\](.*)$/);
@@ -17,10 +20,15 @@ export function deepGet(src, pathTo, defaultValue) {
         }
         else {
             // found final value
-            return src[arrIndex];
+            if (isArrayIncludesIndex(src, arrIndex)) {
+                return src[arrIndex];
+            }
+            return defaultValue;
         }
     }
-    else if (typeof src === 'object') {
+    // not null and object
+    else if (src && typeof src === 'object') {
+        // try to find an array
         const arrMatch = pathTo.match(/^([^.]+)\[/);
         let currentKey;
         let restPath;
@@ -36,7 +44,10 @@ export function deepGet(src, pathTo, defaultValue) {
         }
         else if (!restPath) {
             // found final value
-            return src[currentKey];
+            if (Object.keys(src).includes(currentKey)) {
+                return src[currentKey];
+            }
+            return defaultValue;
         }
         else {
             // go deeper
@@ -56,6 +67,14 @@ export function deepDelete(src, pathTo) {
     // TODO: поддержка массивов
 }
 export function deepClone(src) {
+    console.log(333, src);
+    if (Array.isArray(src)) {
+        return cloneDeepArray(src);
+    }
+    else if (typeof src === 'object') {
+        return cloneDeepObject(src);
+    }
+    return src;
 }
 // TODO: поидее не собо нужно так как не поддерживает массивы. Вместо него использовать deepGet
 /**

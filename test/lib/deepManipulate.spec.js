@@ -4,8 +4,7 @@ import {
 
 
 describe('lib/deepManipulate', () => {
-
-  it('mergeDeepObjects', () => {
+  it('deepGet', () => {
     assert.equal(deepGet({a1: {b1: 1}}, 'a1.b1'), 1)
     assert.deepEqual(deepGet({a1: {b1: 1}}, 'a1'), {b1: 1})
     assert.equal(deepGet({a1: {b1: ['c1']}}, 'a1.b1[0]'), 'c1')
@@ -32,6 +31,10 @@ describe('lib/deepManipulate', () => {
     assert.isUndefined(deepGet(5, 'a2'))
     // wrong path
     assert.isUndefined(deepGet({a1: {b1: 1}}))
+  })
+
+  it('deepSet', () => {
+
   })
 
 })

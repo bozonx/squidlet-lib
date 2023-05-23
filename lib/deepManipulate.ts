@@ -1,5 +1,6 @@
 import {splitFirstElement, trimCharStart} from './strings.js';
-import {arrayKeys, isArrayIncludesIndex} from './arrays.js';
+import {arrayKeys, cloneDeepArray, isArrayIncludesIndex} from './arrays.js';
+import {cloneDeepObject} from './deepObjects.js';
 
 
 const DEEP_PATH_SEPARATOR = '.'
@@ -90,10 +91,15 @@ export function deepDelete(
 
 }
 
-// TODO: cloneDeep - может быть как массив, так и объект
-
 export function deepClone(src?: any): any {
+  if (Array.isArray(src)) {
+    return cloneDeepArray(src)
+  }
+  else if (typeof src === 'object') {
+    return cloneDeepObject(src)
+  }
 
+  return src
 }
 
 

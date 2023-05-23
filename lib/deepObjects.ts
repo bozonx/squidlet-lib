@@ -23,7 +23,7 @@ export function mergeDeepObjects<T = Record<string, any>>(
 
   // Sort undefined keys.
   // Get only not undefined values to result and collect keys which has a undefined values.
-  for (let key of Object.keys(top)) {
+  for (const key of Object.keys(top)) {
     if (typeof top[key] === 'undefined') {
       topUndefinedKeys.push(key)
     }

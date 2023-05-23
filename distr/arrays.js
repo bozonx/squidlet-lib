@@ -28,6 +28,18 @@ export function lastItem(arr) {
     return arr[arr.length - ARRAY_INDEX_SHIFT];
 }
 // TODO: test
+export function arrayKeys(arr) {
+    if (!Array.isArray(arr))
+        return [];
+    return arr.map((el, i) => i);
+}
+// TODO: test
+export function isArrayIncludesIndex(arr, index) {
+    if (!Array.isArray(arr) || typeof index !== 'number')
+        return false;
+    return index >= 0 && index < arr.length;
+}
+// TODO: test
 export function isLastIndex(arr, currentIndex) {
     return (arr.length - ARRAY_INDEX_SHIFT) === Number(currentIndex);
 }
