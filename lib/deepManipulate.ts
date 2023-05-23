@@ -21,12 +21,9 @@ export function deepGet(
   else if (typeof pathTo !== 'string') return defaultValue
 
   if (Array.isArray(src)) {
-    const match = pathTo.match(/^\[(\d+)\](.*)$/)
+    const {arrIndex, restPath} = splitDeepPath(pathTo)
     // means wrong path
-    if (!match || !match[1]) return defaultValue
-
-    const arrIndex = Number(match[1])
-    const restPath = trimCharStart(match[2], DEEP_PATH_SEPARATOR)
+    if (typeof arrIndex === 'undefined') return defaultValue
 
     if (restPath) {
       // go deeper
@@ -43,6 +40,19 @@ export function deepGet(
   }
   // not null and object
   else if (src && typeof src === 'object') {
+    // // try to find an array
+    // const {
+    //   arrIndex,
+    //   objKey,
+    //   restPath
+    // } = splitDeepPath(pathTo)
+    //
+    // const currentKey: string | number | undefined = objKey || arrIndex
+    //
+    // if (typeof currentKey === 'undefined') {
+    //   return defaultValue
+    // }
+
     // try to find an array
     const arrMatch = pathTo.match(/^([^.]+)\[/)
     let currentKey: string
@@ -159,6 +169,26 @@ export function deepClone(src?: any): any {
   return src
 }
 
+
+function splitDeepPath(pathTo: string): {arrIndex?: number, objKey?: string, restPath?: string} {
+  const arrMatch = pathTo.match(/^\[(\d+)\](.*)$/)
+  // try to recognize an array path
+  if (arrMatch && arrMatch[1]) {
+    return {
+      arrIndex: Number(arrMatch[1]),
+      objKey: undefined,
+      restPath: trimCharStart(arrMatch[2], DEEP_PATH_SEPARATOR),
+    }
+  }
+
+  const [objKey, restPath] = splitFirstElement(pathTo, DEEP_PATH_SEPARATOR)
+
+  return {
+    arrIndex: undefined,
+    objKey,
+    restPath,
+  }
+}
 
 // TODO: test
 // TODO: не особо нужно, так как не работает с массивами
