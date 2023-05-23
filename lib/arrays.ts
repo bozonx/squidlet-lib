@@ -11,6 +11,7 @@ export const ARRAY_INDEX_SHIFT = 1
 
 // TODO: test - не нужно, есть же метод Array.fill()
 // TODO: хотя можно этот сделать error safe
+// TODO: можно добавить установку length
 export function fill(array: any[], value: any): any[] {
   const result: any[] = [];
 
@@ -22,10 +23,16 @@ export function fill(array: any[], value: any): any[] {
 }
 
 // TODO: test
-export function fullWithArray(toMutatedArray: any[], fromArray: any[]) {
+export function fullWithArray(
+  toMutatedArray: any[],
+  fromArray: any[],
+  copyLength?: boolean
+) {
   for (const index of fromArray) {
     toMutatedArray[index] = fromArray[index]
   }
+  // setting of length will remove unused items of array
+  if (copyLength) toMutatedArray.length = fromArray.length
 }
 
 export function lastItem(arr: any[]): any {

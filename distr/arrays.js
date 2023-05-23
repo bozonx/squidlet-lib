@@ -7,6 +7,7 @@ import { cloneDeepObject } from './deepObjects.js';
 export const ARRAY_INDEX_SHIFT = 1;
 // TODO: test - не нужно, есть же метод Array.fill()
 // TODO: хотя можно этот сделать error safe
+// TODO: можно добавить установку length
 export function fill(array, value) {
     const result = [];
     for (let index in array) {
@@ -15,10 +16,13 @@ export function fill(array, value) {
     return result;
 }
 // TODO: test
-export function fullWithArray(toMutatedArray, fromArray) {
+export function fullWithArray(toMutatedArray, fromArray, copyLength) {
     for (const index of fromArray) {
         toMutatedArray[index] = fromArray[index];
     }
+    // setting of length will remove unused items of array
+    if (copyLength)
+        toMutatedArray.length = fromArray.length;
 }
 export function lastItem(arr) {
     return arr[arr.length - ARRAY_INDEX_SHIFT];
