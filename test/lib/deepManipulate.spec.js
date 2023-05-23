@@ -42,8 +42,8 @@ describe('lib/deepManipulate', () => {
     deepSet(obj, 'a1', 2)
     assert.deepEqual(obj, {a1: 2})
     obj = {a1: {b2: 2}}
-    deepSet(obj, 'a1.b2', 3)
-    assert.deepEqual(obj, {a1: {b2: 3}})
+    deepSet(obj, 'a1.b2', null)
+    assert.deepEqual(obj, {a1: {b2: null}})
     // add value to object
     obj = {a1: {b1: 1}}
     deepSet(obj, 'a2', {b3: 3})
@@ -58,7 +58,23 @@ describe('lib/deepManipulate', () => {
     arr = [[2]]
     deepSet(arr, '[0][0]', 3)
     assert.deepEqual(arr, [[3]])
+    arr = [{a1: [{b2: 1}]}]
+    deepSet(arr, '[0].a1[0].b2', 3)
+    assert.deepEqual(arr, [{a1: [{b2: 3}]}])
+    arr = [[2]]
+    deepSet(arr, '[0][1]', 3)
+    assert.deepEqual(arr, [[2, 3]])
+    // undefined
+    obj = {a1: {b2: 2}}
+    deepSet(obj, 'a1')
+    assert.deepEqual(obj, {a1: undefined})
+    arr = [[2]]
+    deepSet(arr, '[0][0]')
+    assert.deepEqual(arr, [[undefined]])
     // wrong data
+    assert.doesNotThrow(() => deepSet(null, null, null))
+    assert.doesNotThrow(() => deepSet(5, 5))
+
   })
 
 })
