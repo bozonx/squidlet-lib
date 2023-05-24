@@ -110,12 +110,12 @@ export function removeItemFromArray(arr, item, firstEntry = true) {
     }
 }
 // TODO: test
+// TODO: может как-то оптимизировать???
 export function removeSomeItemsFromArray(arr, items) {
     if (!Array.isArray(arr) || !arr.length)
         return [];
     else if (!Array.isArray(items) || !items.length)
         return [...arr];
-    // TODO: может как-то оптимизировать???
     return arr.filter((currentItem) => {
         return !items.includes(currentItem);
     });

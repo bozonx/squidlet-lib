@@ -3,21 +3,21 @@ import { cloneDeepArray, isArrayIncludesIndex } from './arrays.js';
 import { cloneDeepObject } from './deepObjects.js';
 const DEEP_PATH_SEPARATOR = '.';
 export function splitDeepPath(pathTo) {
-    if (!pathTo)
+    if (!pathTo || typeof pathTo !== 'string')
         return [];
     const res = [];
     const splatDots = pathTo.split(DEEP_PATH_SEPARATOR);
     splatDots.forEach((el) => {
         if (el.indexOf('[') === 0) {
             // it is only array index - [0]
-            const matched = el.match(/^([^\[]+)\[(\d+)/);
-            res.push(matched[1]);
-            res.push(Number(matched[2]));
+            const index = Number(el.match(/\d+/)[0]);
+            res.push(index);
         }
         else if (el.indexOf('[') > 0) {
             // it is like "key[0]"
-            const index = Number(el.match(/\d+/)[0]);
-            res.push(index);
+            const matched = el.match(/^([^\[]+)\[(\d+)/);
+            res.push(matched[1]);
+            res.push(Number(matched[2]));
         }
         else {
             // only key as string

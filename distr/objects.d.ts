@@ -41,4 +41,3 @@ export declare function clearObject(obj: {
 }): void;
 export declare function collectObjValues(src: Record<any, any>, keyPath: string, skipUndefined?: boolean): Record<string, any>;
 export declare function collectEachObjValues(src: Record<any, any>, handler: (item: Record<any, any>, key: string) => any, skipUndefined?: boolean): Record<string, any>;
-export declare function getClassPublicMembers(obj?: any): string[];
