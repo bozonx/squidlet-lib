@@ -1,5 +1,5 @@
 import {splitFirstElement, splitLastElement, trimCharStart} from './strings.js';
-import {cloneDeepArray, isArrayIncludesIndex, withoutFirstItem} from './arrays.js';
+import {cloneDeepArray, isArrayIncludesIndex, lastItem, withoutFirstItem, withoutLastItem} from './arrays.js';
 import {cloneDeepObject} from './deepObjects.js';
 
 
@@ -138,45 +138,59 @@ export function deepSet(
   value?: any
 ) {
   if (!src || (!Array.isArray(src) && typeof src !== 'object')) return
-  else if (typeof pathTo !== 'string') return
+  else if (typeof pathTo !== 'string' || !pathTo) return
 
-  const lastArrMatch = pathTo.match(/^(.*)\[(\d+)\]$/)
-  let prevPath: string | undefined
-  let lastElIndex: number | undefined
-  let lastPath: string | undefined
+  const splatPath = splitDeepPath(pathTo)
+  const prevPath = joinDeepPath(withoutLastItem(splatPath))
+  const lastPathPart: string | number | undefined = lastItem(splatPath)
+  // if can't find anything. But it shouldn't be
+  if (typeof lastPathPart === 'undefined') return
 
-  if (lastArrMatch) {
-    // the last element is array's item
-    lastElIndex = Number(lastArrMatch[2])
-    // prev path or '' if no prev path
-    prevPath = lastArrMatch[1] || undefined
-    lastPath = `[${lastElIndex}]`
-  }
-  else {
-    // the last element is object's item
-    const res = splitLastElement(
-      pathTo,
-      DEEP_PATH_SEPARATOR
-    )
+  const lastPathStr: string = joinDeepPath([lastPathPart])
 
-    lastPath = res[0]
-    prevPath = res[1]
-  }
+  //const lastArrMatch = pathTo.match(/^(.*)\[(\d+)\]$/)
+  //let prevPath: string | undefined
+  //let lastElIndex: number | undefined
+  //let lastPath: string | undefined
+
+  // if (lastArrMatch) {
+  //   // the last element is array's item
+  //   lastElIndex = Number(lastArrMatch[2])
+  //   // prev path or '' if no prev path
+  //   prevPath = lastArrMatch[1] || undefined
+  //   lastPath = `[${lastElIndex}]`
+  // }
+  // else {
+  //   // the last element is object's item
+  //   const res = splitLastElement(
+  //     pathTo,
+  //     DEEP_PATH_SEPARATOR
+  //   )
+  //
+  //   lastPath = res[0]
+  //   prevPath = res[1]
+  // }
+
 
   if (prevPath) {
     // get the parent and set value to it
     const parent = deepGet(src, prevPath)
 
-    deepSet(parent, lastPath, value)
+    if (!parent) return
+    // TODO: а зачем???
+    //deepSet(parent, lastPathStr, value)
+    (parent as any)[lastPathPart] = value
   }
   else {
-    // it is a child of the top object
-    if (Array.isArray(src) && typeof lastElIndex !== 'undefined') {
-      src[lastElIndex] = value
-    }
-    else if (typeof src === 'object' && lastPath) {
-      (src as any)[lastPath] = value
-    }
+    // means set value to src
+    (src as any)[lastPathPart] = value
+
+    // if (Array.isArray(src) && typeof lastPathPart === 'number') {
+    //   src[lastPathPart] = value
+    // }
+    // else if (typeof src === 'object') {
+    //   (src as any)[lastPathPart] = value
+    // }
   }
 }
 
