@@ -3,6 +3,7 @@
  * If one of them not Array then it returns false.
  */
 import {cloneDeepObject} from './deepObjects.js';
+import {withoutFirstItemUint8Arr} from './binaryHelpers.js';
 
 
 // shift when you calculates length
@@ -199,6 +200,20 @@ export function filterBlackList(allItems: string[], blackList: string[] = []): s
   return whiteList
 }
 
+// TODO: test
+/**
+ * Get a new array without the first element
+ * @param arr
+ */
+export function withoutFirstItem(arr?: any[]): any[] {
+  if (!Array.isArray(arr)) return []
+
+  const newArr = [...arr]
+
+  newArr.shift()
+
+  return newArr
+}
 
 // export function combineWhiteAndBlackLists(
 //   allItems: string[],
