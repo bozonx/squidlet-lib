@@ -73,10 +73,10 @@ export function deepGet(
   const restPath = joinDeepPath(withoutFirstItem(splatPath))
 
   if (Array.isArray(src)) {
-    const arrIndex: string | number | undefined = splatPath[0]
-
     // means wrong path
-    if (typeof arrIndex !== 'number') return defaultValue
+    if (typeof splatPath[0] !== 'number') return defaultValue
+
+    const arrIndex: number = splatPath[0]
 
     if (restPath) {
       // go deeper
@@ -98,17 +98,17 @@ export function deepGet(
 
     let currentKey: string = splatPath[0]
 
-    if (!restPath) {
+    if (restPath) {
+      // go deeper
+      return deepGet(src[currentKey], restPath, defaultValue)
+    }
+    else {
       // found final value
       if (Object.keys(src).includes(currentKey)) {
         return src[currentKey]
       }
       // not found a key
       return defaultValue
-    }
-    else {
-      // go deeper
-      return deepGet(src[currentKey], restPath, defaultValue)
     }
   }
   else {
