@@ -144,51 +144,15 @@ export function deepSet(
   // if can't find anything. But it shouldn't be
   if (typeof lastPathPart === 'undefined') return
 
-  const lastPathStr: string = joinDeepPath([lastPathPart])
-
-  //const lastArrMatch = pathTo.match(/^(.*)\[(\d+)\]$/)
-  //let prevPath: string | undefined
-  //let lastElIndex: number | undefined
-  //let lastPath: string | undefined
-
-  // if (lastArrMatch) {
-  //   // the last element is array's item
-  //   lastElIndex = Number(lastArrMatch[2])
-  //   // prev path or '' if no prev path
-  //   prevPath = lastArrMatch[1] || undefined
-  //   lastPath = `[${lastElIndex}]`
-  // }
-  // else {
-  //   // the last element is object's item
-  //   const res = splitLastElement(
-  //     pathTo,
-  //     DEEP_PATH_SEPARATOR
-  //   )
-  //
-  //   lastPath = res[0]
-  //   prevPath = res[1]
-  // }
-
-
   if (prevPath) {
     // get the parent and set value to it
     const parent = deepGet(src, prevPath)
 
-    if (!parent) return
-    // TODO: а зачем???
-    //deepSet(parent, lastPathStr, value)
-    (parent as any)[lastPathPart] = value
+    if (parent) (parent as any)[lastPathPart] = value
   }
   else {
     // means set value to src
     (src as any)[lastPathPart] = value
-
-    // if (Array.isArray(src) && typeof lastPathPart === 'number') {
-    //   src[lastPathPart] = value
-    // }
-    // else if (typeof src === 'object') {
-    //   (src as any)[lastPathPart] = value
-    // }
   }
 }
 
