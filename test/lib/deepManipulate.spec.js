@@ -1,9 +1,28 @@
 import {
-  deepGet, deepSet,
+  deepGet,
+  deepSet,
+  splitDeepPath,
 } from '../../lib/deepManipulate.js'
 
 
 describe('lib/deepManipulate', () => {
+  it('splitDeepPath', () => {
+    assert.deepEqual(splitDeepPath('aa'), ['aa'])
+    assert.deepEqual(splitDeepPath('aa.bb.cc'), ['aa', 'bb', 'cc'])
+    assert.deepEqual(splitDeepPath('[0]'), [0])
+    assert.deepEqual(splitDeepPath('aa[0]'), ['aa', 0])
+    assert.deepEqual(splitDeepPath('aa[0].bb[1].cc'), ['aa', 0, 'bb', 1, 'cc'])
+    // bad values
+    assert.deepEqual(splitDeepPath(''), [])
+    assert.deepEqual(splitDeepPath(), [])
+    assert.deepEqual(splitDeepPath(8), [])
+    assert.deepEqual(splitDeepPath(0), [])
+    assert.deepEqual(splitDeepPath(false), [])
+    assert.deepEqual(splitDeepPath(true), [])
+    assert.deepEqual(splitDeepPath(null), [])
+    assert.deepEqual(splitDeepPath({}), [])
+  })
+
   it('deepGet', () => {
     assert.equal(deepGet({a1: {b1: 1}}, 'a1.b1'), 1)
     assert.deepEqual(deepGet({a1: {b1: 1}}, 'a1'), {b1: 1})

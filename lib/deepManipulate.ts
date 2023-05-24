@@ -7,7 +7,7 @@ const DEEP_PATH_SEPARATOR = '.'
 
 
 export function splitDeepPath(pathTo?: string): (string | number)[] {
-  if (!pathTo) return []
+  if (!pathTo || typeof pathTo !== 'string') return []
 
   const res: (string | number)[] = []
   const splatDots = pathTo.split(DEEP_PATH_SEPARATOR)
@@ -15,15 +15,16 @@ export function splitDeepPath(pathTo?: string): (string | number)[] {
   splatDots.forEach((el: string) => {
     if (el.indexOf('[') === 0) {
       // it is only array index - [0]
+      const index: number = Number(el.match(/\d+/)![0])
+
+      res.push(index)
+    }
+    else if (el.indexOf('[') > 0) {
+      // it is like "key[0]"
       const matched = el.match(/^([^\[]+)\[(\d+)/)
 
       res.push(matched![1])
       res.push(Number(matched![2]))
-    }
-    else if (el.indexOf('[') > 0) {
-      // it is like "key[0]"
-      const index: number = Number(el.match(/\d+/)![0])
-      res.push(index)
     }
     else {
       // only key as string
