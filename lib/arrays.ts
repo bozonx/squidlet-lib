@@ -206,7 +206,7 @@ export function filterBlackList(allItems: string[], blackList: string[] = []): s
  * @param arr
  */
 export function withoutFirstItem(arr?: any[]): any[] {
-  if (!Array.isArray(arr)) return []
+  if (!Array.isArray(arr) || !arr.length) return []
 
   const newArr = [...arr]
 

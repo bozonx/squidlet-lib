@@ -38,7 +38,7 @@ export function splitDeepPath(pathTo?: string): (string | number)[] {
 
 // TODO: test
 export function joinDeepPath(pathParts?: (string | number)[]): string {
-  if (!Array.isArray(pathParts)) return ''
+  if (!Array.isArray(pathParts) || !pathParts.length) return ''
 
   let result = ''
 
@@ -69,10 +69,11 @@ export function deepGet(
   if (typeof src === 'undefined') return defaultValue
   else if (typeof pathTo !== 'string') return defaultValue
 
+  const splatPath = splitDeepPath(pathTo)
+  const restPath = joinDeepPath(withoutFirstItem(splatPath))
+
   if (Array.isArray(src)) {
-    const splatPath = splitDeepPath(pathTo)
     const arrIndex: string | number | undefined = splatPath[0]
-    const restPath = joinDeepPath(withoutFirstItem(splatPath))
 
     // means wrong path
     if (typeof arrIndex !== 'number') return defaultValue
@@ -92,28 +93,17 @@ export function deepGet(
   }
   // not null and object
   else if (src && typeof src === 'object') {
-    // try to realize is the next item is array
-    const arrMatch = pathTo.match(/^([^.]+)\[/)
-    let currentKey: string
-    let restPath: string | undefined
+    // if not string that means wrong path - return default value
+    if (typeof splatPath[0] !== 'string') return defaultValue
 
-    if (arrMatch) {
-      currentKey = arrMatch[1]
-      restPath = pathTo.split(currentKey)[1]
-    }
-    else {
-      [currentKey, restPath] = splitFirstElement(pathTo, DEEP_PATH_SEPARATOR)
-    }
+    let currentKey: string = splatPath[0]
 
-    if (!currentKey) {
-      return defaultValue
-    }
-    else if (!restPath) {
+    if (!restPath) {
       // found final value
       if (Object.keys(src).includes(currentKey)) {
         return src[currentKey]
       }
-
+      // not found a key
       return defaultValue
     }
     else {

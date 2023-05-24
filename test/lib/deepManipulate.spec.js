@@ -1,6 +1,7 @@
 import {
   deepGet,
   deepSet,
+  joinDeepPath,
   splitDeepPath,
 } from '../../lib/deepManipulate.js'
 
@@ -21,6 +22,13 @@ describe('lib/deepManipulate', () => {
     assert.deepEqual(splitDeepPath(true), [])
     assert.deepEqual(splitDeepPath(null), [])
     assert.deepEqual(splitDeepPath({}), [])
+  })
+
+  it('joinDeepPath', () => {
+    assert.equal(joinDeepPath([0, 'a', 1, 'b']), '[0].a[1].b')
+    assert.equal(joinDeepPath(['a', 1, 'b']), 'a[1].b')
+    assert.equal(joinDeepPath(['a']), 'a')
+    assert.equal(joinDeepPath([1]), '[1]')
   })
 
   it('deepGet', () => {
