@@ -11,7 +11,7 @@ describe('lib/deepManipulate', () => {
     assert.deepEqual(splitDeepPath('aa'), ['aa'])
     assert.deepEqual(splitDeepPath('aa.bb.cc'), ['aa', 'bb', 'cc'])
     assert.deepEqual(splitDeepPath('[0]'), [0])
-    assert.deepEqual(splitDeepPath('[0][1]'), [[1]])
+    assert.deepEqual(splitDeepPath('[0][1]'), [0, 1])
     assert.deepEqual(splitDeepPath('aa[0]'), ['aa', 0])
     assert.deepEqual(splitDeepPath('aa[0].bb[1].cc'), ['aa', 0, 'bb', 1, 'cc'])
     // bad value
@@ -96,26 +96,26 @@ describe('lib/deepManipulate', () => {
     deepSet(arr, '[0]', 2)
     assert.deepEqual(arr, [2])
 
-    // arr = [[2]]
-    // deepSet(arr, '[0][0]', 3)
-    // assert.deepEqual(arr, [[3]])
+    arr = [[2]]
+    deepSet(arr, '[0][0]', 3)
+    assert.deepEqual(arr, [[3]])
 
     arr = [{a1: [{b2: 1}]}]
     deepSet(arr, '[0].a1[0].b2', 3)
     assert.deepEqual(arr, [{a1: [{b2: 3}]}])
 
-    // arr = [[2]]
-    // deepSet(arr, '[0][1]', 3)
-    // assert.deepEqual(arr, [[2, 3]])
+    arr = [[2]]
+    deepSet(arr, '[0][1]', 3)
+    assert.deepEqual(arr, [[2, 3]])
 
     // undefined
     obj = {a1: {b2: 2}}
     deepSet(obj, 'a1')
     assert.deepEqual(obj, {a1: undefined})
 
-    // arr = [[2]]
-    // deepSet(arr, '[0][0]')
-    // assert.deepEqual(arr, [[undefined]])
+    arr = [[2]]
+    deepSet(arr, '[0][0]')
+    assert.deepEqual(arr, [[undefined]])
 
     // wrong data
     assert.doesNotThrow(() => deepSet(null, null, null))
