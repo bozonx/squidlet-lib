@@ -6,6 +6,32 @@ import {cloneDeepObject} from './deepObjects.js';
 const DEEP_PATH_SEPARATOR = '.'
 
 
+export function splitDeepPath(pathTo: string): (string | number)[] {
+  const res: (string | number)[] = []
+  const splatDots = pathTo.split(DEEP_PATH_SEPARATOR)
+
+  splatDots.forEach((el: string) => {
+    if (el.indexOf('[') === 0) {
+      // it is only array index - [0]
+      const matched = el.match(/^([^\[]+)\[(\d+)/)
+
+      res.push(matched![1])
+      res.push(Number(matched![2]))
+    }
+    else if (el.indexOf('[') > 0) {
+      // it is like "key[0]"
+      const index: number = Number(el.match(/\d+/)![0])
+      res.push(index)
+    }
+    else {
+      // only key as string
+      res.push(el)
+    }
+  })
+
+  return res
+}
+
 /**
  * Get value deeply from object or array.
  * @param src - object or array
@@ -21,7 +47,7 @@ export function deepGet(
   else if (typeof pathTo !== 'string') return defaultValue
 
   if (Array.isArray(src)) {
-    const {arrIndex, restPath} = splitDeepPath(pathTo)
+    const {arrIndex, restPath} = splitDeepPathOOOLD(pathTo)
     // means wrong path
     if (typeof arrIndex === 'undefined') return defaultValue
 
@@ -73,6 +99,13 @@ export function deepGet(
     // if it isn't object or array then just return defaultValue or undefined
     return defaultValue
   }
+}
+
+export function deepHas(src?: Record<any, any> | Record<any, any>[], pathTo?: string): boolean {
+
+  // TODO: check keys
+
+  return true
 }
 
 export function deepSet(
@@ -147,7 +180,8 @@ export function deepClone(src?: any): any {
 }
 
 
-function splitDeepPath(pathTo: string): {arrIndex?: number, objKey?: string, restPath?: string} {
+// TODO: remake
+function splitDeepPathOOOLD(pathTo: string): {arrIndex?: number, objKey?: string, restPath?: string} {
   const arrMatch = pathTo.match(/^\[(\d+)\](.*)$/)
   // try to recognize an array path
   if (arrMatch && arrMatch[1]) {
