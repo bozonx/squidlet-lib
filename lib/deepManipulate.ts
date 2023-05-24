@@ -1,4 +1,4 @@
-import {splitFirstElement, splitLastElement, trimCharStart} from './strings.js';
+import {trimCharStart} from './strings.js';
 import {cloneDeepArray, isArrayIncludesIndex, lastItem, withoutFirstItem, withoutLastItem} from './arrays.js';
 import {cloneDeepObject} from './deepObjects.js';
 
@@ -167,27 +167,36 @@ export function deepSet(
   // if can't find anything. But it shouldn't be
   if (typeof lastPathPart === 'undefined') return
 
-  if (prevPath) {
-    // get the parent and set value to it
-    const parent = deepGet(src, prevPath)
-
-    if (parent) (parent as any)[lastPathPart] = value
-  }
-  else {
-    // means set value to src
-    (src as any)[lastPathPart] = value
-  }
+  const elToUse: any = (prevPath)
+    // get parent
+    ? deepGet(src, prevPath)
+    // use src
+    : src
+  // it can be object or array
+  if (elToUse) elToUse[lastPathPart] = value
 }
 
+// TODO: test
 export function deepDelete(
   src?: Record<any, any> | Record<any, any>[],
   pathTo?: string,
 ): any {
-  //const [child, pathToParent] = splitLastElement(path, '.')
+  if (!src || (!Array.isArray(src) && typeof src !== 'object')) return
+  else if (typeof pathTo !== 'string' || !pathTo) return
 
-  // TODO: взять родителя и у него удалить потомка
-  // TODO: поддержка массивов
+  const splatPath = splitDeepPath(pathTo)
+  const prevPath = joinDeepPath(withoutLastItem(splatPath))
+  const lastPathPart: string | number | undefined = lastItem(splatPath)
+  // if can't find anything. But it shouldn't be
+  if (typeof lastPathPart === 'undefined') return
 
+  const elToUse: any = (prevPath)
+    // get parent
+    ? deepGet(src, prevPath)
+    // use src
+    : src
+  // it can be object or array
+  if (elToUse) delete elToUse[lastPathPart]
 }
 
 // TODO: test

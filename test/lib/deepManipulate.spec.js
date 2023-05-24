@@ -73,6 +73,24 @@ describe('lib/deepManipulate', () => {
 
   it('deepHas', () => {
     assert.isTrue(deepHas({a1: {b1: 1}}, 'a1.b1'))
+    assert.isTrue(deepHas({a1: [{b1: 1}]}, 'a1[0].b1'))
+    assert.isTrue(deepHas({a1: 1}, 'a1'))
+    assert.isTrue(deepHas([0], '[0]'))
+    assert.isTrue(deepHas([[5]], '[0][0]'))
+    // not found
+    assert.isFalse(deepHas({a1: [{b1: 1}]}, 'a1[1].b1'))
+    assert.isFalse(deepHas({a1: [{b1: 1}]}, 'a1[0].b2'))
+    assert.isFalse(deepHas({a1: [0]}, 'a1[1]'))
+    assert.isFalse(deepHas([0], '[1]'))
+    assert.isFalse(deepHas([[5]], '[0][1]'))
+    // bad values
+    assert.isFalse(deepHas(undefined, 'a'))
+    assert.isFalse(deepHas(null, 'a'))
+    assert.isFalse(deepHas('a', 'a'))
+    assert.isFalse(deepHas(5, 'a'))
+    assert.isFalse(deepHas(false, 'a'))
+    assert.isFalse(deepHas(false))
+    assert.isFalse(deepHas(false, null))
   })
 
   it('deepSet', () => {
@@ -125,6 +143,10 @@ describe('lib/deepManipulate', () => {
     // wrong data
     assert.doesNotThrow(() => deepSet(null, null, null))
     assert.doesNotThrow(() => deepSet(5, 5))
+  })
+
+  it('deepDelete', () => {
+    // TODO: add
   })
 
 })
