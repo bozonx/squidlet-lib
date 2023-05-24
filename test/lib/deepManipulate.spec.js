@@ -1,5 +1,6 @@
 import {
   deepGet,
+  deepHas,
   deepSet,
   joinDeepPath,
   splitDeepPath,
@@ -68,6 +69,10 @@ describe('lib/deepManipulate', () => {
     assert.isUndefined(deepGet(5, 'a2'))
     // wrong path
     assert.isUndefined(deepGet({a1: {b1: 1}}))
+  })
+
+  it('deepHas', () => {
+    assert.isTrue(deepHas({a1: {b1: 1}}, 'a1.b1'))
   })
 
   it('deepSet', () => {

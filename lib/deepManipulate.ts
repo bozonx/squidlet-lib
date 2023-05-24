@@ -124,10 +124,33 @@ export function deepGet(
 }
 
 export function deepHas(src?: Record<any, any> | Record<any, any>[], pathTo?: string): boolean {
+  if (!src || (!Array.isArray(src) && typeof src !== 'object')) return false
+  else if (typeof pathTo !== 'string' || !pathTo) return false
 
-  // TODO: check keys
+  const splatPath = splitDeepPath(pathTo)
+  const prevPath = joinDeepPath(withoutLastItem(splatPath))
+  const lastPathPart: string | number | undefined = lastItem(splatPath)
+  // if can't find anything. But it shouldn't be
+  if (typeof lastPathPart === 'undefined') return false
 
-  return true
+  const elToCheck: any = (prevPath)
+    // get parent
+    ? deepGet(src, prevPath)
+    // use src
+    : src
+
+  if (Array.isArray(elToCheck) && typeof lastPathPart === 'number') {
+    if (lastPathPart < 0) return false
+
+    return lastPathPart < elToCheck.length
+  }
+  else if (typeof elToCheck === 'object' && typeof lastPathPart === 'string') {
+    const keys = Object.keys(elToCheck)
+
+    return keys.includes(lastPathPart)
+  }
+
+  return false
 }
 
 export function deepSet(
