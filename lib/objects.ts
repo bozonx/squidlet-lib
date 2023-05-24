@@ -1,4 +1,5 @@
 import {deepGet} from './deepManipulate.js';
+import {removeItemFromArray} from './arrays.js';
 
 
 /**
@@ -198,6 +199,15 @@ export function collectEachObjValues(
   return res
 }
 
+// TODO: хуёва работает
+// export function getClassPublicMembers(obj?: any): string[] {
+//   if (!obj || typeof obj !== 'object') return []
+//
+//   return removeItemFromArray(
+//     Object.getOwnPropertyNames(Object.getPrototypeOf(obj)),
+//     'constructor'
+//   )
+// }
 
 
 // /**

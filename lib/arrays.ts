@@ -114,7 +114,7 @@ export function makeSizedArray(arr: any[], count: number): any[] {
  * It doesn't mutates an array, it just returns a new one.
  */
 export function removeItemFromArray(arr: any[] | undefined, item: any, firstEntry: boolean = true): any[] {
-  if (!arr) return [];
+  if (!Array.isArray(arr)) return []
 
   if (firstEntry) {
     const index: number = arr.indexOf(item);
@@ -132,6 +132,17 @@ export function removeItemFromArray(arr: any[] | undefined, item: any, firstEntr
       return currentItem !== item;
     });
   }
+}
+
+// TODO: test
+// TODO: может как-то оптимизировать???
+export function removeSomeItemsFromArray(arr: any[] | undefined, items: any[]): any[] {
+  if (!Array.isArray(arr) || !arr.length) return []
+  else if (!Array.isArray(items) || !items.length) return [...arr]
+
+  return arr.filter((currentItem: any) => {
+    return !items.includes(currentItem)
+  })
 }
 
 /**

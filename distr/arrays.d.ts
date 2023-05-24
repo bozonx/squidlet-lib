@@ -32,6 +32,7 @@ export declare function makeSizedArray(arr: any[], count: number): any[];
  * It doesn't mutates an array, it just returns a new one.
  */
 export declare function removeItemFromArray(arr: any[] | undefined, item: any, firstEntry?: boolean): any[];
+export declare function removeSomeItemsFromArray(arr: any[] | undefined, items: any[]): any[];
 /**
  * Concat arrays and remove duplicates
  */

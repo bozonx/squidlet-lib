@@ -3,6 +3,8 @@ import { cloneDeepArray, isArrayIncludesIndex } from './arrays.js';
 import { cloneDeepObject } from './deepObjects.js';
 const DEEP_PATH_SEPARATOR = '.';
 export function splitDeepPath(pathTo) {
+    if (!pathTo)
+        return [];
     const res = [];
     const splatDots = pathTo.split(DEEP_PATH_SEPARATOR);
     splatDots.forEach((el) => {

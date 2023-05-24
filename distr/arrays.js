@@ -93,7 +93,7 @@ export function makeSizedArray(arr, count) {
  * It doesn't mutates an array, it just returns a new one.
  */
 export function removeItemFromArray(arr, item, firstEntry = true) {
-    if (!arr)
+    if (!Array.isArray(arr))
         return [];
     if (firstEntry) {
         const index = arr.indexOf(item);
@@ -108,6 +108,17 @@ export function removeItemFromArray(arr, item, firstEntry = true) {
             return currentItem !== item;
         });
     }
+}
+// TODO: test
+export function removeSomeItemsFromArray(arr, items) {
+    if (!Array.isArray(arr) || !arr.length)
+        return [];
+    else if (!Array.isArray(items) || !items.length)
+        return [...arr];
+    // TODO: может как-то оптимизировать???
+    return arr.filter((currentItem) => {
+        return !items.includes(currentItem);
+    });
 }
 /**
  * Concat arrays and remove duplicates

@@ -1,4 +1,5 @@
 import { deepGet } from './deepManipulate.js';
+import { removeItemFromArray } from './arrays.js';
 /**
  * Get all the class members include prototype's exclude "constructor".
  */
@@ -149,6 +150,12 @@ export function collectEachObjValues(src, handler, skipUndefined = true) {
         res[key] = val;
     }
     return res;
+}
+// TODO: test
+export function getClassPublicMembers(obj) {
+    if (!obj || typeof obj !== 'object')
+        return [];
+    return removeItemFromArray(Object.getOwnPropertyNames(Object.getPrototypeOf(obj)), 'constructor');
 }
 // /**
 //  * Compare 2 objects and collect keys whose VALUES are different (not equals to the same key in the sourceObj).

@@ -6,7 +6,9 @@ import {cloneDeepObject} from './deepObjects.js';
 const DEEP_PATH_SEPARATOR = '.'
 
 
-export function splitDeepPath(pathTo: string): (string | number)[] {
+export function splitDeepPath(pathTo?: string): (string | number)[] {
+  if (!pathTo) return []
+
   const res: (string | number)[] = []
   const splatDots = pathTo.split(DEEP_PATH_SEPARATOR)
 

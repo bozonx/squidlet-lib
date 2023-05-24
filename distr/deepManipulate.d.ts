@@ -1,4 +1,4 @@
-export declare function splitDeepPath(pathTo: string): (string | number)[];
+export declare function splitDeepPath(pathTo?: string): (string | number)[];
 /**
  * Get value deeply from object or array.
  * @param src - object or array
