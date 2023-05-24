@@ -6,6 +6,11 @@ import {cloneDeepObject} from './deepObjects.js';
 const DEEP_PATH_SEPARATOR = '.'
 
 
+/**
+ * Split deep path to paths
+ * E.g "aa[0].bb[1].cc" => ['aa', 0, 'bb', 1, 'cc']
+ * @param pathTo
+ */
 export function splitDeepPath(pathTo?: string): (string | number)[] {
   if (!pathTo || typeof pathTo !== 'string') return []
 
@@ -35,8 +40,11 @@ export function splitDeepPath(pathTo?: string): (string | number)[] {
   return res
 }
 
-
-// TODO: test
+/**
+ * Join deep path parts to string
+ * E.g ['aa', 0, 'bb', 1, 'cc'] => "aa[0].bb[1].cc"
+ * @param pathParts
+ */
 export function joinDeepPath(pathParts?: (string | number)[]): string {
   if (!Array.isArray(pathParts) || !pathParts.length) return ''
 

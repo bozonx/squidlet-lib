@@ -13,7 +13,7 @@ describe('lib/deepManipulate', () => {
     assert.deepEqual(splitDeepPath('[0]'), [0])
     assert.deepEqual(splitDeepPath('aa[0]'), ['aa', 0])
     assert.deepEqual(splitDeepPath('aa[0].bb[1].cc'), ['aa', 0, 'bb', 1, 'cc'])
-    // bad values
+    // bad value
     assert.deepEqual(splitDeepPath(''), [])
     assert.deepEqual(splitDeepPath(), [])
     assert.deepEqual(splitDeepPath(8), [])
@@ -29,6 +29,13 @@ describe('lib/deepManipulate', () => {
     assert.equal(joinDeepPath(['a', 1, 'b']), 'a[1].b')
     assert.equal(joinDeepPath(['a']), 'a')
     assert.equal(joinDeepPath([1]), '[1]')
+    // bad value
+    assert.equal(joinDeepPath([]), '')
+    assert.equal(joinDeepPath(undefined), '')
+    assert.equal(joinDeepPath(null), '')
+    assert.equal(joinDeepPath(5), '')
+    assert.equal(joinDeepPath('g'), '')
+    assert.equal(joinDeepPath(false), '')
   })
 
   it('deepGet', () => {
