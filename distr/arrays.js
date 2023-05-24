@@ -165,6 +165,30 @@ export function filterBlackList(allItems, blackList = []) {
     }
     return whiteList;
 }
+// TODO: test
+/**
+ * Get a new array without the first element
+ * @param arr
+ */
+export function withoutFirstItem(arr) {
+    if (!Array.isArray(arr) || !arr.length)
+        return [];
+    const newArr = [...arr];
+    newArr.shift();
+    return newArr;
+}
+// TODO: test
+/**
+ * Get a new array without the first element
+ * @param arr
+ */
+export function withoutLastItem(arr) {
+    if (!Array.isArray(arr) || !arr.length)
+        return [];
+    const newArr = [...arr];
+    newArr.pop();
+    return newArr;
+}
 // export function combineWhiteAndBlackLists(
 //   allItems: string[],
 //   whiteList: string[],

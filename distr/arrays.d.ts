@@ -40,3 +40,13 @@ export declare function concatUniqStrArrays(...arrays: string[][]): string[];
 export declare function cloneDeepArray(arr?: any[]): any[];
 export declare function stringArrayToNumber(arr: string[]): number[];
 export declare function filterBlackList(allItems: string[], blackList?: string[]): string[];
+/**
+ * Get a new array without the first element
+ * @param arr
+ */
+export declare function withoutFirstItem(arr?: any[]): any[];
+/**
+ * Get a new array without the first element
+ * @param arr
+ */
+export declare function withoutLastItem(arr?: any[]): any[];

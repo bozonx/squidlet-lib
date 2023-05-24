@@ -1,23 +1,24 @@
-import { splitFirstElement, splitLastElement, trimCharStart } from './strings.js';
-import { cloneDeepArray, isArrayIncludesIndex } from './arrays.js';
+import { trimCharStart } from './strings.js';
+import { cloneDeepArray, isArrayIncludesIndex, lastItem, withoutFirstItem, withoutLastItem } from './arrays.js';
 import { cloneDeepObject } from './deepObjects.js';
 const DEEP_PATH_SEPARATOR = '.';
+/**
+ * Split deep path to paths
+ * E.g "aa[0].bb[1].cc" => ['aa', 0, 'bb', 1, 'cc']
+ * @param pathTo
+ */
 export function splitDeepPath(pathTo) {
     if (!pathTo || typeof pathTo !== 'string')
         return [];
     const res = [];
-    const splatDots = pathTo.split(DEEP_PATH_SEPARATOR);
+    const preparedPath = pathTo.replace(/\[/g, DEEP_PATH_SEPARATOR + '[');
+    const splatDots = trimCharStart(preparedPath, DEEP_PATH_SEPARATOR)
+        .split(DEEP_PATH_SEPARATOR);
     splatDots.forEach((el) => {
         if (el.indexOf('[') === 0) {
             // it is only array index - [0]
             const index = Number(el.match(/\d+/)[0]);
             res.push(index);
-        }
-        else if (el.indexOf('[') > 0) {
-            // it is like "key[0]"
-            const matched = el.match(/^([^\[]+)\[(\d+)/);
-            res.push(matched[1]);
-            res.push(Number(matched[2]));
         }
         else {
             // only key as string
@@ -25,6 +26,26 @@ export function splitDeepPath(pathTo) {
         }
     });
     return res;
+}
+/**
+ * Join deep path parts to string
+ * E.g ['aa', 0, 'bb', 1, 'cc'] => "aa[0].bb[1].cc"
+ * @param pathParts
+ */
+export function joinDeepPath(pathParts) {
+    if (!Array.isArray(pathParts) || !pathParts.length)
+        return '';
+    let result = '';
+    for (const item of pathParts) {
+        if (typeof item === 'number') {
+            result += `[${item}]`;
+        }
+        else {
+            // string
+            result += DEEP_PATH_SEPARATOR + item;
+        }
+    }
+    return trimCharStart(result, DEEP_PATH_SEPARATOR);
 }
 /**
  * Get value deeply from object or array.
@@ -37,11 +58,13 @@ export function deepGet(src, pathTo, defaultValue) {
         return defaultValue;
     else if (typeof pathTo !== 'string')
         return defaultValue;
+    const splatPath = splitDeepPath(pathTo);
+    const restPath = joinDeepPath(withoutFirstItem(splatPath));
     if (Array.isArray(src)) {
-        const { arrIndex, restPath } = splitDeepPathOOOLD(pathTo);
         // means wrong path
-        if (typeof arrIndex === 'undefined')
+        if (typeof splatPath[0] !== 'number')
             return defaultValue;
+        const arrIndex = splatPath[0];
         if (restPath) {
             // go deeper
             return deepGet(src[arrIndex], restPath, defaultValue);
@@ -56,30 +79,21 @@ export function deepGet(src, pathTo, defaultValue) {
     }
     // not null and object
     else if (src && typeof src === 'object') {
-        // try to realize is the next item is array
-        const arrMatch = pathTo.match(/^([^.]+)\[/);
-        let currentKey;
-        let restPath;
-        if (arrMatch) {
-            currentKey = arrMatch[1];
-            restPath = pathTo.split(currentKey)[1];
+        // if not string that means wrong path - return default value
+        if (typeof splatPath[0] !== 'string')
+            return defaultValue;
+        let currentKey = splatPath[0];
+        if (restPath) {
+            // go deeper
+            return deepGet(src[currentKey], restPath, defaultValue);
         }
         else {
-            [currentKey, restPath] = splitFirstElement(pathTo, DEEP_PATH_SEPARATOR);
-        }
-        if (!currentKey) {
-            return defaultValue;
-        }
-        else if (!restPath) {
             // found final value
             if (Object.keys(src).includes(currentKey)) {
                 return src[currentKey];
             }
+            // not found a key
             return defaultValue;
-        }
-        else {
-            // go deeper
-            return deepGet(src[currentKey], restPath, defaultValue);
         }
     }
     else {
@@ -88,50 +102,72 @@ export function deepGet(src, pathTo, defaultValue) {
     }
 }
 export function deepHas(src, pathTo) {
-    // TODO: check keys
-    return true;
+    if (!src || (!Array.isArray(src) && typeof src !== 'object'))
+        return false;
+    else if (typeof pathTo !== 'string' || !pathTo)
+        return false;
+    const splatPath = splitDeepPath(pathTo);
+    const prevPath = joinDeepPath(withoutLastItem(splatPath));
+    const lastPathPart = lastItem(splatPath);
+    // if can't find anything. But it shouldn't be
+    if (typeof lastPathPart === 'undefined')
+        return false;
+    const elToCheck = (prevPath)
+        // get parent
+        ? deepGet(src, prevPath)
+        // use src
+        : src;
+    if (Array.isArray(elToCheck) && typeof lastPathPart === 'number') {
+        if (lastPathPart < 0)
+            return false;
+        return lastPathPart < elToCheck.length;
+    }
+    else if (typeof elToCheck === 'object' && typeof lastPathPart === 'string') {
+        const keys = Object.keys(elToCheck);
+        return keys.includes(lastPathPart);
+    }
+    return false;
 }
 export function deepSet(src, pathTo, value) {
     if (!src || (!Array.isArray(src) && typeof src !== 'object'))
         return;
-    else if (typeof pathTo !== 'string')
+    else if (typeof pathTo !== 'string' || !pathTo)
         return;
-    const lastArrMatch = pathTo.match(/^(.*)\[(\d+)\]$/);
-    let prevPath;
-    let lastElIndex;
-    let lastPath;
-    if (lastArrMatch) {
-        // the last element is array's item
-        lastElIndex = Number(lastArrMatch[2]);
-        // prev path or '' if no prev path
-        prevPath = lastArrMatch[1] || undefined;
-        lastPath = `[${lastElIndex}]`;
-    }
-    else {
-        // the last element is object's item
-        const res = splitLastElement(pathTo, DEEP_PATH_SEPARATOR);
-        lastPath = res[0];
-        prevPath = res[1];
-    }
-    if (prevPath) {
-        // get the parent and set value to it
-        const parent = deepGet(src, prevPath);
-        deepSet(parent, lastPath, value);
-    }
-    else {
-        // it is a child of the top object
-        if (Array.isArray(src) && typeof lastElIndex !== 'undefined') {
-            src[lastElIndex] = value;
-        }
-        else if (typeof src === 'object' && lastPath) {
-            src[lastPath] = value;
-        }
-    }
+    const splatPath = splitDeepPath(pathTo);
+    const prevPath = joinDeepPath(withoutLastItem(splatPath));
+    const lastPathPart = lastItem(splatPath);
+    // if can't find anything. But it shouldn't be
+    if (typeof lastPathPart === 'undefined')
+        return;
+    const elToUse = (prevPath)
+        // get parent
+        ? deepGet(src, prevPath)
+        // use src
+        : src;
+    // it can be object or array
+    if (elToUse)
+        elToUse[lastPathPart] = value;
 }
+// TODO: test
 export function deepDelete(src, pathTo) {
-    //const [child, pathToParent] = splitLastElement(path, '.')
-    // TODO: взять родителя и у него удалить потомка
-    // TODO: поддержка массивов
+    if (!src || (!Array.isArray(src) && typeof src !== 'object'))
+        return;
+    else if (typeof pathTo !== 'string' || !pathTo)
+        return;
+    const splatPath = splitDeepPath(pathTo);
+    const prevPath = joinDeepPath(withoutLastItem(splatPath));
+    const lastPathPart = lastItem(splatPath);
+    // if can't find anything. But it shouldn't be
+    if (typeof lastPathPart === 'undefined')
+        return;
+    const elToUse = (prevPath)
+        // get parent
+        ? deepGet(src, prevPath)
+        // use src
+        : src;
+    // it can be object or array
+    if (elToUse)
+        delete elToUse[lastPathPart];
 }
 // TODO: test
 export function deepClone(src) {
@@ -144,23 +180,25 @@ export function deepClone(src) {
     return src;
 }
 // TODO: remake
-function splitDeepPathOOOLD(pathTo) {
-    const arrMatch = pathTo.match(/^\[(\d+)\](.*)$/);
-    // try to recognize an array path
-    if (arrMatch && arrMatch[1]) {
-        return {
-            arrIndex: Number(arrMatch[1]),
-            objKey: undefined,
-            restPath: trimCharStart(arrMatch[2], DEEP_PATH_SEPARATOR),
-        };
-    }
-    const [objKey, restPath] = splitFirstElement(pathTo, DEEP_PATH_SEPARATOR);
-    return {
-        arrIndex: undefined,
-        objKey,
-        restPath,
-    };
-}
+// function splitDeepPathOOOLD(pathTo: string): {arrIndex?: number, objKey?: string, restPath?: string} {
+//   const arrMatch = pathTo.match(/^\[(\d+)\](.*)$/)
+//   // try to recognize an array path
+//   if (arrMatch && arrMatch[1]) {
+//     return {
+//       arrIndex: Number(arrMatch[1]),
+//       objKey: undefined,
+//       restPath: trimCharStart(arrMatch[2], DEEP_PATH_SEPARATOR),
+//     }
+//   }
+//
+//   const [objKey, restPath] = splitFirstElement(pathTo, DEEP_PATH_SEPARATOR)
+//
+//   return {
+//     arrIndex: undefined,
+//     objKey,
+//     restPath,
+//   }
+// }
 // TODO: test
 // TODO: не особо нужно, так как не работает с массивами
 // /**

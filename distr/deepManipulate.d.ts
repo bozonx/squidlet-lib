@@ -1,4 +1,15 @@
+/**
+ * Split deep path to paths
+ * E.g "aa[0].bb[1].cc" => ['aa', 0, 'bb', 1, 'cc']
+ * @param pathTo
+ */
 export declare function splitDeepPath(pathTo?: string): (string | number)[];
+/**
+ * Join deep path parts to string
+ * E.g ['aa', 0, 'bb', 1, 'cc'] => "aa[0].bb[1].cc"
+ * @param pathParts
+ */
+export declare function joinDeepPath(pathParts?: (string | number)[]): string;
 /**
  * Get value deeply from object or array.
  * @param src - object or array
