@@ -9,7 +9,7 @@ export declare function splitDeepPath(pathTo?: string): (string | number)[];
  * E.g ['aa', 0, 'bb', 1, 'cc'] => "aa[0].bb[1].cc"
  * @param pathParts
  */
-export declare function joinDeepPath(pathParts?: (string | number)[]): string;
+export declare function joinDeepPath(pathParts?: (string | number | undefined)[]): string;
 /**
  * Get value deeply from object or array.
  * @param src - object or array

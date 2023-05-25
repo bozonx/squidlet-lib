@@ -40,9 +40,11 @@ export function joinDeepPath(pathParts) {
         if (typeof item === 'number') {
             result += `[${item}]`;
         }
-        else {
-            // string
+        else if (typeof item === 'string' && item) {
             result += DEEP_PATH_SEPARATOR + item;
+        }
+        else {
+            // if empty string or undefined - do nothing
         }
     }
     return trimCharStart(result, DEEP_PATH_SEPARATOR);

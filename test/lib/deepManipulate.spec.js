@@ -36,6 +36,12 @@ describe('lib/deepManipulate', () => {
     assert.equal(joinDeepPath(['aa.bb', 'cc']), 'aa.bb.cc')
     assert.equal(joinDeepPath(['aa.bb', 2]), 'aa.bb[2]')
     assert.equal(joinDeepPath(['aa[1]', 2, 'bb']), 'aa[1][2].bb')
+    // undefined
+    assert.equal(joinDeepPath([undefined]), '')
+    assert.equal(joinDeepPath([undefined, 'bb']), 'bb')
+    assert.equal(joinDeepPath(['aa', undefined, 'bb']), 'aa.bb')
+    assert.equal(joinDeepPath(['aa', undefined]), 'aa')
+    assert.equal(joinDeepPath([undefined, 2, 'bb']), '[2].bb')
     // bad value
     assert.equal(joinDeepPath([]), '')
     assert.equal(joinDeepPath(undefined), '')

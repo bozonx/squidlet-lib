@@ -43,7 +43,7 @@ export function splitDeepPath(pathTo?: string): (string | number)[] {
  * E.g ['aa', 0, 'bb', 1, 'cc'] => "aa[0].bb[1].cc"
  * @param pathParts
  */
-export function joinDeepPath(pathParts?: (string | number)[]): string {
+export function joinDeepPath(pathParts?: (string | number | undefined)[]): string {
   if (!Array.isArray(pathParts) || !pathParts.length) return ''
 
   let result = ''
@@ -52,9 +52,11 @@ export function joinDeepPath(pathParts?: (string | number)[]): string {
     if (typeof item === 'number') {
       result += `[${item}]`
     }
-    else {
-      // string
+    else if (typeof item === 'string' && item) {
       result += DEEP_PATH_SEPARATOR + item
+    }
+    else {
+      // if empty string or undefined - do nothing
     }
   }
 
