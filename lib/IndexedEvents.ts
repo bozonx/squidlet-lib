@@ -75,6 +75,9 @@ export class IndexedEvents<T extends AnyHandler> {
   }
 
   removeListener(handlerIndex?: number): void {
+
+    // TODO: проверить что после дестроя не будет поднимать ошибки
+
     if (typeof handlerIndex === 'undefined') return;
     else if (!this.handlers[handlerIndex]) return;
 

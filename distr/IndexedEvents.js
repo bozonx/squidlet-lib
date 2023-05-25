@@ -57,6 +57,7 @@ export class IndexedEvents {
         return wrapperIndex;
     }
     removeListener(handlerIndex) {
+        // TODO: проверить что после дестроя не будет поднимать ошибки
         if (typeof handlerIndex === 'undefined')
             return;
         else if (!this.handlers[handlerIndex])

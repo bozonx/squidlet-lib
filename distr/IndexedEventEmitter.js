@@ -103,6 +103,7 @@ export class IndexedEventEmitter {
      * You can omit eventName, but if you defined it then removing will be faster.
      */
     removeListener(handlerIndex, eventName) {
+        // TODO: проверить что после дестроя не будет поднимать ошибки
         if (typeof handlerIndex === 'undefined')
             return;
         if (typeof eventName !== 'undefined') {
