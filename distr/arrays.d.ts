@@ -24,6 +24,12 @@ export declare function clearArray(arr: any[]): void;
  */
 export declare function makeSizedArray(arr: any[], count: number): any[];
 /**
+ * Remove item from array in mutate way
+ * @param arr
+ * @param item
+ */
+export declare function spliceItem(arr: any[] | undefined, item: any): void;
+/**
  * Remove item from array. E.g removeItemFromArray(['a', 'b', 'c'], 'b') => ['a', 'c']
  * It can remove all the found items
  *     removeItemFromArray(['a', 'b', 'c', 'b'], 'b', false) => ['a', 'c']

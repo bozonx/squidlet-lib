@@ -84,6 +84,20 @@ export function makeSizedArray(arr, count) {
         result[i] = arr[i];
     return result;
 }
+// TODO: test
+/**
+ * Remove item from array in mutate way
+ * @param arr
+ * @param item
+ */
+export function spliceItem(arr, item) {
+    if (!arr)
+        return;
+    const itemIndex = arr.indexOf(item);
+    if (itemIndex < 0)
+        return;
+    arr.splice(itemIndex, 1);
+}
 /**
  * Remove item from array. E.g removeItemFromArray(['a', 'b', 'c'], 'b') => ['a', 'c']
  * It can remove all the found items

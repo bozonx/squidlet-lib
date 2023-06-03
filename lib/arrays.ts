@@ -3,7 +3,6 @@
  * If one of them not Array then it returns false.
  */
 import {cloneDeepObject} from './deepObjects.js';
-import {withoutFirstItemUint8Arr} from './binaryHelpers.js';
 
 
 // shift when you calculates length
@@ -104,6 +103,22 @@ export function makeSizedArray(arr: any[], count: number): any[] {
   for (let i = 0; i < count; i++) result[i] = arr[i];
 
   return result;
+}
+
+// TODO: test
+/**
+ * Remove item from array in mutate way
+ * @param arr
+ * @param item
+ */
+export function spliceItem(arr: any[] | undefined, item: any) {
+  if (!arr) return
+
+  const itemIndex = arr.indexOf(item)
+
+  if (itemIndex < 0) return
+
+  arr.splice(itemIndex, 1)
 }
 
 /**
