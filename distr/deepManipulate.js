@@ -103,6 +103,30 @@ export function deepGet(src, pathTo, defaultValue) {
         return defaultValue;
     }
 }
+/**
+ * Get parent if path is deep.
+ * Or return itself if path is only one element
+ * @param src
+ * @param pathTo
+ */
+export function deepGetParent(src, pathTo) {
+    if (!src || (!Array.isArray(src) && typeof src !== 'object'))
+        return [];
+    else if (typeof pathTo !== 'string' || !pathTo)
+        return [];
+    const splatPath = splitDeepPath(pathTo);
+    const prevPath = joinDeepPath(withoutLastItem(splatPath));
+    const lastPathPart = lastItem(splatPath);
+    // if can't find anything. But it shouldn't be
+    if (typeof lastPathPart === 'undefined')
+        return [];
+    const parent = (prevPath)
+        // get parent
+        ? deepGet(src, prevPath)
+        // use src
+        : src;
+    return [parent, lastPathPart];
+}
 export function deepHas(src, pathTo) {
     if (!src || (!Array.isArray(src) && typeof src !== 'object'))
         return false;
@@ -131,45 +155,17 @@ export function deepHas(src, pathTo) {
     return false;
 }
 export function deepSet(src, pathTo, value) {
-    if (!src || (!Array.isArray(src) && typeof src !== 'object'))
-        return;
-    else if (typeof pathTo !== 'string' || !pathTo)
-        return;
-    const splatPath = splitDeepPath(pathTo);
-    const prevPath = joinDeepPath(withoutLastItem(splatPath));
-    const lastPathPart = lastItem(splatPath);
-    // if can't find anything. But it shouldn't be
-    if (typeof lastPathPart === 'undefined')
-        return;
-    const elToUse = (prevPath)
-        // get parent
-        ? deepGet(src, prevPath)
-        // use src
-        : src;
+    const [parent, lastPathPart] = deepGetParent(src, pathTo);
     // it can be object or array
-    if (elToUse)
-        elToUse[lastPathPart] = value;
+    if (parent && typeof lastPathPart !== 'undefined')
+        parent[lastPathPart] = value;
 }
 // TODO: test
 export function deepDelete(src, pathTo) {
-    if (!src || (!Array.isArray(src) && typeof src !== 'object'))
-        return;
-    else if (typeof pathTo !== 'string' || !pathTo)
-        return;
-    const splatPath = splitDeepPath(pathTo);
-    const prevPath = joinDeepPath(withoutLastItem(splatPath));
-    const lastPathPart = lastItem(splatPath);
-    // if can't find anything. But it shouldn't be
-    if (typeof lastPathPart === 'undefined')
-        return;
-    const elToUse = (prevPath)
-        // get parent
-        ? deepGet(src, prevPath)
-        // use src
-        : src;
+    const [parent, lastPathPart] = deepGetParent(src, pathTo);
     // it can be object or array
-    if (elToUse)
-        delete elToUse[lastPathPart];
+    if (parent && typeof lastPathPart !== 'undefined')
+        delete parent[lastPathPart];
 }
 // TODO: test
 export function deepClone(src) {

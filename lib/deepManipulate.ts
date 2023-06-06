@@ -80,6 +80,7 @@ export function deepGet(
   const splatPath = splitDeepPath(pathTo)
   const restPath = joinDeepPath(withoutFirstItem(splatPath))
 
+  // TODO: а проверка массива разве сработает на прокси???
   if (Array.isArray(src)) {
     // means wrong path
     if (typeof splatPath[0] !== 'number') return defaultValue
@@ -125,6 +126,34 @@ export function deepGet(
   }
 }
 
+/**
+ * Get parent if path is deep.
+ * Or return itself if path is only one element
+ * @param src
+ * @param pathTo
+ */
+export function deepGetParent(
+  src?: Record<any, any> | Record<any, any>[],
+  pathTo?: string,
+): [any, string | number] | [] {
+  if (!src || (!Array.isArray(src) && typeof src !== 'object')) return []
+  else if (typeof pathTo !== 'string' || !pathTo) return []
+
+  const splatPath = splitDeepPath(pathTo)
+  const prevPath = joinDeepPath(withoutLastItem(splatPath))
+  const lastPathPart: string | number | undefined = lastItem(splatPath)
+  // if can't find anything. But it shouldn't be
+  if (typeof lastPathPart === 'undefined') return []
+
+  const parent = (prevPath)
+    // get parent
+    ? deepGet(src, prevPath)
+    // use src
+    : src
+
+  return [parent, lastPathPart]
+}
+
 export function deepHas(src?: Record<any, any> | Record<any, any>[], pathTo?: string): boolean {
   if (!src || (!Array.isArray(src) && typeof src !== 'object')) return false
   else if (typeof pathTo !== 'string' || !pathTo) return false
@@ -160,22 +189,10 @@ export function deepSet(
   pathTo?: string,
   value?: any
 ) {
-  if (!src || (!Array.isArray(src) && typeof src !== 'object')) return
-  else if (typeof pathTo !== 'string' || !pathTo) return
+  const [parent, lastPathPart] = deepGetParent(src, pathTo)
 
-  const splatPath = splitDeepPath(pathTo)
-  const prevPath = joinDeepPath(withoutLastItem(splatPath))
-  const lastPathPart: string | number | undefined = lastItem(splatPath)
-  // if can't find anything. But it shouldn't be
-  if (typeof lastPathPart === 'undefined') return
-
-  const elToUse: any = (prevPath)
-    // get parent
-    ? deepGet(src, prevPath)
-    // use src
-    : src
   // it can be object or array
-  if (elToUse) elToUse[lastPathPart] = value
+  if (parent && typeof lastPathPart !==  'undefined') parent[lastPathPart] = value
 }
 
 // TODO: test
@@ -183,22 +200,9 @@ export function deepDelete(
   src?: Record<any, any> | Record<any, any>[],
   pathTo?: string,
 ): any {
-  if (!src || (!Array.isArray(src) && typeof src !== 'object')) return
-  else if (typeof pathTo !== 'string' || !pathTo) return
-
-  const splatPath = splitDeepPath(pathTo)
-  const prevPath = joinDeepPath(withoutLastItem(splatPath))
-  const lastPathPart: string | number | undefined = lastItem(splatPath)
-  // if can't find anything. But it shouldn't be
-  if (typeof lastPathPart === 'undefined') return
-
-  const elToUse: any = (prevPath)
-    // get parent
-    ? deepGet(src, prevPath)
-    // use src
-    : src
+  const [parent, lastPathPart] = deepGetParent(src, pathTo)
   // it can be object or array
-  if (elToUse) delete elToUse[lastPathPart]
+  if (parent && typeof lastPathPart !==  'undefined') delete parent[lastPathPart]
 }
 
 // TODO: test
