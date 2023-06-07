@@ -113,7 +113,7 @@ export function deepGet(
     }
     else {
       // found final value
-      if (Object.keys(src).includes(currentKey)) {
+      if (Reflect.ownKeys(src).includes(currentKey)) {
         return src[currentKey]
       }
       // not found a key
@@ -176,7 +176,7 @@ export function deepHas(src?: Record<any, any> | Record<any, any>[], pathTo?: st
     return lastPathPart < elToCheck.length
   }
   else if (typeof elToCheck === 'object' && typeof lastPathPart === 'string') {
-    const keys = Object.keys(elToCheck)
+    const keys = Reflect.ownKeys(elToCheck)
 
     return keys.includes(lastPathPart)
   }

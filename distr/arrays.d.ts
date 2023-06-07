@@ -40,9 +40,11 @@ export declare function spliceItem(arr: any[] | undefined, item: any): void;
 export declare function removeItemFromArray(arr: any[] | undefined, item: any, firstEntry?: boolean): any[];
 export declare function removeSomeItemsFromArray(arr: any[] | undefined, items: any[]): any[];
 /**
- * Concat arrays and remove duplicates
+ * Concat arrays and remove duplicates.
+ * This is much faster than concatUniqArrays
  */
 export declare function concatUniqStrArrays(...arrays: string[][]): string[];
+export declare function deduplicate(arr?: any[]): any[];
 export declare function cloneDeepArray(arr?: any[]): any[];
 export declare function stringArrayToNumber(arr: string[]): number[];
 export declare function filterBlackList(allItems: string[], blackList?: string[]): string[];

@@ -162,18 +162,32 @@ export function removeSomeItemsFromArray(arr: any[] | undefined, items: any[]): 
 }
 
 /**
- * Concat arrays and remove duplicates
+ * Concat arrays and remove duplicates.
+ * This is much faster than concatUniqArrays
  */
 export function concatUniqStrArrays(...arrays: string[][]): string[] {
   const result: {[index: string]: true} = {};
 
-  for (let arr of arrays) {
-    for (let value of arr) {
+  for (const arr of arrays) {
+    for (const value of arr) {
       result[value] = true;
     }
   }
 
   return Object.keys(result);
+}
+
+// TODO: test
+export function deduplicate(arr?: any[]): any[] {
+  if (!arr || !arr.length) return []
+
+  const result: any[] = []
+
+  for (const value of arr) {
+    if (result.indexOf(value) === -1) result.push(value)
+  }
+
+  return result
 }
 
 export function cloneDeepArray(arr?: any[]): any[] {

@@ -62,6 +62,7 @@ export function deepGet(src, pathTo, defaultValue) {
         return defaultValue;
     const splatPath = splitDeepPath(pathTo);
     const restPath = joinDeepPath(withoutFirstItem(splatPath));
+    // TODO: а проверка массива разве сработает на прокси???
     if (Array.isArray(src)) {
         // means wrong path
         if (typeof splatPath[0] !== 'number')
@@ -91,7 +92,7 @@ export function deepGet(src, pathTo, defaultValue) {
         }
         else {
             // found final value
-            if (Object.keys(src).includes(currentKey)) {
+            if (Reflect.ownKeys(src).includes(currentKey)) {
                 return src[currentKey];
             }
             // not found a key
@@ -149,7 +150,7 @@ export function deepHas(src, pathTo) {
         return lastPathPart < elToCheck.length;
     }
     else if (typeof elToCheck === 'object' && typeof lastPathPart === 'string') {
-        const keys = Object.keys(elToCheck);
+        const keys = Reflect.ownKeys(elToCheck);
         return keys.includes(lastPathPart);
     }
     return false;
