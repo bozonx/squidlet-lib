@@ -188,11 +188,17 @@ export function deepSet(
   src?: Record<any, any> | Record<any, any>[],
   pathTo?: string,
   value?: any
-) {
+): boolean {
   const [parent, lastPathPart] = deepGetParent(src, pathTo)
 
   // it can be object or array
-  if (parent && typeof lastPathPart !==  'undefined') parent[lastPathPart] = value
+  if (parent && typeof lastPathPart !==  'undefined') {
+    parent[lastPathPart] = value
+
+    return true
+  }
+
+  return false
 }
 
 // TODO: test

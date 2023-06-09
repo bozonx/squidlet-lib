@@ -25,6 +25,6 @@ export declare function deepGet(src?: Record<any, any> | Record<any, any>[], pat
  */
 export declare function deepGetParent(src?: Record<any, any> | Record<any, any>[], pathTo?: string): [any, string | number] | [];
 export declare function deepHas(src?: Record<any, any> | Record<any, any>[], pathTo?: string): boolean;
-export declare function deepSet(src?: Record<any, any> | Record<any, any>[], pathTo?: string, value?: any): void;
+export declare function deepSet(src?: Record<any, any> | Record<any, any>[], pathTo?: string, value?: any): boolean;
 export declare function deepDelete(src?: Record<any, any> | Record<any, any>[], pathTo?: string): any;
 export declare function deepClone(src?: any): any;

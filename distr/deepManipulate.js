@@ -158,8 +158,11 @@ export function deepHas(src, pathTo) {
 export function deepSet(src, pathTo, value) {
     const [parent, lastPathPart] = deepGetParent(src, pathTo);
     // it can be object or array
-    if (parent && typeof lastPathPart !== 'undefined')
+    if (parent && typeof lastPathPart !== 'undefined') {
         parent[lastPathPart] = value;
+        return true;
+    }
+    return false;
 }
 // TODO: test
 export function deepDelete(src, pathTo) {
