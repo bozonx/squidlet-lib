@@ -7,6 +7,11 @@ export class IndexedEvents<T extends AnyHandler> {
   // all the handlers by index, removed handlers are empty
   private handlers: (T | undefined)[] = [];
 
+  // TODO: test
+  get isDestroyed(): boolean {
+    return typeof this.handlers === 'undefined'
+  }
+
   /**
    * Get all the handlers.
    * Removed handlers will be undefined
@@ -75,11 +80,10 @@ export class IndexedEvents<T extends AnyHandler> {
   }
 
   removeListener(handlerIndex?: number): void {
-
-    // TODO: проверить что после дестроя не будет поднимать ошибки
-
-    if (typeof handlerIndex === 'undefined') return;
-    else if (!this.handlers[handlerIndex]) return;
+    if (typeof handlerIndex === 'undefined') return
+    // TODO: test что после дестроя не будет поднимать ошибки
+    else if (this.isDestroyed) return
+    else if (!this.handlers[handlerIndex]) return
 
     delete this.handlers[handlerIndex];
   }

@@ -11,7 +11,8 @@ export class IndexedEventEmitter<T extends DefaultHandler = DefaultHandler> {
 
   // TODO: test
   get isDestroyed(): boolean {
-    return typeof this.handlers === 'undefined' && typeof this.indexes === 'undefined'
+    return typeof this.handlers === 'undefined'
+      //&& typeof this.indexes === 'undefined'
   }
 
 
@@ -149,12 +150,10 @@ export class IndexedEventEmitter<T extends DefaultHandler = DefaultHandler> {
    * You can omit eventName, but if you defined it then removing will be faster.
    */
   removeListener(handlerIndex?: number, eventName?: string | number): void {
-
-    // TODO: проверить что после дестроя не будет поднимать ошибки
-
     if (typeof handlerIndex === 'undefined') return;
-
-    if (typeof eventName !== 'undefined') {
+    // TODO: test что после дестроя не будет поднимать ошибки
+    else if (this.isDestroyed) return
+    else if (typeof eventName !== 'undefined') {
       if (!this.indexes[eventName]) return
 
       // find index of handler index in list belongs to eventName

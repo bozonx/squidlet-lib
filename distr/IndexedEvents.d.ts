@@ -1,6 +1,7 @@
 export type AnyHandler = (...args: any[]) => void;
 export declare class IndexedEvents<T extends AnyHandler> {
     private handlers;
+    get isDestroyed(): boolean;
     /**
      * Get all the handlers.
      * Removed handlers will be undefined
