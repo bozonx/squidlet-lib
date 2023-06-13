@@ -12,7 +12,6 @@ export class IndexedEventEmitter<T extends DefaultHandler = DefaultHandler> {
   // TODO: test
   get isDestroyed(): boolean {
     return typeof this.handlers === 'undefined'
-      //&& typeof this.indexes === 'undefined'
   }
 
 

@@ -7,7 +7,6 @@ export class IndexedEventEmitter {
     // TODO: test
     get isDestroyed() {
         return typeof this.handlers === 'undefined';
-        //&& typeof this.indexes === 'undefined'
     }
     emit = (eventName, ...args) => {
         if (!this.indexes[eventName])
