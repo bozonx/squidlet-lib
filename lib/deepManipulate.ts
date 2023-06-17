@@ -231,7 +231,7 @@ export function deepClone(src?: any): any {
  */
 export function deepFindObj(
   src?: Record<any, any> | Record<any, any>[],
-  handler?: (item: Record<any, any>, key: string | number) => (boolean | undefined)
+  handler?: (obj: Record<any, any>, key: string | number) => (any | undefined)
 ): Record<any, any> | undefined {
   if (!handler || !src || (!Array.isArray(src) && typeof src !== 'object')) return
 

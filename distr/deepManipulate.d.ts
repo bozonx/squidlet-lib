@@ -33,4 +33,4 @@ export declare function deepClone(src?: any): any;
  * @param src
  * @param handler
  */
-export declare function deepFindObj(src?: Record<any, any> | Record<any, any>[], handler?: (item: Record<any, any>, key: string | number) => (boolean | undefined)): Record<any, any> | undefined;
+export declare function deepFindObj(src?: Record<any, any> | Record<any, any>[], handler?: (obj: Record<any, any>, key: string | number) => (any | undefined)): Record<any, any> | undefined;
