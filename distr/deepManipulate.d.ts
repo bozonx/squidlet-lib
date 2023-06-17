@@ -28,3 +28,9 @@ export declare function deepHas(src?: Record<any, any> | Record<any, any>[], pat
 export declare function deepSet(src?: Record<any, any> | Record<any, any>[], pathTo?: string, value?: any): boolean;
 export declare function deepDelete(src?: Record<any, any> | Record<any, any>[], pathTo?: string): any;
 export declare function deepClone(src?: any): any;
+/**
+ * Find object by checking its properties
+ * @param src
+ * @param handler
+ */
+export declare function deepFindObj(src?: Record<any, any> | Record<any, any>[], handler?: (item: Record<any, any>, key: string | number) => (boolean | undefined)): Record<any, any> | undefined;

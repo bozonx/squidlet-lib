@@ -223,6 +223,46 @@ export function deepClone(src?: any): any {
   return src
 }
 
+// TODO: test
+/**
+ * Find object by checking its properties
+ * @param src
+ * @param handler
+ */
+export function deepFindObj(
+  src?: Record<any, any> | Record<any, any>[],
+  handler?: (item: Record<any, any>, key: string | number) => (boolean | undefined)
+): Record<any, any> | undefined {
+  if (!handler || !src || (!Array.isArray(src) && typeof src !== 'object')) return
+
+  if (Array.isArray(src)) {
+    // go deep to each item of array
+    for (const item of src) {
+      const res = deepFindObj(item, handler)
+
+      if (res) return res
+    }
+  }
+  else {
+    // object
+    for (const key of Object.keys(src)) {
+      const res = handler(src[key], key)
+      // if found
+      if (res) return src[key]
+      // else go deeper to each key of object
+      else {
+        const deepRes = deepFindObj(src[key], handler)
+
+        if (deepRes) return deepRes
+      }
+    }
+  }
+  // if not found return undefined
+}
+
+// TODO: add find both arrays and objects
+// TODO: add deep foreach
+
 
 // TODO: remake
 // function splitDeepPathOOOLD(pathTo: string): {arrIndex?: number, objKey?: string, restPath?: string} {
