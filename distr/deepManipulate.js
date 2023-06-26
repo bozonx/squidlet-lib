@@ -217,6 +217,42 @@ export function deepFindObj(src, handler) {
     // if not found return undefined
 }
 // TODO: test
+// TODO: add path to handler
+// TODO: как это объединить с deepFindObj ???
+/**
+ * Find object by checking its properties
+ * @param src
+ * @param handler
+ */
+export async function deepFindObjAsync(src, handler) {
+    if (!handler || !src || (!Array.isArray(src) && typeof src !== 'object'))
+        return;
+    if (Array.isArray(src)) {
+        // go deep to each item of array
+        for (const item of src) {
+            const res = deepFindObjAsync(item, handler);
+            if (res)
+                return res;
+        }
+    }
+    else {
+        // object
+        for (const key of Object.keys(src)) {
+            const res = await handler(src[key], key);
+            // if found
+            if (res)
+                return src[key];
+            // else go deeper to each key of object
+            else {
+                const deepRes = deepFindObjAsync(src[key], handler);
+                if (deepRes)
+                    return deepRes;
+            }
+        }
+    }
+    // if not found return undefined
+}
+// TODO: test
 /**
  * Run handler on each object in arrays or other objects
  * @param src
@@ -224,6 +260,16 @@ export function deepFindObj(src, handler) {
  */
 export function deepEachObj(src, handler) {
     deepFindObj(src, handler);
+}
+// TODO: test
+// TODO: както надо объединить с deepEachObj
+/**
+ * Run handler on each object in arrays or other objects
+ * @param src
+ * @param handler - if returns true-like then the cycle will break
+ */
+export async function deepEachObjAsync(src, handler) {
+    await deepFindObjAsync(src, handler);
 }
 export function isSameDeep(obj1, obj2) {
     // TODO: поддержка массивов

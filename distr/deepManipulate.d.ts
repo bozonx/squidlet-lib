@@ -35,9 +35,21 @@ export declare function deepClone(src?: any): any;
  */
 export declare function deepFindObj(src?: Record<any, any> | Record<any, any>[], handler?: (obj: Record<any, any>, key: string | number) => (any | undefined)): Record<any, any> | undefined;
 /**
+ * Find object by checking its properties
+ * @param src
+ * @param handler
+ */
+export declare function deepFindObjAsync(src?: Record<any, any> | Record<any, any>[], handler?: (obj: Record<any, any>, key: string | number) => (any | undefined)): Promise<Record<any, any> | undefined>;
+/**
  * Run handler on each object in arrays or other objects
  * @param src
  * @param handler - if returns true-like then the cycle will break
  */
 export declare function deepEachObj(src?: Record<any, any> | Record<any, any>[], handler?: (obj: Record<any, any>, key: string | number) => void): void;
+/**
+ * Run handler on each object in arrays or other objects
+ * @param src
+ * @param handler - if returns true-like then the cycle will break
+ */
+export declare function deepEachObjAsync(src?: Record<any, any> | Record<any, any>[], handler?: (obj: Record<any, any>, key: string | number) => void): Promise<void>;
 export declare function isSameDeep(obj1?: any, obj2?: any): boolean;
