@@ -224,6 +224,7 @@ export function deepClone(src?: any): any {
 }
 
 // TODO: test
+// TODO: add path to handler
 /**
  * Find object by checking its properties
  * @param src
@@ -258,6 +259,44 @@ export function deepFindObj(
     }
   }
   // if not found return undefined
+}
+
+// TODO: test
+/**
+ * Run handler on each object in arrays or other objects
+ * @param src
+ * @param handler - if returns true-like then the cycle will break
+ */
+export function deepEachObj(
+  src?: Record<any, any> | Record<any, any>[],
+  handler?: (obj: Record<any, any>, key: string | number) => void
+): void {
+  deepFindObj(src, handler)
+}
+
+export function isSameDeep(obj1?: any, obj2?: any): boolean {
+
+  // TODO: поддержка массивов
+
+  if (obj1 === obj2) return true
+  else if (!obj1 || !obj2 || typeof obj1 !== 'object' || typeof obj2 !== 'object') return false
+  else if (!Object.keys(obj1).length) return false
+  else if (Object.keys(obj1).length !== Object.keys(obj2).length) return false
+
+  for (const [key, value] of Object.entries(obj1)) {
+    if (value && typeof value === 'object' && typeof obj2[key] === 'object') {
+      const res = isSameDeep(value, obj2[key])
+
+      if (!res) return false
+      // if true then continue
+    }
+    else {
+      if (obj1[key] !== obj2[key]) return false
+      // the just continue
+    }
+  }
+
+  return true
 }
 
 // TODO: add find both arrays and objects
