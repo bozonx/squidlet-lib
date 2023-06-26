@@ -1,3 +1,4 @@
+// TODO: может наследовать от Promise
 export class Promised {
     static alreadyResolved(result) {
         const promised = new Promised();

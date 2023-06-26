@@ -1,6 +1,7 @@
 import { cloneDeepArray } from './arrays.js';
 import { isPlainObject } from './objects.js';
 // TODO: review and review tests
+// TODO: move to object.ts
 /**
  * Merges two objects deeply.
  * It doesn't mutate any object.

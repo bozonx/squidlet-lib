@@ -19,14 +19,23 @@ export declare function joinDeepPath(pathParts?: (string | number | undefined)[]
 export declare function deepGet(src?: Record<any, any> | Record<any, any>[], pathTo?: string, defaultValue?: any): any;
 /**
  * Get parent if path is deep.
- * Or return itself if path is only one element
+ * Or return itself if path is only one element.
+ * Be careful if path points to array then array will be returned
+ * @param src - object or array where to find parent
+ * @param pathTo - full path to parameter of parent
+ * @param strict - if true then it will check does key exist in parent
+ * @return - [parent, paramKey, parentPath]
+ */
+export declare function deepGetParent(src?: Record<any, any> | Record<any, any>[], pathTo?: string, strict?: boolean): [any, string | number, string] | [];
+export declare function deepHas(src?: Record<any, any> | Record<any, any>[], pathTo?: string): boolean;
+export declare function deepSet(src?: Record<any, any> | Record<any, any>[], pathTo?: string, value?: any): boolean;
+/**
+ * It will delete item from object or array.
+ * In case of array instead of item will be undefined.
  * @param src
  * @param pathTo
  */
-export declare function deepGetParent(src?: Record<any, any> | Record<any, any>[], pathTo?: string): [any, string | number] | [];
-export declare function deepHas(src?: Record<any, any> | Record<any, any>[], pathTo?: string): boolean;
-export declare function deepSet(src?: Record<any, any> | Record<any, any>[], pathTo?: string, value?: any): boolean;
-export declare function deepDelete(src?: Record<any, any> | Record<any, any>[], pathTo?: string): any;
+export declare function deepDelete(src?: Record<any, any> | Record<any, any>[], pathTo?: string): boolean;
 export declare function deepClone(src?: any): any;
 /**
  * Find object by checking its properties

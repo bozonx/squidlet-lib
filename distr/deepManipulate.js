@@ -62,7 +62,6 @@ export function deepGet(src, pathTo, defaultValue) {
         return defaultValue;
     const splatPath = splitDeepPath(pathTo);
     const restPath = joinDeepPath(withoutFirstItem(splatPath));
-    // TODO: а проверка массива разве сработает на прокси???
     if (Array.isArray(src)) {
         // means wrong path
         if (typeof splatPath[0] !== 'number')
@@ -106,72 +105,68 @@ export function deepGet(src, pathTo, defaultValue) {
 }
 /**
  * Get parent if path is deep.
- * Or return itself if path is only one element
- * @param src
- * @param pathTo
+ * Or return itself if path is only one element.
+ * Be careful if path points to array then array will be returned
+ * @param src - object or array where to find parent
+ * @param pathTo - full path to parameter of parent
+ * @param strict - if true then it will check does key exist in parent
+ * @return - [parent, paramKey, parentPath]
  */
-export function deepGetParent(src, pathTo) {
+export function deepGetParent(src, pathTo, strict = false) {
     if (!src || (!Array.isArray(src) && typeof src !== 'object'))
         return [];
     else if (typeof pathTo !== 'string' || !pathTo)
         return [];
     const splatPath = splitDeepPath(pathTo);
-    const prevPath = joinDeepPath(withoutLastItem(splatPath));
-    const lastPathPart = lastItem(splatPath);
+    const parentPath = joinDeepPath(withoutLastItem(splatPath));
+    const paramKey = lastItem(splatPath);
     // if can't find anything. But it shouldn't be
-    if (typeof lastPathPart === 'undefined')
+    if (typeof paramKey === 'undefined')
         return [];
-    const parent = (prevPath)
+    const parent = (parentPath)
         // get parent
-        ? deepGet(src, prevPath)
+        ? deepGet(src, parentPath)
         // use src
         : src;
-    return [parent, lastPathPart];
+    if (!parent)
+        return [];
+    if (strict) {
+        if (Array.isArray(parent) && Number(paramKey) >= parent.length)
+            return [];
+        else if (typeof parent === 'object' && !Object.keys(parent).includes(String(paramKey))) {
+            return [];
+        }
+    }
+    return [parent, paramKey, parentPath || ''];
 }
 export function deepHas(src, pathTo) {
-    if (!src || (!Array.isArray(src) && typeof src !== 'object'))
-        return false;
-    else if (typeof pathTo !== 'string' || !pathTo)
-        return false;
-    const splatPath = splitDeepPath(pathTo);
-    const prevPath = joinDeepPath(withoutLastItem(splatPath));
-    const lastPathPart = lastItem(splatPath);
-    // if can't find anything. But it shouldn't be
-    if (typeof lastPathPart === 'undefined')
-        return false;
-    const elToCheck = (prevPath)
-        // get parent
-        ? deepGet(src, prevPath)
-        // use src
-        : src;
-    if (Array.isArray(elToCheck) && typeof lastPathPart === 'number') {
-        if (lastPathPart < 0)
-            return false;
-        return lastPathPart < elToCheck.length;
-    }
-    else if (typeof elToCheck === 'object' && typeof lastPathPart === 'string') {
-        const keys = Reflect.ownKeys(elToCheck);
-        return keys.includes(lastPathPart);
-    }
-    return false;
+    const [, paramKey] = deepGetParent(src, pathTo, true);
+    return typeof paramKey !== 'undefined';
 }
 export function deepSet(src, pathTo, value) {
-    const [parent, lastPathPart] = deepGetParent(src, pathTo);
+    const [parent, paramKey] = deepGetParent(src, pathTo);
     // it can be object or array
-    if (parent && typeof lastPathPart !== 'undefined') {
-        parent[lastPathPart] = value;
+    if (parent && typeof paramKey !== 'undefined') {
+        parent[paramKey] = value;
         return true;
     }
     return false;
 }
-// TODO: test
+/**
+ * It will delete item from object or array.
+ * In case of array instead of item will be undefined.
+ * @param src
+ * @param pathTo
+ */
 export function deepDelete(src, pathTo) {
-    const [parent, lastPathPart] = deepGetParent(src, pathTo);
+    const [parent, lastPathPart] = deepGetParent(src, pathTo, true);
     // it can be object or array
-    if (parent && typeof lastPathPart !== 'undefined')
+    if (parent && typeof lastPathPart !== 'undefined') {
         delete parent[lastPathPart];
+        return true;
+    }
+    return false;
 }
-// TODO: test
 export function deepClone(src) {
     if (Array.isArray(src)) {
         return cloneDeepArray(src);
@@ -182,7 +177,6 @@ export function deepClone(src) {
     return src;
 }
 // TODO: test
-// TODO: add path to handler
 /**
  * Find object by checking its properties
  * @param src
@@ -292,6 +286,7 @@ export function isSameDeep(obj1, obj2) {
     else if (Object.keys(obj1).length !== Object.keys(obj2).length)
         return false;
     for (const [key, value] of Object.entries(obj1)) {
+        // TODO: use isPlainObject
         if (value && typeof value === 'object' && typeof obj2[key] === 'object') {
             const res = isSameDeep(value, obj2[key]);
             if (!res)
@@ -306,94 +301,3 @@ export function isSameDeep(obj1, obj2) {
     }
     return true;
 }
-// TODO: add find both arrays and objects
-// TODO: add deep foreach
-// TODO: remake
-// function splitDeepPathOOOLD(pathTo: string): {arrIndex?: number, objKey?: string, restPath?: string} {
-//   const arrMatch = pathTo.match(/^\[(\d+)\](.*)$/)
-//   // try to recognize an array path
-//   if (arrMatch && arrMatch[1]) {
-//     return {
-//       arrIndex: Number(arrMatch[1]),
-//       objKey: undefined,
-//       restPath: trimCharStart(arrMatch[2], DEEP_PATH_SEPARATOR),
-//     }
-//   }
-//
-//   const [objKey, restPath] = splitFirstElement(pathTo, DEEP_PATH_SEPARATOR)
-//
-//   return {
-//     arrIndex: undefined,
-//     objKey,
-//     restPath,
-//   }
-// }
-// TODO: test
-// TODO: не особо нужно, так как не работает с массивами
-// /**
-//  * Set value deeply to object and create nodes if need.
-//  * It mutates the object
-//  * @param obj
-//  * @param pathTo - path like parnent.node1.node2
-//  * @param value
-//  */
-// export function objSetMutate(obj: Record<string, any>, pathTo: string, value: any) {
-//   const pathSplat: string[] = pathTo.split('.')
-//   let currentDir = obj
-//
-//   for (const index in pathSplat) {
-//     const curDirName = pathSplat[index]
-//
-//     if (Number(index) === pathSplat.length - 1) {
-//       // the last element
-//       currentDir[curDirName] = value
-//     }
-//     else {
-//       // in the middle
-//       // create dir if not exist
-//       if (!currentDir[curDirName]) {
-//         currentDir[curDirName] = {}
-//         currentDir = currentDir[curDirName]
-//       }
-//     }
-//   }
-// }
-// /**
-//  * Get value from deep object.
-//  * If there isn't a value or node undefined or default value will be returned.
-//  * WARNING: arrays doesn't supported!
-//  */
-// export function objGet(obj?: {[index: string]: any}, pathTo?: string, defaultValue?: any): any {
-//   if (!obj || !pathTo) return defaultValue;
-//
-//   const recursive = (currentObj: {[index: string]: any}, currentPath: string): any => {
-//     for (let itemName of Object.keys(currentObj)) {
-//       const pathOfItem: string = (currentPath) ? [currentPath, itemName].join('.') : itemName;
-//
-//       if (pathTo.indexOf(pathOfItem) !== 0) {
-//         // lost path
-//         return;
-//       }
-//       else if (pathOfItem === pathTo) {
-//         // found
-//         return currentObj[itemName];
-//       }
-//       else if (Array.isArray(currentObj[itemName])) {
-//         // arrays aren't supported
-//         return;
-//       }
-//       // got deeper
-//       else if (typeof currentObj[itemName] === 'object') {
-//         return recursive(currentObj[itemName], pathOfItem);
-//       }
-//
-//       // else do nothing
-//     }
-//   };
-//
-//   const result: any = recursive(obj, '');
-//
-//   if (typeof result === 'undefined' && typeof defaultValue !== 'undefined') return defaultValue;
-//
-//   return result;
-// }
