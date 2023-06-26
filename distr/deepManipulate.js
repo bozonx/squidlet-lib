@@ -197,7 +197,7 @@ export function deepFindObj(src, handler, initialPath) {
         for (const key of src.keys()) {
             const item = src[key];
             const path = joinDeepPath([initialPath, key]);
-            const res = deepFindObjAsync(item, handler, path);
+            const res = deepFindObj(item, handler, path);
             if (res)
                 return res;
         }
@@ -212,7 +212,7 @@ export function deepFindObj(src, handler, initialPath) {
                 return src[key];
             // else go deeper to each key of object
             else {
-                const deepRes = deepFindObjAsync(src[key], handler, path);
+                const deepRes = deepFindObj(src[key], handler, path);
                 if (deepRes)
                     return deepRes;
             }
