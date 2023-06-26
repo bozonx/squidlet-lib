@@ -212,12 +212,10 @@ export function deepDelete(
   return false
 }
 
-// TODO: test
 export function deepClone(src?: any): any {
   if (Array.isArray(src)) {
     return cloneDeepArray(src)
   }
-  // TODO: use isPlainObject
   else if (typeof src === 'object') {
     return cloneDeepObject(src)
   }

@@ -1,4 +1,5 @@
 import {
+  deepClone,
   deepDelete,
   deepFindObjAsync,
   deepGet, deepGetParent,
@@ -234,6 +235,17 @@ describe('lib/deepManipulate', () => {
     arr = [[2]]
     assert.isFalse(deepDelete(arr, '[1][0]'))
     assert.deepEqual(arr, [[2]])
+  })
+
+  it('deepClone', () => {
+    const obj = {a: [{c: 1}]}
+    const clone = deepClone(obj)
+
+    assert.deepEqual(clone, obj)
+
+    deepSet(clone, 'a[0].c', 2)
+
+    assert.notDeepEqual(clone, obj)
   })
 
   // it('deepFindObjAsync', () => {
