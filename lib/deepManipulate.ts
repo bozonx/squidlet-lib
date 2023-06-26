@@ -262,6 +262,45 @@ export function deepFindObj(
 }
 
 // TODO: test
+// TODO: add path to handler
+/**
+ * Find object by checking its properties
+ * @param src
+ * @param handler
+ */
+export async function deepFindObjAsync(
+  src?: Record<any, any> | Record<any, any>[],
+  handler?: (obj: Record<any, any>, key: string | number) => (any | undefined)
+): Promise<Record<any, any> | undefined> {
+  if (!handler || !src || (!Array.isArray(src) && typeof src !== 'object')) return
+
+  if (Array.isArray(src)) {
+    // go deep to each item of array
+    for (const item of src) {
+      const res = deepFindObjAsync(item, handler)
+
+      if (res) return res
+    }
+  }
+  else {
+    // object
+    for (const key of Object.keys(src)) {
+      const res = await handler(src[key], key)
+      // if found
+      if (res) return src[key]
+      // else go deeper to each key of object
+      else {
+        const deepRes = deepFindObjAsync(src[key], handler)
+
+        if (deepRes) return deepRes
+      }
+    }
+  }
+  // if not found return undefined
+}
+
+
+// TODO: test
 /**
  * Run handler on each object in arrays or other objects
  * @param src
@@ -272,6 +311,19 @@ export function deepEachObj(
   handler?: (obj: Record<any, any>, key: string | number) => void
 ): void {
   deepFindObj(src, handler)
+}
+
+// TODO: test
+/**
+ * Run handler on each object in arrays or other objects
+ * @param src
+ * @param handler - if returns true-like then the cycle will break
+ */
+export async function deepEachObjAsync(
+  src?: Record<any, any> | Record<any, any>[],
+  handler?: (obj: Record<any, any>, key: string | number) => void
+) {
+  await deepFindObjAsync(src, handler)
 }
 
 export function isSameDeep(obj1?: any, obj2?: any): boolean {
