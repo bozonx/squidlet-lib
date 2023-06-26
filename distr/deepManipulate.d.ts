@@ -1,3 +1,4 @@
+export declare const DONT_GO_DEEPER: unique symbol;
 /**
  * Split deep path to paths
  * E.g "aa[0].bb[1].cc" => ['aa', 0, 'bb', 1, 'cc']

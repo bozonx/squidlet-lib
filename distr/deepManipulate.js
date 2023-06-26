@@ -2,6 +2,7 @@ import { trimCharStart } from './strings.js';
 import { cloneDeepArray, isArrayIncludesIndex, lastItem, withoutFirstItem, withoutLastItem } from './arrays.js';
 import { cloneDeepObject } from './deepObjects.js';
 const DEEP_PATH_SEPARATOR = '.';
+export const DONT_GO_DEEPER = Symbol('DONT_GO_DEEPER');
 /**
  * Split deep path to paths
  * E.g "aa[0].bb[1].cc" => ['aa', 0, 'bb', 1, 'cc']
@@ -177,6 +178,7 @@ export function deepClone(src) {
     return src;
 }
 // TODO: test
+// TODO: ass symbol - dontGoDeeper
 /**
  * Find object by checking its properties
  * @param src
@@ -201,8 +203,11 @@ export function deepFindObj(src, handler, initialPath) {
         for (const key of Object.keys(src)) {
             const path = joinDeepPath([initialPath, key]);
             const res = handler(src[key], key, path);
+            // if it shouldn't go deeper than continue
+            if (res === DONT_GO_DEEPER)
+                continue;
             // if found
-            if (res)
+            else if (res)
                 return src[key];
             // else go deeper to each key of object
             else {
@@ -241,8 +246,11 @@ export async function deepFindObjAsync(src, handler, initialPath) {
         for (const key of Object.keys(src)) {
             const path = joinDeepPath([initialPath, key]);
             const res = await handler(src[key], key, path);
+            // if it shouldn't go deeper than continue
+            if (res === DONT_GO_DEEPER)
+                continue;
             // if found
-            if (res)
+            else if (res)
                 return src[key];
             // else go deeper to each key of object
             else {
