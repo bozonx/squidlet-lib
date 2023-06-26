@@ -229,17 +229,21 @@ export function deepClone(src?: any): any {
  * Find object by checking its properties
  * @param src
  * @param handler
+ * @param initialPath - path to the object in src
  */
 export function deepFindObj(
   src?: Record<any, any> | Record<any, any>[],
-  handler?: (obj: Record<any, any>, key: string | number) => (any | undefined)
+  handler?: (obj: Record<any, any>, key: string | number, path: string) => (any | undefined),
+  initialPath?: string
 ): Record<any, any> | undefined {
   if (!handler || !src || (!Array.isArray(src) && typeof src !== 'object')) return
 
   if (Array.isArray(src)) {
     // go deep to each item of array
-    for (const item of src) {
-      const res = deepFindObj(item, handler)
+    for (const key of src.keys()) {
+      const item = src[key]
+      const path = joinDeepPath([initialPath, key])
+      const res = deepFindObjAsync(item, handler, path)
 
       if (res) return res
     }
@@ -247,12 +251,13 @@ export function deepFindObj(
   else {
     // object
     for (const key of Object.keys(src)) {
-      const res = handler(src[key], key)
+      const path = joinDeepPath([initialPath, key])
+      const res = handler(src[key], key, path)
       // if found
       if (res) return src[key]
       // else go deeper to each key of object
       else {
-        const deepRes = deepFindObj(src[key], handler)
+        const deepRes = deepFindObjAsync(src[key], handler, path)
 
         if (deepRes) return deepRes
       }
@@ -267,18 +272,22 @@ export function deepFindObj(
 /**
  * Find object by checking its properties
  * @param src
- * @param handler
+ * @param handler,
+ * @param initialPath - path to the object in src
  */
 export async function deepFindObjAsync(
   src?: Record<any, any> | Record<any, any>[],
-  handler?: (obj: Record<any, any>, key: string | number) => (any | undefined)
+  handler?: (obj: Record<any, any>, key: string | number, path: string) => (any | undefined),
+  initialPath?: string
 ): Promise<Record<any, any> | undefined> {
   if (!handler || !src || (!Array.isArray(src) && typeof src !== 'object')) return
 
   if (Array.isArray(src)) {
     // go deep to each item of array
-    for (const item of src) {
-      const res = deepFindObjAsync(item, handler)
+    for (const key of src.keys()) {
+      const item = src[key]
+      const path = joinDeepPath([initialPath, key])
+      const res = deepFindObjAsync(item, handler, path)
 
       if (res) return res
     }
@@ -286,12 +295,13 @@ export async function deepFindObjAsync(
   else {
     // object
     for (const key of Object.keys(src)) {
-      const res = await handler(src[key], key)
+      const path = joinDeepPath([initialPath, key])
+      const res = await handler(src[key], key, path)
       // if found
       if (res) return src[key]
       // else go deeper to each key of object
       else {
-        const deepRes = deepFindObjAsync(src[key], handler)
+        const deepRes = deepFindObjAsync(src[key], handler, path)
 
         if (deepRes) return deepRes
       }
@@ -309,7 +319,7 @@ export async function deepFindObjAsync(
  */
 export function deepEachObj(
   src?: Record<any, any> | Record<any, any>[],
-  handler?: (obj: Record<any, any>, key: string | number) => void
+  handler?: (obj: Record<any, any>, key: string | number, path: string) => void
 ): void {
   deepFindObj(src, handler)
 }
@@ -323,7 +333,7 @@ export function deepEachObj(
  */
 export async function deepEachObjAsync(
   src?: Record<any, any> | Record<any, any>[],
-  handler?: (obj: Record<any, any>, key: string | number) => void
+  handler?: (obj: Record<any, any>, key: string | number, path: string) => void
 ) {
   await deepFindObjAsync(src, handler)
 }
