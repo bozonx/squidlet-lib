@@ -1,7 +1,6 @@
 import {trimCharStart} from './strings.js';
 import {cloneDeepArray, isArrayIncludesIndex, lastItem, withoutFirstItem, withoutLastItem} from './arrays.js';
 import {cloneDeepObject} from './deepObjects.js';
-import {isPlainObject} from './objects.js';
 
 
 const DEEP_PATH_SEPARATOR = '.'
@@ -101,7 +100,6 @@ export function deepGet(
     }
   }
   // not null and object
-  // TODO: use isPlainObject
   else if (src && typeof src === 'object') {
     // if not string that means wrong path - return default value
     if (typeof splatPath[0] !== 'string') return defaultValue
@@ -139,7 +137,7 @@ export function deepGetParent(
   src?: Record<any, any> | Record<any, any>[],
   pathTo?: string,
 ): [any, string | number, string] | [] {
-  if (!Array.isArray(src) && !isPlainObject(src)) return []
+  if (!src || (!Array.isArray(src) && typeof src !== 'object')) return []
   else if (typeof pathTo !== 'string' || !pathTo) return []
 
   const splatPath = splitDeepPath(pathTo)
@@ -166,34 +164,9 @@ export function deepGetParent(
 }
 
 export function deepHas(src?: Record<any, any> | Record<any, any>[], pathTo?: string): boolean {
-  if (!src || (!Array.isArray(src) && typeof src !== 'object')) return false
-  else if (typeof pathTo !== 'string' || !pathTo) return false
+  const [parent, paramKey] = deepGetParent(src, pathTo)
 
-  const splatPath = splitDeepPath(pathTo)
-  const prevPath = joinDeepPath(withoutLastItem(splatPath))
-  const lastPathPart: string | number | undefined = lastItem(splatPath)
-  // if can't find anything. But it shouldn't be
-  if (typeof lastPathPart === 'undefined') return false
-
-  const elToCheck: any = (prevPath)
-    // get parent
-    ? deepGet(src, prevPath)
-    // use src
-    : src
-
-  if (Array.isArray(elToCheck) && typeof lastPathPart === 'number') {
-    if (lastPathPart < 0) return false
-
-    return lastPathPart < elToCheck.length
-  }
-  // TODO: use isPlainObject
-  else if (typeof elToCheck === 'object' && typeof lastPathPart === 'string') {
-    const keys = Reflect.ownKeys(elToCheck)
-
-    return keys.includes(lastPathPart)
-  }
-
-  return false
+  return typeof paramKey !== 'undefined'
 }
 
 export function deepSet(
