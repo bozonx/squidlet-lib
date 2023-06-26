@@ -187,14 +187,17 @@ export function deepClone(src) {
  * Find object by checking its properties
  * @param src
  * @param handler
+ * @param initialPath - path to the object in src
  */
-export function deepFindObj(src, handler) {
+export function deepFindObj(src, handler, initialPath) {
     if (!handler || !src || (!Array.isArray(src) && typeof src !== 'object'))
         return;
     if (Array.isArray(src)) {
         // go deep to each item of array
-        for (const item of src) {
-            const res = deepFindObj(item, handler);
+        for (const key of src.keys()) {
+            const item = src[key];
+            const path = joinDeepPath([initialPath, key]);
+            const res = deepFindObjAsync(item, handler, path);
             if (res)
                 return res;
         }
@@ -202,13 +205,14 @@ export function deepFindObj(src, handler) {
     else {
         // object
         for (const key of Object.keys(src)) {
-            const res = handler(src[key], key);
+            const path = joinDeepPath([initialPath, key]);
+            const res = handler(src[key], key, path);
             // if found
             if (res)
                 return src[key];
             // else go deeper to each key of object
             else {
-                const deepRes = deepFindObj(src[key], handler);
+                const deepRes = deepFindObjAsync(src[key], handler, path);
                 if (deepRes)
                     return deepRes;
             }
@@ -222,15 +226,18 @@ export function deepFindObj(src, handler) {
 /**
  * Find object by checking its properties
  * @param src
- * @param handler
+ * @param handler,
+ * @param initialPath - path to the object in src
  */
-export async function deepFindObjAsync(src, handler) {
+export async function deepFindObjAsync(src, handler, initialPath) {
     if (!handler || !src || (!Array.isArray(src) && typeof src !== 'object'))
         return;
     if (Array.isArray(src)) {
         // go deep to each item of array
-        for (const item of src) {
-            const res = deepFindObjAsync(item, handler);
+        for (const key of src.keys()) {
+            const item = src[key];
+            const path = joinDeepPath([initialPath, key]);
+            const res = deepFindObjAsync(item, handler, path);
             if (res)
                 return res;
         }
@@ -238,13 +245,14 @@ export async function deepFindObjAsync(src, handler) {
     else {
         // object
         for (const key of Object.keys(src)) {
-            const res = await handler(src[key], key);
+            const path = joinDeepPath([initialPath, key]);
+            const res = await handler(src[key], key, path);
             // if found
             if (res)
                 return src[key];
             // else go deeper to each key of object
             else {
-                const deepRes = deepFindObjAsync(src[key], handler);
+                const deepRes = deepFindObjAsync(src[key], handler, path);
                 if (deepRes)
                     return deepRes;
             }
@@ -257,9 +265,10 @@ export async function deepFindObjAsync(src, handler) {
  * Run handler on each object in arrays or other objects
  * @param src
  * @param handler - if returns true-like then the cycle will break
+ * @param initialPath - path to the object in src
  */
-export function deepEachObj(src, handler) {
-    deepFindObj(src, handler);
+export function deepEachObj(src, handler, initialPath) {
+    deepFindObj(src, handler, initialPath);
 }
 // TODO: test
 // TODO: както надо объединить с deepEachObj
@@ -267,9 +276,10 @@ export function deepEachObj(src, handler) {
  * Run handler on each object in arrays or other objects
  * @param src
  * @param handler - if returns true-like then the cycle will break
+ * @param initialPath - path to the object in src
  */
-export async function deepEachObjAsync(src, handler) {
-    await deepFindObjAsync(src, handler);
+export async function deepEachObjAsync(src, handler, initialPath) {
+    await deepFindObjAsync(src, handler, initialPath);
 }
 export function isSameDeep(obj1, obj2) {
     // TODO: поддержка массивов

@@ -32,24 +32,28 @@ export declare function deepClone(src?: any): any;
  * Find object by checking its properties
  * @param src
  * @param handler
+ * @param initialPath - path to the object in src
  */
-export declare function deepFindObj(src?: Record<any, any> | Record<any, any>[], handler?: (obj: Record<any, any>, key: string | number) => (any | undefined)): Record<any, any> | undefined;
+export declare function deepFindObj(src?: Record<any, any> | Record<any, any>[], handler?: (obj: Record<any, any>, key: string | number, path: string) => (any | undefined), initialPath?: string): Record<any, any> | undefined;
 /**
  * Find object by checking its properties
  * @param src
- * @param handler
+ * @param handler,
+ * @param initialPath - path to the object in src
  */
-export declare function deepFindObjAsync(src?: Record<any, any> | Record<any, any>[], handler?: (obj: Record<any, any>, key: string | number) => (any | undefined)): Promise<Record<any, any> | undefined>;
+export declare function deepFindObjAsync(src?: Record<any, any> | Record<any, any>[], handler?: (obj: Record<any, any>, key: string | number, path: string) => (any | undefined), initialPath?: string): Promise<Record<any, any> | undefined>;
 /**
  * Run handler on each object in arrays or other objects
  * @param src
  * @param handler - if returns true-like then the cycle will break
+ * @param initialPath - path to the object in src
  */
-export declare function deepEachObj(src?: Record<any, any> | Record<any, any>[], handler?: (obj: Record<any, any>, key: string | number) => void): void;
+export declare function deepEachObj(src?: Record<any, any> | Record<any, any>[], handler?: (obj: Record<any, any>, key: string | number, path: string) => void, initialPath?: string): void;
 /**
  * Run handler on each object in arrays or other objects
  * @param src
  * @param handler - if returns true-like then the cycle will break
+ * @param initialPath - path to the object in src
  */
-export declare function deepEachObjAsync(src?: Record<any, any> | Record<any, any>[], handler?: (obj: Record<any, any>, key: string | number) => void): Promise<void>;
+export declare function deepEachObjAsync(src?: Record<any, any> | Record<any, any>[], handler?: (obj: Record<any, any>, key: string | number, path: string) => void, initialPath?: string): Promise<void>;
 export declare function isSameDeep(obj1?: any, obj2?: any): boolean;

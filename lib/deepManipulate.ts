@@ -316,12 +316,14 @@ export async function deepFindObjAsync(
  * Run handler on each object in arrays or other objects
  * @param src
  * @param handler - if returns true-like then the cycle will break
+ * @param initialPath - path to the object in src
  */
 export function deepEachObj(
   src?: Record<any, any> | Record<any, any>[],
-  handler?: (obj: Record<any, any>, key: string | number, path: string) => void
+  handler?: (obj: Record<any, any>, key: string | number, path: string) => void,
+  initialPath?: string
 ): void {
-  deepFindObj(src, handler)
+  deepFindObj(src, handler, initialPath)
 }
 
 // TODO: test
@@ -330,12 +332,14 @@ export function deepEachObj(
  * Run handler on each object in arrays or other objects
  * @param src
  * @param handler - if returns true-like then the cycle will break
+ * @param initialPath - path to the object in src
  */
 export async function deepEachObjAsync(
   src?: Record<any, any> | Record<any, any>[],
-  handler?: (obj: Record<any, any>, key: string | number, path: string) => void
+  handler?: (obj: Record<any, any>, key: string | number, path: string) => void,
+  initialPath?: string
 ) {
-  await deepFindObjAsync(src, handler)
+  await deepFindObjAsync(src, handler, initialPath)
 }
 
 export function isSameDeep(obj1?: any, obj2?: any): boolean {
