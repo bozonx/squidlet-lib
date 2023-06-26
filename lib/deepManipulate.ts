@@ -129,7 +129,8 @@ export function deepGet(
 
 /**
  * Get parent if path is deep.
- * Or return itself if path is only one element
+ * Or return itself if path is only one element.
+ * Be careful if path points to array then array will be returned
  * @param src - object or array where to find parent
  * @param pathTo - full path to parameter of parent
  * @return - [parent, paramKey, parentPath]
@@ -138,8 +139,7 @@ export function deepGetParent(
   src?: Record<any, any> | Record<any, any>[],
   pathTo?: string,
 ): [any, string | number, string] | [] {
-  if (!src || (!Array.isArray(src) && typeof src !== 'object')) return []
-  //if (!src || !Array.isArray(src) || !isPlainObject(src)) return []
+  if (!Array.isArray(src) && !isPlainObject(src)) return []
   else if (typeof pathTo !== 'string' || !pathTo) return []
 
   const splatPath = splitDeepPath(pathTo)
@@ -154,7 +154,15 @@ export function deepGetParent(
     // use src
     : src
 
-  return [parent, paramKey, parentPath]
+  if (!parent) return []
+  else if (Array.isArray(parent) && Number(paramKey) >= parent.length) return []
+  else if (
+    typeof parent === 'object' && !Object.keys(parent).includes(String(paramKey))
+  ) {
+    return []
+  }
+
+  return [parent, paramKey, parentPath || '']
 }
 
 export function deepHas(src?: Record<any, any> | Record<any, any>[], pathTo?: string): boolean {
