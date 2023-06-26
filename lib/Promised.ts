@@ -1,3 +1,6 @@
+
+// TODO: может наследовать от Promise
+
 export class Promised<T = any> {
   static alreadyResolved<T = any>(result: T): Promised<T> {
     const promised = new Promised<T>()
@@ -14,7 +17,7 @@ export class Promised<T = any> {
 
     return promised
   }
-  
+
   private _result: T | undefined
   private _error: Error | string | undefined
   private _promise: Promise<T>;

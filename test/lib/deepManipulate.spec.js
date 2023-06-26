@@ -1,6 +1,6 @@
 import {
   deepFindObjAsync,
-  deepGet,
+  deepGet, deepGetParent,
   deepHas,
   deepSet,
   joinDeepPath,
@@ -80,6 +80,27 @@ describe('lib/deepManipulate', () => {
     assert.isUndefined(deepGet(5, 'a2'))
     // wrong path
     assert.isUndefined(deepGet({a1: {b1: 1}}))
+    // proxy array
+    const proxyArr = new Proxy([{a: 1}], {
+      get: (target, prop) => {
+        return target[prop]
+      }
+    })
+    assert.equal(deepGet(proxyArr, '[0].a'), 1)
+    // proxy object
+    const proxyObj = new Proxy({a: {b: 1}}, {
+      get: (target, prop) => {
+        return target[prop]
+      }
+    })
+    assert.equal(deepGet(proxyObj, 'a.b'), 1)
+  })
+
+  it('deepGetParent', () => {
+    assert.deepEqual(
+      deepGetParent({a: {b: {c: 1}}}, 'a.b.c'),
+      [{c: 1}, 'c', 'a.b']
+    )
   })
 
   it('deepHas', () => {

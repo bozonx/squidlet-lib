@@ -1,6 +1,7 @@
 import {trimCharStart} from './strings.js';
 import {cloneDeepArray, isArrayIncludesIndex, lastItem, withoutFirstItem, withoutLastItem} from './arrays.js';
 import {cloneDeepObject} from './deepObjects.js';
+import {isPlainObject} from './objects.js';
 
 
 const DEEP_PATH_SEPARATOR = '.'
@@ -80,7 +81,6 @@ export function deepGet(
   const splatPath = splitDeepPath(pathTo)
   const restPath = joinDeepPath(withoutFirstItem(splatPath))
 
-  // TODO: а проверка массива разве сработает на прокси???
   if (Array.isArray(src)) {
     // means wrong path
     if (typeof splatPath[0] !== 'number') return defaultValue
@@ -101,6 +101,7 @@ export function deepGet(
     }
   }
   // not null and object
+  // TODO: use isPlainObject
   else if (src && typeof src === 'object') {
     // if not string that means wrong path - return default value
     if (typeof splatPath[0] !== 'string') return defaultValue
@@ -129,29 +130,31 @@ export function deepGet(
 /**
  * Get parent if path is deep.
  * Or return itself if path is only one element
- * @param src
- * @param pathTo
+ * @param src - object or array where to find parent
+ * @param pathTo - full path to parameter of parent
+ * @return - [parent, paramKey, parentPath]
  */
 export function deepGetParent(
   src?: Record<any, any> | Record<any, any>[],
   pathTo?: string,
-): [any, string | number] | [] {
+): [any, string | number, string] | [] {
   if (!src || (!Array.isArray(src) && typeof src !== 'object')) return []
+  //if (!src || !Array.isArray(src) || !isPlainObject(src)) return []
   else if (typeof pathTo !== 'string' || !pathTo) return []
 
   const splatPath = splitDeepPath(pathTo)
-  const prevPath = joinDeepPath(withoutLastItem(splatPath))
-  const lastPathPart: string | number | undefined = lastItem(splatPath)
+  const parentPath = joinDeepPath(withoutLastItem(splatPath))
+  const paramKey: string | number | undefined = lastItem(splatPath)
   // if can't find anything. But it shouldn't be
-  if (typeof lastPathPart === 'undefined') return []
+  if (typeof paramKey === 'undefined') return []
 
-  const parent = (prevPath)
+  const parent = (parentPath)
     // get parent
-    ? deepGet(src, prevPath)
+    ? deepGet(src, parentPath)
     // use src
     : src
 
-  return [parent, lastPathPart]
+  return [parent, paramKey, parentPath]
 }
 
 export function deepHas(src?: Record<any, any> | Record<any, any>[], pathTo?: string): boolean {
@@ -175,6 +178,7 @@ export function deepHas(src?: Record<any, any> | Record<any, any>[], pathTo?: st
 
     return lastPathPart < elToCheck.length
   }
+  // TODO: use isPlainObject
   else if (typeof elToCheck === 'object' && typeof lastPathPart === 'string') {
     const keys = Reflect.ownKeys(elToCheck)
 
@@ -216,6 +220,7 @@ export function deepClone(src?: any): any {
   if (Array.isArray(src)) {
     return cloneDeepArray(src)
   }
+  // TODO: use isPlainObject
   else if (typeof src === 'object') {
     return cloneDeepObject(src)
   }
@@ -352,6 +357,7 @@ export function isSameDeep(obj1?: any, obj2?: any): boolean {
   else if (Object.keys(obj1).length !== Object.keys(obj2).length) return false
 
   for (const [key, value] of Object.entries(obj1)) {
+    // TODO: use isPlainObject
     if (value && typeof value === 'object' && typeof obj2[key] === 'object') {
       const res = isSameDeep(value, obj2[key])
 
