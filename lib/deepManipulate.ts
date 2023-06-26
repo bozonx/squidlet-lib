@@ -131,11 +131,13 @@ export function deepGet(
  * Be careful if path points to array then array will be returned
  * @param src - object or array where to find parent
  * @param pathTo - full path to parameter of parent
+ * @param strict - if true then it will check does key exist in parent
  * @return - [parent, paramKey, parentPath]
  */
 export function deepGetParent(
   src?: Record<any, any> | Record<any, any>[],
   pathTo?: string,
+  strict: boolean = false
 ): [any, string | number, string] | [] {
   if (!src || (!Array.isArray(src) && typeof src !== 'object')) return []
   else if (typeof pathTo !== 'string' || !pathTo) return []
@@ -153,18 +155,21 @@ export function deepGetParent(
     : src
 
   if (!parent) return []
-  else if (Array.isArray(parent) && Number(paramKey) >= parent.length) return []
-  else if (
-    typeof parent === 'object' && !Object.keys(parent).includes(String(paramKey))
-  ) {
-    return []
+
+  if (strict) {
+    if (Array.isArray(parent) && Number(paramKey) >= parent.length) return []
+    else if (
+      typeof parent === 'object' && !Object.keys(parent).includes(String(paramKey))
+    ) {
+      return []
+    }
   }
 
   return [parent, paramKey, parentPath || '']
 }
 
 export function deepHas(src?: Record<any, any> | Record<any, any>[], pathTo?: string): boolean {
-  const [parent, paramKey] = deepGetParent(src, pathTo)
+  const [parent, paramKey] = deepGetParent(src, pathTo, true)
 
   return typeof paramKey !== 'undefined'
 }
@@ -174,11 +179,11 @@ export function deepSet(
   pathTo?: string,
   value?: any
 ): boolean {
-  const [parent, lastPathPart] = deepGetParent(src, pathTo)
+  const [parent, paramKey] = deepGetParent(src, pathTo)
 
   // it can be object or array
-  if (parent && typeof lastPathPart !==  'undefined') {
-    parent[lastPathPart] = value
+  if (parent && typeof paramKey !==  'undefined') {
+    parent[paramKey] = value
 
     return true
   }

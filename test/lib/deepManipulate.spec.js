@@ -109,10 +109,14 @@ describe('lib/deepManipulate', () => {
       deepGetParent({a: [{c: 1}]}, 'a[0]'),
       [[{c: 1}], 0, 'a']
     )
-    // wrong path
-    assert.deepEqual(deepGetParent({a: {b: 1}}, 'a.c'), [])
+    // wrong path - strict
+    assert.deepEqual(deepGetParent({a: {b: 1}}, 'a.c', true), [])
+    assert.deepEqual(deepGetParent({a: {b: 1}}, 'a.c.a', true), [])
+    assert.deepEqual(deepGetParent({a: [{b: 1}]}, 'a[1]', true), [])
+    // wrong path - not strict
+    assert.deepEqual(deepGetParent({a: {b: 1}}, 'a.c'), [{b: 1}, 'c', 'a'])
     assert.deepEqual(deepGetParent({a: {b: 1}}, 'a.c.a'), [])
-    assert.deepEqual(deepGetParent({a: [{b: 1}]}, 'a[1]'), [])
+    assert.deepEqual(deepGetParent({a: [{b: 1}]}, 'a[1]'), [[{b: 1}], 1, 'a'])
   })
 
   it('deepHas', () => {
