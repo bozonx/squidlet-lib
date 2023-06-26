@@ -1,4 +1,5 @@
 import {
+  deepFindObjAsync,
   deepGet,
   deepHas,
   deepSet,
@@ -158,5 +159,9 @@ describe('lib/deepManipulate', () => {
   it('deepDelete', () => {
     // TODO: add
   })
+
+  // it('deepFindObjAsync', () => {
+  //   assert.isUndefined(deepFindObjAsync({}, () => {}))
+  // })
 
 })

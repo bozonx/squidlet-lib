@@ -263,6 +263,7 @@ export function deepFindObj(
 
 // TODO: test
 // TODO: add path to handler
+// TODO: как это объединить с deepFindObj ???
 /**
  * Find object by checking its properties
  * @param src
@@ -314,6 +315,7 @@ export function deepEachObj(
 }
 
 // TODO: test
+// TODO: както надо объединить с deepEachObj
 /**
  * Run handler on each object in arrays or other objects
  * @param src
