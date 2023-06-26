@@ -1,4 +1,5 @@
 import {
+  deepDelete,
   deepFindObjAsync,
   deepGet, deepGetParent,
   deepHas,
@@ -146,46 +147,46 @@ describe('lib/deepManipulate', () => {
     let arr
     // object
     obj = {a1: 2}
-    deepSet(obj, 'a1', 2)
+    assert.isTrue(deepSet(obj, 'a1', 2))
     assert.deepEqual(obj, {a1: 2})
 
     obj = {a1: {b2: 2}}
-    deepSet(obj, 'a1.b2', null)
+    assert.isTrue(deepSet(obj, 'a1.b2', null))
     assert.deepEqual(obj, {a1: {b2: null}})
 
     // add value to object
     obj = {a1: {b1: 1}}
-    deepSet(obj, 'a2', {b3: 3})
+    assert.isTrue(deepSet(obj, 'a2', {b3: 3}))
     assert.deepEqual(obj, {a1: {b1: 1}, a2: {b3: 3}})
 
     obj = {a1: {b2: 2}}
-    deepSet(obj, 'a1.b3', 3)
+    assert.isTrue(deepSet(obj, 'a1.b3', 3))
     assert.deepEqual(obj, {a1: {b2: 2, b3: 3}})
 
     // array
     arr = [1]
-    deepSet(arr, '[0]', 2)
+    assert.isTrue(deepSet(arr, '[0]', 2))
     assert.deepEqual(arr, [2])
 
     arr = [[2]]
-    deepSet(arr, '[0][0]', 3)
+    assert.isTrue(deepSet(arr, '[0][0]', 3))
     assert.deepEqual(arr, [[3]])
 
     arr = [{a1: [{b2: 1}]}]
-    deepSet(arr, '[0].a1[0].b2', 3)
+    assert.isTrue(deepSet(arr, '[0].a1[0].b2', 3))
     assert.deepEqual(arr, [{a1: [{b2: 3}]}])
 
     arr = [[2]]
-    deepSet(arr, '[0][1]', 3)
+    assert.isTrue(deepSet(arr, '[0][1]', 3))
     assert.deepEqual(arr, [[2, 3]])
 
     // undefined
     obj = {a1: {b2: 2}}
-    deepSet(obj, 'a1')
+    assert.isTrue(deepSet(obj, 'a1'))
     assert.deepEqual(obj, {a1: undefined})
 
     arr = [[2]]
-    deepSet(arr, '[0][0]')
+    assert.isTrue(deepSet(arr, '[0][0]'))
     assert.deepEqual(arr, [[undefined]])
 
     // wrong data
@@ -194,7 +195,45 @@ describe('lib/deepManipulate', () => {
   })
 
   it('deepDelete', () => {
-    // TODO: add
+    let obj
+    let arr
+
+    obj = {a: {b: {c: 1}}}
+    assert.isTrue(deepDelete(obj, 'a.b.c'))
+    assert.deepEqual(obj, {a: {b: {}}})
+
+    obj = {a: {b: {c: 1}}}
+    assert.isTrue(deepDelete(obj, 'a.b'))
+    assert.deepEqual(obj, {a: {}})
+
+    arr = [[2]]
+    assert.isTrue(deepDelete(arr, '[0][0]'))
+    assert.deepEqual(arr, [[undefined]])
+
+    arr = [[2]]
+    assert.isTrue(deepDelete(arr, '[0]'))
+    assert.deepEqual(arr, [undefined])
+
+    // wrong paths
+    obj = {a: {b: {c: 1}}}
+    assert.isFalse(deepDelete(obj, 'a.b.d'))
+    assert.deepEqual(obj, {a: {b: {c: 1}}})
+
+    obj = {a: {b: {c: 1}}}
+    assert.isFalse(deepDelete(obj, 'b'))
+    assert.deepEqual(obj, {a: {b: {c: 1}}})
+
+    obj = {a: {b: {c: 1}}}
+    assert.isFalse(deepDelete(obj, 'a.d.c'))
+    assert.deepEqual(obj, {a: {b: {c: 1}}})
+
+    arr = [[2]]
+    assert.isFalse(deepDelete(arr, '[0][1]'))
+    assert.deepEqual(arr, [[2]])
+
+    arr = [[2]]
+    assert.isFalse(deepDelete(arr, '[1][0]'))
+    assert.deepEqual(arr, [[2]])
   })
 
   // it('deepFindObjAsync', () => {

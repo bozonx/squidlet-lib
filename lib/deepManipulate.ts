@@ -1,6 +1,7 @@
 import {trimCharStart} from './strings.js';
 import {cloneDeepArray, isArrayIncludesIndex, lastItem, withoutFirstItem, withoutLastItem} from './arrays.js';
 import {cloneDeepObject} from './deepObjects.js';
+import {strict} from 'assert';
 
 
 const DEEP_PATH_SEPARATOR = '.'
@@ -180,7 +181,6 @@ export function deepSet(
   value?: any
 ): boolean {
   const [parent, paramKey] = deepGetParent(src, pathTo)
-
   // it can be object or array
   if (parent && typeof paramKey !==  'undefined') {
     parent[paramKey] = value
@@ -191,14 +191,25 @@ export function deepSet(
   return false
 }
 
-// TODO: test
+/**
+ * It will delete item from object or array.
+ * In case of array instead of item will be undefined.
+ * @param src
+ * @param pathTo
+ */
 export function deepDelete(
   src?: Record<any, any> | Record<any, any>[],
   pathTo?: string,
-): any {
-  const [parent, lastPathPart] = deepGetParent(src, pathTo)
+): boolean {
+  const [parent, lastPathPart] = deepGetParent(src, pathTo, true)
   // it can be object or array
-  if (parent && typeof lastPathPart !==  'undefined') delete parent[lastPathPart]
+  if (parent && typeof lastPathPart !== 'undefined') {
+    delete parent[lastPathPart]
+
+    return true
+  }
+
+  return false
 }
 
 // TODO: test
