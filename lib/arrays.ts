@@ -9,6 +9,19 @@ import {cloneDeepObject} from './deepObjects.js';
 export const ARRAY_INDEX_SHIFT = 1
 
 
+// TODO: test
+/**
+ * If it is not array - return false
+ * If it is nudefied or null then it returns false
+ * If it is an array then check its length
+ * @param arr
+ */
+export function isEmptyArray(arr?: any[]): boolean {
+  if (!Array.isArray(arr)) return false
+
+  return !arr.length
+}
+
 // TODO: test - не нужно, есть же метод Array.fill()
 // TODO: хотя можно этот сделать error safe
 // TODO: можно добавить установку length

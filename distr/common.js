@@ -1,7 +1,27 @@
 import { isEqualUint8Array } from './binaryHelpers.js';
 import { concatUniqStrArrays } from './arrays.js';
 import { LOG_LEVELS } from './interfaces/Logger.js';
-// TODO: add isEmpty - общий для объектов и массивов
+// TODO: test
+/**
+ * If it is undefined or null then true
+ * If it is an array then check its length
+ * If it is an object then check its keys length
+ * If it is an empty string then true
+ * In other cases: (boolean, 0, number etc) it returns false
+ * @param some
+ */
+export function isEmpty(some) {
+    if (typeof some === 'undefined' || some === null)
+        return true;
+    else if (Array.isArray(some) && !some.length)
+        return true;
+    else if (typeof some === 'object' && !Object.keys(some).length)
+        return true;
+    else if (some === '')
+        return true;
+    // boolean, 0, number, etc
+    return false;
+}
 /**
  * Compare any types and check equality of two values.
  */

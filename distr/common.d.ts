@@ -1,5 +1,14 @@
 import { Logger, LogLevel } from './interfaces/Logger.js';
 /**
+ * If it is undefined or null then true
+ * If it is an array then check its length
+ * If it is an object then check its keys length
+ * If it is an empty string then true
+ * In other cases: (boolean, 0, number etc) it returns false
+ * @param some
+ */
+export declare function isEmpty(some?: any | any[]): boolean;
+/**
  * Compare any types and check equality of two values.
  */
 export declare function isEqual(first: any, second: any): boolean;
