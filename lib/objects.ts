@@ -130,7 +130,6 @@ export function isPlainObject(obj: any): boolean {
 
   return obj.constructor === Object // separate instances (Array, DOM, ...)
     && Object.prototype.toString.call(obj) === '[object Object]' // separate build-in like Math
-    || false
 }
 
 /**

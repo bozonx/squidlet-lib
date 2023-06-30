@@ -100,8 +100,7 @@ export function isPlainObject(obj) {
     if (!obj || Array.isArray(obj) || typeof obj !== 'object')
         return false;
     return obj.constructor === Object // separate instances (Array, DOM, ...)
-        && Object.prototype.toString.call(obj) === '[object Object]' // separate build-in like Math
-        || false;
+        && Object.prototype.toString.call(obj) === '[object Object]'; // separate build-in like Math
 }
 /**
  * Get the first key of value

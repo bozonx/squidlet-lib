@@ -16,7 +16,7 @@ export const ARRAY_INDEX_SHIFT = 1
  * If it is an array then check its length
  * @param arr
  */
-export function isEmptyArray(arr?: any[]): boolean {
+export function isEmptyArray(arr?: any): boolean {
   if (!Array.isArray(arr)) return false
 
   return !arr.length
