@@ -300,7 +300,6 @@ export function deepFindObj(
 }
 
 // TODO: test
-// TODO: add path to handler
 // TODO: как это объединить с deepFindObj ???
 /**
  * Find object by checking its properties.
@@ -331,6 +330,9 @@ export async function deepFindObjAsync(
   else {
     // object
     for (const key of Object.keys(src)) {
+
+      console.log(4444, src, key)
+
       const item = src[key]
       const path = joinDeepPath([initialPath, key])
       // skip class instances in case of onlyPlainObjects

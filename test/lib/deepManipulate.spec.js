@@ -279,8 +279,18 @@ describe('lib/deepManipulate', () => {
     assert.notDeepEqual(clone, obj)
   })
 
-  // it('deepFindObjAsync', () => {
-  //   assert.isUndefined(deepFindObjAsync({}, () => {}))
-  // })
+  it.only('deepFindObjAsync', async () => {
+    assert.deepEqual(
+      await deepFindObjAsync({a: {b: 1}}, (obj, key, path) => {
+
+        console.log(111, obj, key, path)
+
+        if (key === 'b' && obj[key] === 1) return true
+      }),
+      2
+    )
+
+    //assert.isUndefined(deepFindObjAsync({}, () => {}))
+  })
 
 })

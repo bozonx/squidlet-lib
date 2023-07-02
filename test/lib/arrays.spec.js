@@ -15,7 +15,7 @@ describe('lib/arrays', () => {
     // TODO: test arrays and objects
   })
 
-  it.only('arrayDifference', () => {
+  it('arrayDifference', () => {
     assert.deepEqual(arrayDifference([1, 2], [1, 5, 2]), [5])
 
     // TODO: как работает с инстансами классов?
