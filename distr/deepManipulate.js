@@ -1,6 +1,7 @@
 import { trimCharStart } from './strings.js';
 import { cloneDeepArray, isArrayIncludesIndex, lastItem, withoutFirstItem, withoutLastItem } from './arrays.js';
 import { cloneDeepObject } from './deepObjects.js';
+import { isPlainObject } from './objects.js';
 const DEEP_PATH_SEPARATOR = '.';
 export const DONT_GO_DEEPER = Symbol('DONT_GO_DEEPER');
 /**
@@ -178,14 +179,15 @@ export function deepClone(src) {
     return src;
 }
 // TODO: test
-// TODO: ass symbol - dontGoDeeper
 /**
  * Find object by checking its properties
  * @param src
  * @param handler
  * @param initialPath - path to the object in src
+ * @param onlyPlainObjects - default is true. It means skip class instances and
+ *                           process only plain objects
  */
-export function deepFindObj(src, handler, initialPath) {
+export function deepFindObj(src, handler, initialPath, onlyPlainObjects = true) {
     if (!handler || !src || (!Array.isArray(src) && typeof src !== 'object'))
         return;
     if (Array.isArray(src)) {
@@ -201,17 +203,21 @@ export function deepFindObj(src, handler, initialPath) {
     else {
         // object
         for (const key of Object.keys(src)) {
+            const item = src[key];
             const path = joinDeepPath([initialPath, key]);
-            const res = handler(src[key], key, path);
+            // skip class instances in case of onlyPlainObjects
+            if (onlyPlainObjects && !isPlainObject(item))
+                continue;
+            const res = handler(item, key, path);
             // if it shouldn't go deeper than continue
             if (res === DONT_GO_DEEPER)
                 continue;
             // if found
             else if (res)
-                return src[key];
+                return item;
             // else go deeper to each key of object
             else {
-                const deepRes = deepFindObj(src[key], handler, path);
+                const deepRes = deepFindObj(item, handler, path);
                 if (deepRes)
                     return deepRes;
             }
@@ -223,12 +229,14 @@ export function deepFindObj(src, handler, initialPath) {
 // TODO: add path to handler
 // TODO: как это объединить с deepFindObj ???
 /**
- * Find object by checking its properties
+ * Find object by checking its properties.
  * @param src
  * @param handler,
  * @param initialPath - path to the object in src
+ * @param onlyPlainObjects - default is true. It means skip class instances and
+ *                           process only plain objects
  */
-export async function deepFindObjAsync(src, handler, initialPath) {
+export async function deepFindObjAsync(src, handler, initialPath, onlyPlainObjects = true) {
     if (!handler || !src || (!Array.isArray(src) && typeof src !== 'object'))
         return;
     if (Array.isArray(src)) {
@@ -244,17 +252,21 @@ export async function deepFindObjAsync(src, handler, initialPath) {
     else {
         // object
         for (const key of Object.keys(src)) {
+            const item = src[key];
             const path = joinDeepPath([initialPath, key]);
-            const res = await handler(src[key], key, path);
+            // skip class instances in case of onlyPlainObjects
+            if (onlyPlainObjects && !isPlainObject(item))
+                continue;
+            const res = await handler(item, key, path);
             // if it shouldn't go deeper than continue
             if (res === DONT_GO_DEEPER)
                 continue;
             // if found
             else if (res)
-                return src[key];
+                return item;
             // else go deeper to each key of object
             else {
-                const deepRes = deepFindObjAsync(src[key], handler, path);
+                const deepRes = deepFindObjAsync(item, handler, path);
                 if (deepRes)
                     return deepRes;
             }
@@ -268,9 +280,11 @@ export async function deepFindObjAsync(src, handler, initialPath) {
  * @param src
  * @param handler - if returns true-like then the cycle will break
  * @param initialPath - path to the object in src
+ * @param onlyPlainObjects - default is true. It means skip class instances and
+ *                           process only plain objects
  */
-export function deepEachObj(src, handler, initialPath) {
-    deepFindObj(src, handler, initialPath);
+export function deepEachObj(src, handler, initialPath, onlyPlainObjects = true) {
+    deepFindObj(src, handler, initialPath, onlyPlainObjects);
 }
 // TODO: test
 // TODO: както надо объединить с deepEachObj
@@ -279,9 +293,11 @@ export function deepEachObj(src, handler, initialPath) {
  * @param src
  * @param handler - if returns true-like then the cycle will break
  * @param initialPath - path to the object in src
+ * @param onlyPlainObjects - default is true. It means skip class instances and
+ *                           process only plain objects
  */
-export async function deepEachObjAsync(src, handler, initialPath) {
-    await deepFindObjAsync(src, handler, initialPath);
+export async function deepEachObjAsync(src, handler, initialPath, onlyPlainObjects = true) {
+    await deepFindObjAsync(src, handler, initialPath, onlyPlainObjects);
 }
 export function isSameDeep(obj1, obj2) {
     // TODO: поддержка массивов
