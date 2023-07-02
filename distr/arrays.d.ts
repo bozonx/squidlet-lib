@@ -52,6 +52,11 @@ export declare function removeSomeItemsFromArray(arr: any[] | undefined, items: 
  */
 export declare function concatUniqStrArrays(...arrays: string[][]): string[];
 export declare function deduplicate(arr?: any[]): any[];
+/**
+ * Remove keys which are duplicate each other and return only those
+ * keys which are only ones
+ */
+export declare function arrayDifference(...arrs: any[][]): any[];
 export declare function cloneDeepArray(arr?: any[]): any[];
 export declare function stringArrayToNumber(arr: string[]): number[];
 export declare function filterBlackList(allItems: string[], blackList?: string[]): string[];

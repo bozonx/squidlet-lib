@@ -1,4 +1,4 @@
-import {deduplicate} from "../../lib/index.js";
+import {arrayDifference, deduplicate} from "../../lib/index.js";
 
 
 describe('lib/arrays', () => {
@@ -13,6 +13,13 @@ describe('lib/arrays', () => {
     assert.deepEqual(deduplicate(['', '', 1]), ['', 1])
 
     // TODO: test arrays and objects
+  })
+
+  it.only('arrayDifference', () => {
+    assert.deepEqual(arrayDifference([1, 2], [1, 5, 2]), [5])
+
+    // TODO: как работает с инстансами классов?
+    // TODO: как работает с массивами и объектами?
   })
 
 })

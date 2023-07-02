@@ -170,6 +170,36 @@ export function deduplicate(arr) {
     }
     return result;
 }
+// TODO: доделать test
+/**
+ * Remove keys which are duplicate each other and return only those
+ * keys which are only ones
+ */
+export function arrayDifference(...arrs) {
+    const uniqueValues = [];
+    const valuesIntersections = [];
+    for (const arr of arrs) {
+        if (!Array.isArray(arr))
+            continue;
+        for (const item of arr) {
+            const resItemIndex = uniqueValues.indexOf(item);
+            if (resItemIndex === -1) {
+                // new value
+                uniqueValues.push(item);
+                valuesIntersections[uniqueValues.length - 1] = 1;
+            }
+            else {
+                // found duplicate
+                valuesIntersections[resItemIndex] = valuesIntersections[resItemIndex] + 1;
+            }
+        }
+    }
+    // select only those which have only one includes
+    return uniqueValues.filter((item, index) => {
+        if (valuesIntersections[index] === 1)
+            return true;
+    });
+}
 export function cloneDeepArray(arr) {
     if (!arr)
         return [];
