@@ -432,12 +432,12 @@ export function deepMerge(
     const result: Record<any, any> = {}
 
     for (const key of keys) {
+      // we use includes here to  overwrite undefined values in top
       result[key] = (topKeys.includes(key)) ? top[key] : bottom[key]
     }
 
     return result
   }
-  else {
-    return (typeof top === 'undefined') ? bottom : top
-  }
+  // else if values aren't arrays and objects then try to get top value otherwise bottom
+  return (typeof top === 'undefined') ? bottom : top
 }

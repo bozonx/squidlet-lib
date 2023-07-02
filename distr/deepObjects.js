@@ -1,5 +1,6 @@
 import { cloneDeepArray } from './arrays.js';
 import { isPlainObject } from './objects.js';
+// TODO: да наверное не особо нужно - есть deepMerge()
 // TODO: review and review tests
 // TODO: move to object.ts
 /**

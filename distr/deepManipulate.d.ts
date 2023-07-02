@@ -75,3 +75,14 @@ export declare function deepEachObj(src?: Record<any, any> | Record<any, any>[],
  */
 export declare function deepEachObjAsync(src?: Record<any, any> | Record<any, any>[], handler?: (obj: Record<any, any>, key: string | number, path: string) => void, initialPath?: string, onlyPlainObjects?: boolean): Promise<void>;
 export declare function isSameDeep(obj1?: any, obj2?: any): boolean;
+/**
+ * Merge 2 values with can be a simple value or object or array.
+ * Keep in mind that it doesn't go into class instances.
+ * If top is simple value of class instance then top will be get
+ * If top and bottom are arrays or plain objects then they will be merged
+ *   with priority ob top
+ * If top and bottom have different types then top will be get
+ * @param top value of this object will overwrite the bottom value
+ * @param bottom value of this object will be overwritten by top value
+ */
+export declare function deepMerge(top: any | any[], bottom: any | any[]): any | any[];
