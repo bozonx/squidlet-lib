@@ -29,7 +29,15 @@ export declare function deepGet(src?: Record<any, any> | Record<any, any>[], pat
  */
 export declare function deepGetParent(src?: Record<any, any> | Record<any, any>[], pathTo?: string, strict?: boolean): [any, string | number, string] | [];
 export declare function deepHas(src?: Record<any, any> | Record<any, any>[], pathTo?: string): boolean;
-export declare function deepSet(src?: Record<any, any> | Record<any, any>[], pathTo?: string, value?: any): boolean;
+/**
+ * Set value deeply.
+ * If path does not exist then it will create objects and arrays according this path
+ * If value is undefined then the undefined will be set
+ * @param src
+ * @param pathTo
+ * @param value
+ */
+export declare function deepSet(src?: any | any[], pathTo?: string, value?: any): boolean;
 /**
  * It will delete item from object or array.
  * In case of array instead of item will be undefined.

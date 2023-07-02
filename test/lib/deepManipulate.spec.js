@@ -143,7 +143,7 @@ describe('lib/deepManipulate', () => {
     assert.isFalse(deepHas(false, null))
   })
 
-  it.only('deepSet', () => {
+  it('deepSet', () => {
     let obj
     let arr
     // object
@@ -195,16 +195,35 @@ describe('lib/deepManipulate', () => {
     assert.doesNotThrow(() => deepSet(5, 5))
   })
 
-  it.only('deepSet - set deep to empty object or array', () => {
-
-    // TODO: set set undefined
-
+  it('deepSet - set deep to empty object or array', () => {
     let obj
     let arr
     // object
     obj = {}
     assert.isTrue(deepSet(obj, 'a.aa', 2))
     assert.deepEqual(obj, {a: {aa: 2}})
+    obj = {}
+    assert.isTrue(deepSet(obj, 'a[0].b', 2))
+    assert.deepEqual(obj, {a: [{b: 2}]})
+    obj = {}
+    assert.isTrue(deepSet(obj, 'a[0].b[1]'))
+    assert.deepEqual(obj, {a: [{b: [undefined, undefined]}]})
+    obj = {}
+    assert.isTrue(deepSet(obj, 'a'))
+    assert.deepEqual(obj, {a: undefined})
+    // arr
+    arr = []
+    assert.isTrue(deepSet(arr, '[0].a', 2))
+    assert.deepEqual(arr, [{a: 2}])
+    arr = []
+    assert.isTrue(deepSet(arr, '[0][0].a', 2))
+    assert.deepEqual(arr, [[{a: 2}]])
+    arr = []
+    assert.isTrue(deepSet(arr, '[0][1].a', 2))
+    assert.deepEqual(arr, [[undefined, {a: 2}]])
+    arr = []
+    assert.isTrue(deepSet(arr, '[0][1]', 2))
+    assert.deepEqual(arr, [[undefined, 2]])
   })
 
   it('deepDelete', () => {

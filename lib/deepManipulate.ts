@@ -203,6 +203,10 @@ export function deepSet(src?: any | any[], pathTo?: string, value?: any): boolea
   if (splatPath.length > 1) {
     // has child
     const childPath = joinDeepPath(withoutFirstItem(splatPath))
+
+    if (typeof src[currentKey] === 'undefined') {
+      src[currentKey] = (typeof splatPath[1] === 'number') ? [] : {}
+    }
     // go deeper
     return deepSet(src[currentKey], childPath, value)
   }

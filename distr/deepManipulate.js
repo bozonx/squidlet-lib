@@ -145,14 +145,36 @@ export function deepHas(src, pathTo) {
     const [, paramKey] = deepGetParent(src, pathTo, true);
     return typeof paramKey !== 'undefined';
 }
+/**
+ * Set value deeply.
+ * If path does not exist then it will create objects and arrays according this path
+ * If value is undefined then the undefined will be set
+ * @param src
+ * @param pathTo
+ * @param value
+ */
 export function deepSet(src, pathTo, value) {
-    const [parent, paramKey] = deepGetParent(src, pathTo);
-    // it can be object or array
-    if (parent && typeof paramKey !== 'undefined') {
-        parent[paramKey] = value;
-        return true;
+    if (!src || (!Array.isArray(src) && typeof src !== 'object'))
+        return false;
+    else if (typeof pathTo !== 'string' || !pathTo)
+        return false;
+    const splatPath = splitDeepPath(pathTo);
+    const currentKey = splatPath[0];
+    // something went wrong in this case
+    if (typeof currentKey === 'undefined')
+        return false;
+    if (splatPath.length > 1) {
+        // has child
+        const childPath = joinDeepPath(withoutFirstItem(splatPath));
+        if (typeof src[currentKey] === 'undefined') {
+            src[currentKey] = (typeof splatPath[1] === 'number') ? [] : {};
+        }
+        // go deeper
+        return deepSet(src[currentKey], childPath, value);
     }
-    return false;
+    // else this is the plain root - just set value
+    src[currentKey] = value;
+    return true;
 }
 /**
  * It will delete item from object or array.
