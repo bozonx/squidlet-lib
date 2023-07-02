@@ -183,20 +183,33 @@ export function deepHas(src?: Record<any, any> | Record<any, any>[], pathTo?: st
   return typeof paramKey !== 'undefined'
 }
 
-export function deepSet(
-  src?: Record<any, any> | Record<any, any>[],
-  pathTo?: string,
-  value?: any
-): boolean {
-  const [parent, paramKey] = deepGetParent(src, pathTo)
-  // it can be object or array
-  if (parent && typeof paramKey !==  'undefined') {
-    parent[paramKey] = value
+/**
+ * Set value deeply.
+ * If path does not exist then it will create objects and arrays according this path
+ * If value is undefined then the undefined will be set
+ * @param src
+ * @param pathTo
+ * @param value
+ */
+export function deepSet(src?: any | any[], pathTo?: string, value?: any): boolean {
+  if (!src || (!Array.isArray(src) && typeof src !== 'object')) return false
+  else if (typeof pathTo !== 'string' || !pathTo) return false
 
-    return true
+  const splatPath = splitDeepPath(pathTo)
+  const currentKey: string | number | undefined = splatPath[0]
+  // something went wrong in this case
+  if (typeof currentKey === 'undefined') return false
+
+  if (splatPath.length > 1) {
+    // has child
+    const childPath = joinDeepPath(withoutFirstItem(splatPath))
+    // go deeper
+    return deepSet(src[currentKey], childPath, value)
   }
+  // else this is the plain root - just set value
+  src[currentKey] = value
 
-  return false
+  return true
 }
 
 /**
