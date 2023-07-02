@@ -1,5 +1,12 @@
 import {trimCharStart} from './strings.js';
-import {cloneDeepArray, isArrayIncludesIndex, lastItem, withoutFirstItem, withoutLastItem} from './arrays.js';
+import {
+  cloneDeepArray, concatUniqStrArrays,
+  deduplicate,
+  isArrayIncludesIndex,
+  lastItem,
+  withoutFirstItem,
+  withoutLastItem
+} from './arrays.js';
 import {cloneDeepObject} from './deepObjects.js';
 import {isPlainObject} from './objects.js';
 
@@ -258,7 +265,7 @@ export function deepFindObj(
       const path = joinDeepPath([initialPath, key])
       // skip class instances in case of onlyPlainObjects
       if (onlyPlainObjects && !isPlainObject(item)) continue
-      
+
       const res = handler(item, key, path)
       // if it shouldn't go deeper than continue
       if (res === DONT_GO_DEEPER) continue
@@ -390,4 +397,47 @@ export function isSameDeep(obj1?: any, obj2?: any): boolean {
   }
 
   return true
+}
+
+// TODO: test
+// TODO: optimize
+/**
+ * Merge 2 values with can be a simple value or object or array.
+ * Keep in mind that it doesn't go into class instances.
+ * If top is simple value of class instance then top will be get
+ * If top and bottom are arrays or plain objects then they will be merged
+ *   with priority ob top
+ * If top and bottom have different types then top will be get
+ * @param top value of this object will overwrite the bottom value
+ * @param bottom value of this object will be overwritten by top value
+ */
+export function deepMerge(
+  top: any | any[],
+  bottom: any | any[]
+): any | any[] {
+  if (Array.isArray(top) && Array.isArray(bottom)) {
+    // do merge if both values are arrays
+    const length = Math.max(bottom.length, top.length)
+    // go deeper into each item of both arrays
+    return new Array(length).fill(false)
+      .map((val, index) => deepMerge(top[index], bottom[index]))
+  }
+  else if (isPlainObject(top) && isPlainObject(bottom)) {
+    // do merge if both values are objects
+    const topKeys = Object.keys(top)
+
+    // TODO: тут смешается порядок ключей - может можно более тонко сделать чем sort
+
+    const keys = concatUniqStrArrays(topKeys, Object.keys(bottom)).sort()
+    const result: Record<any, any> = {}
+
+    for (const key of keys) {
+      result[key] = (topKeys.includes(key)) ? top[key] : bottom[key]
+    }
+
+    return result
+  }
+  else {
+    return (typeof top === 'undefined') ? bottom : top
+  }
 }
