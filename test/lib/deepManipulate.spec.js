@@ -7,6 +7,7 @@ import {
   deepSet,
   joinDeepPath,
   splitDeepPath,
+  deepFindObj,
 } from '../../lib/deepManipulate.js'
 
 
@@ -277,6 +278,60 @@ describe('lib/deepManipulate', () => {
     deepSet(clone, 'a[0].c', 2)
 
     assert.notDeepEqual(clone, obj)
+  })
+
+  it.only('deepFindObj', () => {
+    let count = 0
+
+    assert.deepEqual(
+      deepFindObj({a: {b: {c: 1}}}, (obj, key, path) => {
+        if (key === 'a') {
+          count++
+          assert.equal(path, 'a')
+        }
+        else if (key === 'b') {
+          count++
+          assert.equal(path, 'a.b')
+
+          return true
+        }
+      }),
+      {c: 1}
+    )
+    assert.equal(count, 2)
+
+    count = 0
+    assert.deepEqual(
+      deepFindObj([{a: {b: 1}}], (obj, key, path) => {
+        if (key === 0) {
+          count++
+          assert.equal(path, '[0]')
+        }
+        else if (key === 'a') {
+          count++
+          assert.equal(path, '[0].a')
+
+          return true
+        }
+      }),
+      {b: 1}
+    )
+    assert.equal(count, 2)
+
+    count = 0
+    assert.deepEqual(
+      deepFindObj([{a: ['b']}], (obj, key, path) => {
+        if (key === 0) {
+          count++
+          assert.equal(key, 0)
+          assert.equal(path, '[0]')
+
+          return true
+        }
+      }),
+      {a: ['b']}
+    )
+    assert.equal(count, 1)
   })
 
   it.only('deepFindObjAsync', async () => {
