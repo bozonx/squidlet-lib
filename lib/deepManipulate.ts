@@ -322,19 +322,13 @@ export async function deepFindObjAsync(
     for (const key of src.keys()) {
       const item = src[key]
       const path = joinDeepPath([initialPath, key])
-      const res = deepFindObjAsync(item, handler, path)
 
-      if (res) return res
-    }
-  }
-  else {
-    // object
-    for (const key of Object.keys(src)) {
+      console.log(333, src, item, key, initialPath, path)
 
-      console.log(4444, src, key)
+      // const res = deepFindObjAsync(item, handler, path)
+      //
+      // if (res) return res
 
-      const item = src[key]
-      const path = joinDeepPath([initialPath, key])
       // skip class instances in case of onlyPlainObjects
       if (onlyPlainObjects && !isPlainObject(item)) continue
 
@@ -345,7 +339,31 @@ export async function deepFindObjAsync(
       else if (res) return item
       // else go deeper to each key of object
       else {
-        const deepRes = deepFindObjAsync(item, handler, path)
+        const deepRes = await deepFindObjAsync(item, handler, path)
+
+        if (deepRes) return deepRes
+      }
+    }
+  }
+  else {
+    // object
+    for (const key of Object.keys(src)) {
+      const item = src[key]
+      const path = joinDeepPath([initialPath, key])
+
+      console.log(4444, src, item, key, initialPath, path)
+
+      // skip class instances in case of onlyPlainObjects
+      if (onlyPlainObjects && !isPlainObject(item)) continue
+
+      const res = await handler(item, key, path)
+      // if it shouldn't go deeper than continue
+      if (res === DONT_GO_DEEPER) continue
+      // if found
+      else if (res) return item
+      // else go deeper to each key of object
+      else {
+        const deepRes = await deepFindObjAsync(item, handler, path)
 
         if (deepRes) return deepRes
       }

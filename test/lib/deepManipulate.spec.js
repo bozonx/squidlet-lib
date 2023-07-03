@@ -280,17 +280,57 @@ describe('lib/deepManipulate', () => {
   })
 
   it.only('deepFindObjAsync', async () => {
+    let count = 0
+
     assert.deepEqual(
-      await deepFindObjAsync({a: {b: 1}}, (obj, key, path) => {
+      await deepFindObjAsync({a: {b: {c: 1}}}, (obj, key, path) => {
+        if (key === 'a') {
+          count++
+          assert.equal(path, 'a')
+        }
+        else if (key === 'b') {
+          count++
+          assert.equal(path, 'a.b')
 
-        console.log(111, obj, key, path)
-
-        if (key === 'b' && obj[key] === 1) return true
+          return true
+        }
       }),
-      2
+      {c: 1}
     )
+    assert.equal(count, 2)
 
-    //assert.isUndefined(deepFindObjAsync({}, () => {}))
+    count = 0
+    assert.deepEqual(
+      await deepFindObjAsync([{a: {b: 1}}], (obj, key, path) => {
+        if (key === 0) {
+          count++
+          assert.equal(path, '[0]')
+        }
+        else if (key === 'a') {
+          count++
+          assert.equal(path, '[0].a')
+
+          return true
+        }
+      }),
+      {b: 1}
+    )
+    assert.equal(count, 2)
+
+    count = 0
+    assert.deepEqual(
+      await deepFindObjAsync([{a: ['b']}], (obj, key, path) => {
+        if (key === 0) {
+          count++
+          assert.equal(key, 0)
+          assert.equal(path, '[0]')
+
+          return true
+        }
+      }),
+      {a: ['b']}
+    )
+    assert.equal(count, 1)
   })
 
 })
