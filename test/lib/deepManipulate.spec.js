@@ -280,7 +280,7 @@ describe('lib/deepManipulate', () => {
     assert.notDeepEqual(clone, obj)
   })
 
-  it.only('deepFindObj', () => {
+  it('deepFindObj', () => {
     let count = 0
 
     assert.deepEqual(
@@ -350,7 +350,7 @@ describe('lib/deepManipulate', () => {
     assert.equal(count, 2)
   })
 
-  it.only('deepFindObjAsync', async () => {
+  it('deepFindObjAsync', async () => {
     let count = 0
 
     assert.deepEqual(
@@ -420,7 +420,7 @@ describe('lib/deepManipulate', () => {
     assert.equal(count, 2)
   })
 
-  it.only('deepEachObj', () => {
+  it('deepEachObj', () => {
     let count = 0
     assert.isUndefined(
       deepEachObj({a: {b: {c: 1}}, a2: {b2: 1}}, (obj, key, path) => {
@@ -437,7 +437,7 @@ describe('lib/deepManipulate', () => {
     assert.equal(count, 2)
   })
 
-  it.only('deepEachObjAsync', async () => {
+  it('deepEachObjAsync', async () => {
     let count = 0
     assert.isUndefined(
       await deepEachObjAsync({a: {b: {c: 1}}, a2: {b2: 1}}, (obj, key, path) => {
@@ -452,6 +452,10 @@ describe('lib/deepManipulate', () => {
       })
     )
     assert.equal(count, 2)
+  })
+
+  it.only('deepEachObj', () => {
+
   })
 
 })

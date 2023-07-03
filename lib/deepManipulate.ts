@@ -2,7 +2,6 @@ import {trimCharStart} from './strings.js';
 import {
   arrayKeys,
   cloneDeepArray, concatUniqStrArrays,
-  deduplicate,
   isArrayIncludesIndex,
   lastItem,
   withoutFirstItem,
@@ -366,32 +365,6 @@ export async function deepEachObjAsync(
   await deepFindObjAsync(src, handler, initialPath, onlyPlainObjects)
 }
 
-export function isSameDeep(obj1?: any, obj2?: any): boolean {
-
-  // TODO: поддержка массивов
-
-  if (obj1 === obj2) return true
-  else if (!obj1 || !obj2 || typeof obj1 !== 'object' || typeof obj2 !== 'object') return false
-  else if (!Object.keys(obj1).length) return false
-  else if (Object.keys(obj1).length !== Object.keys(obj2).length) return false
-
-  for (const [key, value] of Object.entries(obj1)) {
-    // TODO: use isPlainObject
-    if (value && typeof value === 'object' && typeof obj2[key] === 'object') {
-      const res = isSameDeep(value, obj2[key])
-
-      if (!res) return false
-      // if true then continue
-    }
-    else {
-      if (obj1[key] !== obj2[key]) return false
-      // the just continue
-    }
-  }
-
-  return true
-}
-
 // TODO: test
 // TODO: optimize
 /**
@@ -433,4 +406,31 @@ export function deepMerge(
   }
   // else if values aren't arrays and objects then try to get top value otherwise bottom
   return (typeof top === 'undefined') ? bottom : top
+}
+
+// TODO: test
+export function isSameDeep(obj1?: any, obj2?: any): boolean {
+
+  // TODO: поддержка массивов
+
+  if (obj1 === obj2) return true
+  else if (!obj1 || !obj2 || typeof obj1 !== 'object' || typeof obj2 !== 'object') return false
+  else if (!Object.keys(obj1).length) return false
+  else if (Object.keys(obj1).length !== Object.keys(obj2).length) return false
+
+  for (const [key, value] of Object.entries(obj1)) {
+    // TODO: use isPlainObject
+    if (value && typeof value === 'object' && typeof obj2[key] === 'object') {
+      const res = isSameDeep(value, obj2[key])
+
+      if (!res) return false
+      // if true then continue
+    }
+    else {
+      if (obj1[key] !== obj2[key]) return false
+      // the just continue
+    }
+  }
+
+  return true
 }
