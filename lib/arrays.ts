@@ -71,32 +71,6 @@ export function isLastIndex(arr: any[], currentIndex: number | string): boolean 
   return (arr.length - ARRAY_INDEX_SHIFT) === Number(currentIndex)
 }
 
-/**
- * Make a new array which contains items which are different in samples.
- * Examples:
- * * [1,4], [1,2,3] => [4]
- * * [1,3], [1,2,3] => []
- * WARNING: be careful with choosing between testArr and samples
- * @param testArr - array to check, we not sure about it.
- * @param samples - means all the available values
- */
-export function arraysDifference(testArr: any[], samples: any[]): any[] {
-  if (typeof testArr === 'undefined' || !testArr.length) return [];
-  else if (typeof samples === 'undefined' || !samples.length) return testArr;
-
-  const diffArr: any[] = [];
-
-  for (let item of testArr) {
-    if (typeof item === 'undefined') continue;
-
-    if (samples.indexOf(item) === -1) {
-      diffArr.push(item);
-    }
-  }
-
-  return diffArr;
-}
-
 export function compactUndefined(arr: any[]): any[] {
   return arr.filter((item) => typeof item !== 'undefined');
 }
@@ -202,6 +176,34 @@ export function deduplicate(arr?: any[]): any[] {
 
   return result
 }
+
+
+// TODO: это чё за хуйн???
+/**
+ * Make a new array which contains items which are different in samples.
+ * Examples:
+ * * [1,4], [1,2,3] => [4]
+ * * [1,3], [1,2,3] => []
+ * WARNING: be careful with choosing between testArr and samples
+ * @param testArr - array to check, we not sure about it.
+ * @param samples - means all the available values
+ */
+// export function arraysDifference(testArr: any[], samples: any[]): any[] {
+//   if (typeof testArr === 'undefined' || !testArr.length) return [];
+//   else if (typeof samples === 'undefined' || !samples.length) return testArr;
+//
+//   const diffArr: any[] = [];
+//
+//   for (let item of testArr) {
+//     if (typeof item === 'undefined') continue;
+//
+//     if (samples.indexOf(item) === -1) {
+//       diffArr.push(item);
+//     }
+//   }
+//
+//   return diffArr;
+// }
 
 // TODO: доделать test
 /**

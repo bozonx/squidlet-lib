@@ -7,7 +7,7 @@ import {
   deepSet,
   joinDeepPath,
   splitDeepPath,
-  deepFindObj, DONT_GO_DEEPER, deepEachObjAsync, deepEachObj, deepMerge,
+  deepFindObj, DONT_GO_DEEPER, deepEachObjAsync, deepEachObj, deepMerge, isSameDeep,
 } from '../../lib/deepManipulate.js'
 
 
@@ -511,6 +511,41 @@ describe('lib/deepManipulate', () => {
       Object.keys(deepMerge({c: 1, a: 1}, {b: 1})),
       ['b', 'c', 'a']
     )
+  })
+
+  it.only('isSameDeep', () => {
+    // simple cases
+    assert.isTrue(isSameDeep({}, {}))
+    assert.isTrue(isSameDeep([], []))
+    assert.isTrue(isSameDeep([1], [1]))
+    assert.isFalse(isSameDeep([1], [2]))
+    assert.isFalse(isSameDeep([1], []))
+    assert.isFalse(isSameDeep([1], 1))
+    assert.isFalse(isSameDeep([], 1))
+    assert.isFalse(isSameDeep({}, 1))
+    assert.isFalse(isSameDeep({}))
+    assert.isFalse(isSameDeep(undefined, {}))
+    assert.isFalse(isSameDeep([]))
+    assert.isFalse(isSameDeep(undefined, []))
+    assert.isTrue(isSameDeep(undefined, undefined))
+    assert.isFalse(isSameDeep(null, undefined))
+    assert.isTrue(isSameDeep(null, null))
+    assert.isTrue(isSameDeep(1, 1))
+    assert.isFalse(isSameDeep(1, 0))
+    assert.isFalse(isSameDeep(1, '1'))
+    assert.isFalse(isSameDeep(0, false))
+    assert.isTrue(isSameDeep(false, false))
+    assert.isFalse(isSameDeep('false', false))
+    assert.isFalse(isSameDeep('', undefined))
+    assert.isFalse(isSameDeep(0, undefined))
+    // in objects
+    assert.isTrue(isSameDeep({a: 1}, {a: 1}))
+    assert.isFalse(isSameDeep({a: 1}, {b: 1}))
+    // in arrays
+
+    // deep
+
+    // TODO: class instances
   })
 
 })
