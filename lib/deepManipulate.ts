@@ -1,6 +1,5 @@
 import {trimCharStart} from './strings.js';
 import {
-  arrayDifference,
   arrayKeys,
   cloneDeepArray, concatUniqStrArrays,
   isArrayIncludesIndex,
@@ -427,7 +426,7 @@ export function deepMerge(
 }
 
 /**
- * Check two items
+ * Check two items. Try to find at least one difference
  * * if they are some simple values then just compare them
  * * if they are class instances - compare if they are the same instance
  * * if they are arrays - compare arrays deeply
@@ -436,14 +435,18 @@ export function deepMerge(
  * @param some2
  */
 export function isSameDeep(some1?: any, some2?: any): boolean {
-  // check simple types
-  if (some1 === some2) return true
-  else if (Array.isArray(some1) && Array.isArray(some2)) {
+  if (Array.isArray(some1) && Array.isArray(some2)) {
     // check arrays
     if (!some1.length && !some2.length) return true
-    else if (some1.length !== some1.length) return false
+    else if (some1.length !== some2.length) return false
+    // count of keys the same
+    for (const key of some1.keys()) {
+      const res = isSameDeep(some1[key], some2[key])
+      // if false - we found the difference. else go further
+      if (!res) return false
+    }
 
-    // TODO: поддержка массивов
+    return true
   }
   else if (isPlainObject(some1) && isPlainObject(some2)) {
     // check plain objects
@@ -453,24 +456,15 @@ export function isSameDeep(some1?: any, some2?: any): boolean {
     if (!keys1.length && !keys2.length) return true
     else if (keys1.length !== keys2.length) return false
     // count of keys the same
-    for (const [key, value] of Object.entries(some1)) {
-      // TODO: use isPlainObject
-      if (value && typeof value === 'object' && typeof some2[key] === 'object') {
-        const res = isSameDeep(value, some2[key])
-
-        if (!res) return false
-        // if true then continue
-      }
-      else {
-        if (some1[key] !== some2[key]) return false
-        // the just continue
-      }
+    for (const key of keys1) {
+      const res = isSameDeep(some1[key], some2[key])
+      // if false - we found the difference. else go further
+      if (!res) return false
     }
+
+    return true
   }
-
-  // else if (!obj1 || !obj2 || typeof obj1 !== 'object' || typeof obj2 !== 'object') return false
-  // else if (!Object.keys(obj1).length) return false
-  // else if (Object.keys(obj1).length !== Object.keys(obj2).length) return false
-
-  return false
+  else if (Number.isNaN(some1) && Number.isNaN(some2)) return true
+  // check simple types and class instances
+  return some1 === some2
 }

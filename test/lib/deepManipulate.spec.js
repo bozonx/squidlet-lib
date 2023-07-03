@@ -538,14 +538,39 @@ describe('lib/deepManipulate', () => {
     assert.isFalse(isSameDeep('false', false))
     assert.isFalse(isSameDeep('', undefined))
     assert.isFalse(isSameDeep(0, undefined))
+    // NaN
+    assert.isFalse(isSameDeep(undefined, NaN))
+    assert.isFalse(isSameDeep(0, NaN))
+    assert.isFalse(isSameDeep(null, NaN))
+    assert.isTrue(isSameDeep(NaN, NaN))
     // in objects
     assert.isTrue(isSameDeep({a: 1}, {a: 1}))
     assert.isFalse(isSameDeep({a: 1}, {b: 1}))
+    assert.isTrue(isSameDeep({a: {b: {c: 1}}}, {a: {b: {c: 1}}}))
+    assert.isFalse(isSameDeep({a: {b: {c: 1}}}, {a: {b: {c: 2}}}))
+    assert.isFalse(isSameDeep({a: {b: {c: 1}}}, {a: {B: {c: 1}}}))
     // in arrays
-
-    // deep
-
-    // TODO: class instances
+    assert.isTrue(isSameDeep([[1]], [[1]]))
+    assert.isFalse(isSameDeep([[1]], [[2]]))
+    assert.isFalse(isSameDeep([[1]], [[1,2]]))
+    assert.isFalse(isSameDeep([[1]], [undefined,[1]]))
+    assert.isFalse(isSameDeep([[undefined]], [[null]]))
+    assert.isTrue(isSameDeep([[undefined]], [[undefined]]))
+    assert.isTrue(isSameDeep([{a: [1]}], [{a: [1]}]))
+    assert.isFalse(isSameDeep([{a: [1]}], [{a: [2]}]))
+    assert.isFalse(isSameDeep([{a: [1]}], [{a: [1]}, undefined]))
+    // class instances
+    class cl1 {}
+    class cl2 {}
+    const cli1 = new cl1()
+    const cli2 = new cl2()
+    assert.isTrue(isSameDeep(cli1, cli1))
+    assert.isFalse(isSameDeep(cli1, cl1))
+    assert.isFalse(isSameDeep(cli1, cli2))
+    assert.isTrue(isSameDeep({a: cli1}, {a: cli1}))
+    assert.isFalse(isSameDeep({a: cli1}, {a: cli2}))
+    assert.isTrue(isSameDeep([cli1], [cli1]))
+    assert.isFalse(isSameDeep([cli1], [cli2]))
   })
 
 })
