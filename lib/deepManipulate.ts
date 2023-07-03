@@ -387,15 +387,18 @@ export function deepMerge(
     const res: any[] = []
 
     for (let i = 0; i < length; i++) {
+      let resolvedValue: any | undefined
+
       if (i > top.length - 1) {
-        res.push(bottom[i])
+        resolvedValue = bottom[i]
       }
-      else {
-        // if top value is explicitly undefined then set undefined
-        if (typeof top[i] === 'undefined') res.push(undefined)
-        // else do merge of top and bottom items
-        else res.push(deepMerge(top[i], bottom[i]))
+      else if (typeof top[i] !== 'undefined') {
+        // else top is defined do merge of top and bottom items
+        resolvedValue = deepMerge(top[i], bottom[i])
       }
+      // else if top value is explicitly undefined then set undefined
+
+      res.push(resolvedValue)
     }
 
     return res
