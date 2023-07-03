@@ -368,6 +368,9 @@ export async function deepEachObjAsync(
 /**
  * Merge 2 values with can be a simple value or object or array.
  * Keep in mind that it doesn't go into class instances - they will be copied from top.
+ * Also keep in mind that order of keys in objects will be bottom first,
+ *   after them are top keys
+ * In array top will always replace bottom keys including undefined ones
  * Be careful with undefined - in arrays and objects it will be gotten from top,
  *   but if it is a top is undefined then bottom will be gotten.
  * If top is simple value of class instance then top will be get
@@ -406,10 +409,7 @@ export function deepMerge(
   else if (isPlainObject(top) && isPlainObject(bottom)) {
     // do merge if both values are objects
     const topKeys = Object.keys(top)
-
-    // TODO: тут смешается порядок ключей - может можно более тонко сделать чем sort
-
-    const keys = concatUniqStrArrays(topKeys, Object.keys(bottom)).sort()
+    const keys = concatUniqStrArrays(Object.keys(bottom), topKeys)
     const result: Record<any, any> = {}
 
     for (const key of keys) {

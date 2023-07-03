@@ -454,7 +454,7 @@ describe('lib/deepManipulate', () => {
     assert.equal(count, 2)
   })
 
-  it.only('deepMerge', () => {
+  it('deepMerge', () => {
     // objects
     assert.deepEqual(
       deepMerge({a1: {b1: 5}}, {a1: {b1: 1, b2: 1}, a2: 1}),
@@ -506,8 +506,11 @@ describe('lib/deepManipulate', () => {
     assert.deepEqual(deepMerge({a: {b: 1}}, {a: cli}), {a: {b: 1}})
     assert.deepEqual(deepMerge([cli], [{a: 1}]), [cli])
     assert.deepEqual(deepMerge([{a: 1}], [cli]), [{a: 1}])
-
-    // TODO: смещение порядка ключей в объектах
+    // key order in object - bottom first
+    assert.deepEqual(
+      Object.keys(deepMerge({c: 1, a: 1}, {b: 1})),
+      ['b', 'c', 'a']
+    )
   })
 
 })
