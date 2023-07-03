@@ -176,7 +176,7 @@ export function removeSomeItemsFromArray(arr: any[] | undefined, items: any[]): 
 
 /**
  * Concat arrays and remove duplicates.
- * This is much faster than concatUniqArrays
+ * This is much faster than deduplicate
  */
 export function concatUniqStrArrays(...arrays: string[][]): string[] {
   const result: {[index: string]: true} = {};

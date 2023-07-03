@@ -9,7 +9,6 @@ import {
 } from './arrays.js';
 import {cloneDeepObject} from './deepObjects.js';
 import {isPlainObject} from './objects.js';
-import {type} from 'os';
 
 
 const DEEP_PATH_SEPARATOR = '.'
@@ -369,6 +368,8 @@ export async function deepEachObjAsync(
 /**
  * Merge 2 values with can be a simple value or object or array.
  * Keep in mind that it doesn't go into class instances - they will be copied from top.
+ * Be carresul with undefined - in arrays it will be gotten from top, but if it is
+ *   a top is undefined then bottom will be gotten.
  * If top is simple value of class instance then top will be get
  * If top and bottom are arrays or plain objects then they will be merged
  *   with priority ob top
