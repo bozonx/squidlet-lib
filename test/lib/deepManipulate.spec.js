@@ -7,7 +7,7 @@ import {
   deepSet,
   joinDeepPath,
   splitDeepPath,
-  deepFindObj, DONT_GO_DEEPER, deepEachObjAsync, deepEachObj,
+  deepFindObj, DONT_GO_DEEPER, deepEachObjAsync, deepEachObj, deepMerge,
 } from '../../lib/deepManipulate.js'
 
 
@@ -454,8 +454,11 @@ describe('lib/deepManipulate', () => {
     assert.equal(count, 2)
   })
 
-  it.only('deepEachObj', () => {
-
+  it.only('deepMerge', () => {
+    assert.deepEqual(
+      deepMerge({a1: {b1: 5}}, {a1: {b1: 1, b2: 1}, a2: 1}),
+      {a1: {b1: 5, b2: 1}, a2: 1}
+    )
   })
 
 })
