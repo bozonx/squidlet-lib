@@ -455,10 +455,33 @@ describe('lib/deepManipulate', () => {
   })
 
   it.only('deepMerge', () => {
+    // objects
     assert.deepEqual(
       deepMerge({a1: {b1: 5}}, {a1: {b1: 1, b2: 1}, a2: 1}),
       {a1: {b1: 5, b2: 1}, a2: 1}
     )
+    assert.deepEqual(
+      deepMerge({a1: {b1: {c1: 5}}}, {a1: {b1: 1, b2: 1}, a2: 1}),
+      {a1: {b1: {c1: 5}, b2: 1}, a2: 1}
+    )
+    assert.deepEqual(
+      deepMerge({a1: {b1: {c1: 5, c3: 5}}}, {a1: {b1: {c1: 1, c2: 1}}}),
+      {a1: {b1: {c1: 5, c2: 1, c3: 5}}}
+    )
+    // arrays
+    assert.deepEqual(
+      deepMerge([{a1: [5]}], [{a1: [1,1], b2: 1}]),
+      [{a1: [5, 1], b2: 1}]
+    )
+    assert.deepEqual(
+      deepMerge([{a1: [undefined, 5]}], [{a1: [1, 1]}]),
+      [{a1: [undefined, 5]}]
+    )
+
+    // TODO: test mixed arrays and objects
+    // TODO: а если значение явно указанно как undefined в объекте?
+    // TODO: test wrond values
+    // TODO: test class inheritances
   })
 
 })

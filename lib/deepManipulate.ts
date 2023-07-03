@@ -9,6 +9,7 @@ import {
 } from './arrays.js';
 import {cloneDeepObject} from './deepObjects.js';
 import {isPlainObject} from './objects.js';
+import {type} from 'os';
 
 
 const DEEP_PATH_SEPARATOR = '.'
@@ -365,11 +366,9 @@ export async function deepEachObjAsync(
   await deepFindObjAsync(src, handler, initialPath, onlyPlainObjects)
 }
 
-// TODO: test
-// TODO: optimize
 /**
  * Merge 2 values with can be a simple value or object or array.
- * Keep in mind that it doesn't go into class instances.
+ * Keep in mind that it doesn't go into class instances - they will be copied from top.
  * If top is simple value of class instance then top will be get
  * If top and bottom are arrays or plain objects then they will be merged
  *   with priority ob top
@@ -384,23 +383,33 @@ export function deepMerge(
   if (Array.isArray(top) && Array.isArray(bottom)) {
     // do merge if both values are arrays
     const length = Math.max(bottom.length, top.length)
-    // go deeper into each item of both arrays
-    return new Array(length).fill(false)
-      .map((val, index) => deepMerge(top[index], bottom[index]))
+    const res: any[] = []
+
+    for (let i = 0; i < length; i++) {
+      if (i > top.length - 1) {
+        res.push(bottom[i])
+      }
+      else {
+        // if top value is explicitly undefined then set undefined
+        if (typeof top[i] === 'undefined') res.push(undefined)
+        // else do merge of top and bottom items
+        else res.push(deepMerge(top[i], bottom[i]))
+      }
+    }
+
+    return res
   }
   else if (isPlainObject(top) && isPlainObject(bottom)) {
     // do merge if both values are objects
     const topKeys = Object.keys(top)
 
     // TODO: тут смешается порядок ключей - может можно более тонко сделать чем sort
+    // TODO: а если значение явно указанно как undefined?
 
     const keys = concatUniqStrArrays(topKeys, Object.keys(bottom)).sort()
     const result: Record<any, any> = {}
 
-    for (const key of keys) {
-      // we use includes here to  overwrite undefined values in top
-      result[key] = (topKeys.includes(key)) ? top[key] : bottom[key]
-    }
+    for (const key of keys) result[key] = deepMerge(top[key], bottom[key])
 
     return result
   }
