@@ -368,8 +368,8 @@ export async function deepEachObjAsync(
 /**
  * Merge 2 values with can be a simple value or object or array.
  * Keep in mind that it doesn't go into class instances - they will be copied from top.
- * Be carresul with undefined - in arrays it will be gotten from top, but if it is
- *   a top is undefined then bottom will be gotten.
+ * Be careful with undefined - in arrays and objects it will be gotten from top,
+ *   but if it is a top is undefined then bottom will be gotten.
  * If top is simple value of class instance then top will be get
  * If top and bottom are arrays or plain objects then they will be merged
  *   with priority ob top
@@ -408,12 +408,16 @@ export function deepMerge(
     const topKeys = Object.keys(top)
 
     // TODO: тут смешается порядок ключей - может можно более тонко сделать чем sort
-    // TODO: а если значение явно указанно как undefined?
 
     const keys = concatUniqStrArrays(topKeys, Object.keys(bottom)).sort()
     const result: Record<any, any> = {}
 
-    for (const key of keys) result[key] = deepMerge(top[key], bottom[key])
+    for (const key of keys) {
+      // implicitly replace value with undefined
+      if (typeof top[key] === 'undefined' && topKeys.includes(key)) result[key] = undefined
+      // else do merge two objects
+      else result[key] = deepMerge(top[key], bottom[key])
+    }
 
     return result
   }

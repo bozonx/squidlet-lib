@@ -468,6 +468,9 @@ describe('lib/deepManipulate', () => {
       deepMerge({a1: {b1: {c1: 5, c3: 5}}}, {a1: {b1: {c1: 1, c2: 1}}}),
       {a1: {b1: {c1: 5, c2: 1, c3: 5}}}
     )
+    assert.deepEqual(deepMerge({a: null}, {a: 1}), {a: null})
+    // undefined in object
+    assert.deepEqual(deepMerge({a: undefined}, {a: 1}), {a: undefined})
     // arrays
     assert.deepEqual(deepMerge([], [5]), [5])
     assert.deepEqual(
@@ -495,10 +498,16 @@ describe('lib/deepManipulate', () => {
     assert.deepEqual(deepMerge(undefined, []), [])
     assert.deepEqual(deepMerge(undefined, 5), 5)
     // class instances
+    class cl {
+      cp = 1
+    }
+    let cli = new cl()
+    assert.deepEqual(deepMerge({a: cli}, {a: {b: 1}}), {a: cli})
+    assert.deepEqual(deepMerge({a: {b: 1}}, {a: cli}), {a: {b: 1}})
+    assert.deepEqual(deepMerge([cli], [{a: 1}]), [cli])
+    assert.deepEqual(deepMerge([{a: 1}], [cli]), [{a: 1}])
 
-
-    // TODO: а если значение явно указанно как undefined в объекте?
-    // TODO: test class inheritances
+    // TODO: смещение порядка ключей в объектах
   })
 
 })
