@@ -332,8 +332,6 @@ export async function deepFindObjAsync(
   }
 }
 
-
-// TODO: test
 /**
  * Run handler on each object in arrays or other objects
  * @param src
@@ -351,8 +349,6 @@ export function deepEachObj(
   deepFindObj(src, handler, initialPath, onlyPlainObjects)
 }
 
-// TODO: test
-// TODO: както надо объединить с deepEachObj
 /**
  * Run handler on each object in arrays or other objects
  * @param src

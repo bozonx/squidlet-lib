@@ -7,7 +7,7 @@ import {
   deepSet,
   joinDeepPath,
   splitDeepPath,
-  deepFindObj,
+  deepFindObj, DONT_GO_DEEPER, deepEachObjAsync, deepEachObj,
 } from '../../lib/deepManipulate.js'
 
 
@@ -332,6 +332,22 @@ describe('lib/deepManipulate', () => {
       {a: ['b']}
     )
     assert.equal(count, 1)
+
+    count = 0
+    assert.deepEqual(
+      deepFindObj({a: {b: {c: 1}}, a2: {b2: 1}}, (obj, key, path) => {
+        count++
+
+        if (key === 'a') {
+          return DONT_GO_DEEPER
+        }
+        else if (key === 'a2') {
+          return true
+        }
+      }),
+      {b2: 1}
+    )
+    assert.equal(count, 2)
   })
 
   it.only('deepFindObjAsync', async () => {
@@ -386,6 +402,56 @@ describe('lib/deepManipulate', () => {
       {a: ['b']}
     )
     assert.equal(count, 1)
+
+    count = 0
+    assert.deepEqual(
+      await deepFindObjAsync({a: {b: {c: 1}}, a2: {b2: 1}}, (obj, key, path) => {
+        count++
+
+        if (key === 'a') {
+          return DONT_GO_DEEPER
+        }
+        else if (key === 'a2') {
+          return true
+        }
+      }),
+      {b2: 1}
+    )
+    assert.equal(count, 2)
+  })
+
+  it.only('deepEachObj', () => {
+    let count = 0
+    assert.isUndefined(
+      deepEachObj({a: {b: {c: 1}}, a2: {b2: 1}}, (obj, key, path) => {
+        count++
+
+        if (key === 'a') {
+          return DONT_GO_DEEPER
+        }
+        else if (key === 'a2') {
+          return true
+        }
+      })
+    )
+    assert.equal(count, 2)
+  })
+
+  it.only('deepEachObjAsync', async () => {
+    let count = 0
+    assert.isUndefined(
+      await deepEachObjAsync({a: {b: {c: 1}}, a2: {b2: 1}}, (obj, key, path) => {
+        count++
+
+        if (key === 'a') {
+          return DONT_GO_DEEPER
+        }
+        else if (key === 'a2') {
+          return true
+        }
+      })
+    )
+    assert.equal(count, 2)
   })
 
 })
