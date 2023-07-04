@@ -435,10 +435,22 @@ describe('lib/deepManipulate', () => {
       })
     )
     assert.equal(count, 2)
+
+    count = 0
+    assert.isUndefined(
+      deepEachObj([[{a: 1}]], (obj, key, path) => {
+        count++
+
+        assert.equal(key, 0)
+        assert.equal(path, '[0][0]')
+      })
+    )
+    assert.equal(count, 1)
   })
 
   it('deepEachObjAsync', async () => {
     let count = 0
+
     assert.isUndefined(
       await deepEachObjAsync({a: {b: {c: 1}}, a2: {b2: 1}}, (obj, key, path) => {
         count++
@@ -452,6 +464,17 @@ describe('lib/deepManipulate', () => {
       })
     )
     assert.equal(count, 2)
+
+    count = 0
+    assert.isUndefined(
+      await deepEachObjAsync([[{a: 1}]], (obj, key, path) => {
+        count++
+
+        assert.equal(key, 0)
+        assert.equal(path, '[0][0]')
+      })
+    )
+    assert.equal(count, 1)
   })
 
   it('deepMerge', () => {

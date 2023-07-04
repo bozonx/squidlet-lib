@@ -272,9 +272,18 @@ export function deepFindObj(
     const item = (src as any)[key]
     const path = joinDeepPath([initialPath, key])
 
-    // skip class instances in case of onlyPlainObjects
-    if (onlyPlainObjects && !isPlainObject(item)) continue
+    if (Array.isArray(item)) {
+      const deepRes = deepFindObj(item, handler, path)
 
+      if (deepRes) return deepRes
+
+      continue
+    }
+    // skip non objects values
+    else if (typeof item !== 'object' || !item) continue
+    // skip class instances in case of onlyPlainObjects
+    else if (onlyPlainObjects && !isPlainObject(item)) continue
+    // run handler to check if we found the item
     const res = handler(item, key, path)
     // if it shouldn't go deeper than continue
     if (res === DONT_GO_DEEPER) continue
@@ -314,9 +323,18 @@ export async function deepFindObjAsync(
     const item = (src as any)[key]
     const path = joinDeepPath([initialPath, key])
 
-    // skip class instances in case of onlyPlainObjects
-    if (onlyPlainObjects && !isPlainObject(item)) continue
+    if (Array.isArray(item)) {
+      const deepRes = await deepFindObjAsync(item, handler, path)
 
+      if (deepRes) return deepRes
+
+      continue
+    }
+    // skip non objects values
+    else if (typeof item !== 'object' || !item) continue
+    // skip class instances in case of onlyPlainObjects
+    else if (onlyPlainObjects && !isPlainObject(item)) continue
+    // run handler to check if we found the item
     const res = await handler(item, key, path)
     // if it shouldn't go deeper than continue
     if (res === DONT_GO_DEEPER) continue
