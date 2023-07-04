@@ -513,7 +513,7 @@ describe('lib/deepManipulate', () => {
     )
   })
 
-  it.only('isSameDeep', () => {
+  it('isSameDeep', () => {
     // simple cases
     assert.isTrue(isSameDeep({}, {}))
     assert.isTrue(isSameDeep([], []))

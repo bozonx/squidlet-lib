@@ -12,16 +12,6 @@ export declare function lastItem(arr: any[]): any;
 export declare function arrayKeys(arr?: any[]): number[];
 export declare function isArrayIncludesIndex(arr?: any[], index?: number): boolean;
 export declare function isLastIndex(arr: any[], currentIndex: number | string): boolean;
-/**
- * Make a new array which contains items which are different in samples.
- * Examples:
- * * [1,4], [1,2,3] => [4]
- * * [1,3], [1,2,3] => []
- * WARNING: be careful with choosing between testArr and samples
- * @param testArr - array to check, we not sure about it.
- * @param samples - means all the available values
- */
-export declare function arraysDifference(testArr: any[], samples: any[]): any[];
 export declare function compactUndefined(arr: any[]): any[];
 export declare function clearArray(arr: any[]): void;
 /**
@@ -48,10 +38,19 @@ export declare function removeItemFromArray(arr: any[] | undefined, item: any, f
 export declare function removeSomeItemsFromArray(arr: any[] | undefined, items: any[]): any[];
 /**
  * Concat arrays and remove duplicates.
- * This is much faster than concatUniqArrays
+ * This is much faster than deduplicate
  */
 export declare function concatUniqStrArrays(...arrays: string[][]): string[];
 export declare function deduplicate(arr?: any[]): any[];
+/**
+ * Make a new array which contains items which are different in samples.
+ * Examples:
+ * * [1,4], [1,2,3] => [4]
+ * * [1,3], [1,2,3] => []
+ * WARNING: be careful with choosing between testArr and samples
+ * @param testArr - array to check, we not sure about it.
+ * @param samples - means all the available values
+ */
 /**
  * Remove keys which are duplicate each other and return only those
  * keys which are only ones

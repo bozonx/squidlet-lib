@@ -1,5 +1,5 @@
 import { trimCharStart } from './strings.js';
-import { cloneDeepArray, concatUniqStrArrays, isArrayIncludesIndex, lastItem, withoutFirstItem, withoutLastItem } from './arrays.js';
+import { arrayKeys, cloneDeepArray, concatUniqStrArrays, isArrayIncludesIndex, lastItem, withoutFirstItem, withoutLastItem } from './arrays.js';
 import { cloneDeepObject } from './deepObjects.js';
 import { isPlainObject } from './objects.js';
 const DEEP_PATH_SEPARATOR = '.';
@@ -200,7 +200,6 @@ export function deepClone(src) {
     }
     return src;
 }
-// TODO: test
 /**
  * Find object by checking its properties
  * @param src
@@ -212,42 +211,30 @@ export function deepClone(src) {
 export function deepFindObj(src, handler, initialPath, onlyPlainObjects = true) {
     if (!handler || !src || (!Array.isArray(src) && typeof src !== 'object'))
         return;
-    if (Array.isArray(src)) {
-        // go deep to each item of array
-        for (const key of src.keys()) {
-            const item = src[key];
-            const path = joinDeepPath([initialPath, key]);
-            const res = deepFindObj(item, handler, path);
-            if (res)
-                return res;
+    const keys = (Array.isArray(src))
+        ? arrayKeys(src)
+        : Object.keys(src);
+    for (const key of keys) {
+        const item = src[key];
+        const path = joinDeepPath([initialPath, key]);
+        // skip class instances in case of onlyPlainObjects
+        if (onlyPlainObjects && !isPlainObject(item))
+            continue;
+        const res = handler(item, key, path);
+        // if it shouldn't go deeper than continue
+        if (res === DONT_GO_DEEPER)
+            continue;
+        // if found
+        else if (res)
+            return item;
+        // else go deeper to each key of object
+        else {
+            const deepRes = deepFindObj(item, handler, path);
+            if (deepRes)
+                return deepRes;
         }
     }
-    else {
-        // object
-        for (const key of Object.keys(src)) {
-            const item = src[key];
-            const path = joinDeepPath([initialPath, key]);
-            // skip class instances in case of onlyPlainObjects
-            if (onlyPlainObjects && !isPlainObject(item))
-                continue;
-            const res = handler(item, key, path);
-            // if it shouldn't go deeper than continue
-            if (res === DONT_GO_DEEPER)
-                continue;
-            // if found
-            else if (res)
-                return item;
-            // else go deeper to each key of object
-            else {
-                const deepRes = deepFindObj(item, handler, path);
-                if (deepRes)
-                    return deepRes;
-            }
-        }
-    }
-    // if not found return undefined
 }
-// TODO: test
 // TODO: как это объединить с deepFindObj ???
 /**
  * Find object by checking its properties.
@@ -260,43 +247,30 @@ export function deepFindObj(src, handler, initialPath, onlyPlainObjects = true) 
 export async function deepFindObjAsync(src, handler, initialPath, onlyPlainObjects = true) {
     if (!handler || !src || (!Array.isArray(src) && typeof src !== 'object'))
         return;
-    if (Array.isArray(src)) {
-        // go deep to each item of array
-        for (const key of src.keys()) {
-            const item = src[key];
-            const path = joinDeepPath([initialPath, key]);
-            const res = deepFindObjAsync(item, handler, path);
-            if (res)
-                return res;
+    const keys = (Array.isArray(src))
+        ? arrayKeys(src)
+        : Object.keys(src);
+    for (const key of keys) {
+        const item = src[key];
+        const path = joinDeepPath([initialPath, key]);
+        // skip class instances in case of onlyPlainObjects
+        if (onlyPlainObjects && !isPlainObject(item))
+            continue;
+        const res = await handler(item, key, path);
+        // if it shouldn't go deeper than continue
+        if (res === DONT_GO_DEEPER)
+            continue;
+        // if found
+        else if (res)
+            return item;
+        // else go deeper to each key of object
+        else {
+            const deepRes = await deepFindObjAsync(item, handler, path);
+            if (deepRes)
+                return deepRes;
         }
     }
-    else {
-        // object
-        for (const key of Object.keys(src)) {
-            console.log(4444, src, key);
-            const item = src[key];
-            const path = joinDeepPath([initialPath, key]);
-            // skip class instances in case of onlyPlainObjects
-            if (onlyPlainObjects && !isPlainObject(item))
-                continue;
-            const res = await handler(item, key, path);
-            // if it shouldn't go deeper than continue
-            if (res === DONT_GO_DEEPER)
-                continue;
-            // if found
-            else if (res)
-                return item;
-            // else go deeper to each key of object
-            else {
-                const deepRes = deepFindObjAsync(item, handler, path);
-                if (deepRes)
-                    return deepRes;
-            }
-        }
-    }
-    // if not found return undefined
 }
-// TODO: test
 /**
  * Run handler on each object in arrays or other objects
  * @param src
@@ -308,8 +282,6 @@ export async function deepFindObjAsync(src, handler, initialPath, onlyPlainObjec
 export function deepEachObj(src, handler, initialPath, onlyPlainObjects = true) {
     deepFindObj(src, handler, initialPath, onlyPlainObjects);
 }
-// TODO: test
-// TODO: както надо объединить с deepEachObj
 /**
  * Run handler on each object in arrays or other objects
  * @param src
@@ -321,37 +293,14 @@ export function deepEachObj(src, handler, initialPath, onlyPlainObjects = true) 
 export async function deepEachObjAsync(src, handler, initialPath, onlyPlainObjects = true) {
     await deepFindObjAsync(src, handler, initialPath, onlyPlainObjects);
 }
-export function isSameDeep(obj1, obj2) {
-    // TODO: поддержка массивов
-    if (obj1 === obj2)
-        return true;
-    else if (!obj1 || !obj2 || typeof obj1 !== 'object' || typeof obj2 !== 'object')
-        return false;
-    else if (!Object.keys(obj1).length)
-        return false;
-    else if (Object.keys(obj1).length !== Object.keys(obj2).length)
-        return false;
-    for (const [key, value] of Object.entries(obj1)) {
-        // TODO: use isPlainObject
-        if (value && typeof value === 'object' && typeof obj2[key] === 'object') {
-            const res = isSameDeep(value, obj2[key]);
-            if (!res)
-                return false;
-            // if true then continue
-        }
-        else {
-            if (obj1[key] !== obj2[key])
-                return false;
-            // the just continue
-        }
-    }
-    return true;
-}
-// TODO: test
-// TODO: optimize
 /**
  * Merge 2 values with can be a simple value or object or array.
- * Keep in mind that it doesn't go into class instances.
+ * Keep in mind that it doesn't go into class instances - they will be copied from top.
+ * Also keep in mind that order of keys in objects will be bottom first,
+ *   after them are top keys
+ * In array top will always replace bottom keys including undefined ones
+ * Be careful with undefined - in arrays and objects it will be gotten from top,
+ *   but if it is a top is undefined then bottom will be gotten.
  * If top is simple value of class instance then top will be get
  * If top and bottom are arrays or plain objects then they will be merged
  *   with priority ob top
@@ -363,22 +312,83 @@ export function deepMerge(top, bottom) {
     if (Array.isArray(top) && Array.isArray(bottom)) {
         // do merge if both values are arrays
         const length = Math.max(bottom.length, top.length);
-        // go deeper into each item of both arrays
-        return new Array(length).fill(false)
-            .map((val, index) => deepMerge(top[index], bottom[index]));
+        const res = [];
+        for (let i = 0; i < length; i++) {
+            let resolvedValue;
+            if (i > top.length - 1) {
+                resolvedValue = bottom[i];
+            }
+            else if (typeof top[i] !== 'undefined') {
+                // else top is defined do merge of top and bottom items
+                resolvedValue = deepMerge(top[i], bottom[i]);
+            }
+            // else if top value is explicitly undefined then set undefined
+            res.push(resolvedValue);
+        }
+        return res;
     }
     else if (isPlainObject(top) && isPlainObject(bottom)) {
         // do merge if both values are objects
         const topKeys = Object.keys(top);
-        // TODO: тут смешается порядок ключей - может можно более тонко сделать чем sort
-        const keys = concatUniqStrArrays(topKeys, Object.keys(bottom)).sort();
+        const keys = concatUniqStrArrays(Object.keys(bottom), topKeys);
         const result = {};
         for (const key of keys) {
-            // we use includes here to  overwrite undefined values in top
-            result[key] = (topKeys.includes(key)) ? top[key] : bottom[key];
+            // implicitly replace value with undefined
+            if (typeof top[key] === 'undefined' && topKeys.includes(key))
+                result[key] = undefined;
+            // else do merge two objects
+            else
+                result[key] = deepMerge(top[key], bottom[key]);
         }
         return result;
     }
     // else if values aren't arrays and objects then try to get top value otherwise bottom
     return (typeof top === 'undefined') ? bottom : top;
+}
+/**
+ * Check two items. Try to find at least one difference
+ * * if they are some simple values then just compare them
+ * * if they are class instances - compare if they are the same instance
+ * * if they are arrays - compare arrays deeply
+ * * if they are objects - compare objects deeply
+ * @param some1
+ * @param some2
+ */
+export function isSameDeep(some1, some2) {
+    if (Array.isArray(some1) && Array.isArray(some2)) {
+        // check arrays
+        if (!some1.length && !some2.length)
+            return true;
+        else if (some1.length !== some2.length)
+            return false;
+        // count of keys the same
+        for (const key of some1.keys()) {
+            const res = isSameDeep(some1[key], some2[key]);
+            // if false - we found the difference. else go further
+            if (!res)
+                return false;
+        }
+        return true;
+    }
+    else if (isPlainObject(some1) && isPlainObject(some2)) {
+        // check plain objects
+        const keys1 = Object.keys(some1);
+        const keys2 = Object.keys(some2);
+        if (!keys1.length && !keys2.length)
+            return true;
+        else if (keys1.length !== keys2.length)
+            return false;
+        // count of keys the same
+        for (const key of keys1) {
+            const res = isSameDeep(some1[key], some2[key]);
+            // if false - we found the difference. else go further
+            if (!res)
+                return false;
+        }
+        return true;
+    }
+    else if (Number.isNaN(some1) && Number.isNaN(some2))
+        return true;
+    // check simple types and class instances
+    return some1 === some2;
 }
