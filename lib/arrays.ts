@@ -36,6 +36,15 @@ export function fill(array: any[], value: any): any[] {
 }
 
 // TODO: test
+export function fillWithNumberIncrement(start: number, itemsNum: number): number[] {
+  const result: number[] = []
+
+  for (let i = start; i < start + itemsNum; i++) result.push(i)
+
+  return result
+}
+
+// TODO: test
 export function fullWithArray(
   toMutatedArray: any[],
   fromArray: any[],

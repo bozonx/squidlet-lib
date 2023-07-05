@@ -7,6 +7,7 @@ export declare const ARRAY_INDEX_SHIFT = 1;
  */
 export declare function isEmptyArray(arr?: any): boolean;
 export declare function fill(array: any[], value: any): any[];
+export declare function fillWithNumberIncrement(start: number, itemsNum: number): number[];
 export declare function fullWithArray(toMutatedArray: any[], fromArray: any[], copyLength?: boolean): void;
 export declare function lastItem(arr: any[]): any;
 export declare function arrayKeys(arr?: any[]): number[];

@@ -28,6 +28,13 @@ export function fill(array, value) {
     return result;
 }
 // TODO: test
+export function fillWithNumberIncrement(start, itemsNum) {
+    const result = [];
+    for (let i = start; i < start + itemsNum; i++)
+        result.push(i);
+    return result;
+}
+// TODO: test
 export function fullWithArray(toMutatedArray, fromArray, copyLength) {
     for (const index of fromArray) {
         toMutatedArray[index] = fromArray[index];
