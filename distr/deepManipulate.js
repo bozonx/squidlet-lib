@@ -249,7 +249,7 @@ export function deepFindObj(src, handler, initialPath, onlyPlainObjects = true) 
 /**
  * Find object by checking its properties.
  * @param src
- * @param handler,
+ * @param handler
  * @param initialPath - path to the object in src
  * @param onlyPlainObjects - default is true. It means skip class instances and
  *                           process only plain objects
@@ -411,4 +411,18 @@ export function isSameDeep(some1, some2) {
         return true;
     // check simple types and class instances
     return some1 === some2;
+}
+/**
+ * Get value of given keyName from any deep objects
+ * @param src
+ * @param keyName
+ */
+export function deepGetObjValue(src, keyName) {
+    if (!keyName)
+        return;
+    const resObj = deepFindObj(src, (obj, key, path) => {
+        if (Object.keys(obj).includes(keyName))
+            return true;
+    });
+    return resObj && resObj[keyName];
 }

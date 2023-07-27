@@ -58,7 +58,7 @@ export declare function deepFindObj(src?: Record<any, any> | Record<any, any>[],
 /**
  * Find object by checking its properties.
  * @param src
- * @param handler,
+ * @param handler
  * @param initialPath - path to the object in src
  * @param onlyPlainObjects - default is true. It means skip class instances and
  *                           process only plain objects
@@ -108,3 +108,9 @@ export declare function deepMerge(top: any | any[], bottom: any | any[]): any | 
  * @param some2
  */
 export declare function isSameDeep(some1?: any, some2?: any): boolean;
+/**
+ * Get value of given keyName from any deep objects
+ * @param src
+ * @param keyName
+ */
+export declare function deepGetObjValue(src?: Record<any, any> | Record<any, any>[], keyName?: string): any;

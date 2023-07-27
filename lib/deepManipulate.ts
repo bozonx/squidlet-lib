@@ -1,7 +1,8 @@
 import {trimCharStart} from './strings.js';
 import {
   arrayKeys,
-  cloneDeepArray, concatUniqStrArrays,
+  cloneDeepArray,
+  concatUniqStrArrays,
   isArrayIncludesIndex,
   lastItem,
   withoutFirstItem,
@@ -302,7 +303,7 @@ export function deepFindObj(
 /**
  * Find object by checking its properties.
  * @param src
- * @param handler,
+ * @param handler
  * @param initialPath - path to the object in src
  * @param onlyPlainObjects - default is true. It means skip class instances and
  *                           process only plain objects
@@ -485,4 +486,19 @@ export function isSameDeep(some1?: any, some2?: any): boolean {
   else if (Number.isNaN(some1) && Number.isNaN(some2)) return true
   // check simple types and class instances
   return some1 === some2
+}
+
+/**
+ * Get value of given keyName from any deep objects
+ * @param src
+ * @param keyName
+ */
+export function deepGetObjValue(src?: Record<any, any> | Record<any, any>[], keyName?: string): any {
+  if (!keyName) return
+
+  const resObj = deepFindObj(src, (obj: Record<any, any>, key: string | number, path: string) => {
+    if (Object.keys(obj).includes(keyName)) return true
+  })
+
+  return resObj && resObj[keyName]
 }

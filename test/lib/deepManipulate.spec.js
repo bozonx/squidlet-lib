@@ -7,7 +7,7 @@ import {
   deepSet,
   joinDeepPath,
   splitDeepPath,
-  deepFindObj, DONT_GO_DEEPER, deepEachObjAsync, deepEachObj, deepMerge, isSameDeep,
+  deepFindObj, DONT_GO_DEEPER, deepEachObjAsync, deepEachObj, deepMerge, isSameDeep, deepGetObjValue,
 } from '../../lib/deepManipulate.js'
 
 
@@ -594,6 +594,24 @@ describe('lib/deepManipulate', () => {
     assert.isFalse(isSameDeep({a: cli1}, {a: cli2}))
     assert.isTrue(isSameDeep([cli1], [cli1]))
     assert.isFalse(isSameDeep([cli1], [cli2]))
+  })
+
+  it('deepGetObjValue', () => {
+    assert.equal(deepGetObjValue({
+      a: [
+        {
+          $exp: 'g'
+        }
+      ]
+    }, '$exp'), 'g')
+    // not found
+    assert.isUndefined(deepGetObjValue({
+      a: [
+        {
+          $exp: 'g'
+        }
+      ]
+    }, '$exp2'))
   })
 
 })
