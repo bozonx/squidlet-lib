@@ -1,5 +1,5 @@
-import {JsonTypes} from '../interfaces/Types.js';
-import {HttpContentType} from '../interfaces/Http.js';
+import {JsonTypes} from './interfaces/Types.js';
+import {HttpContentType} from './interfaces/Http.js';
 
 
 // TODO: does it need support of null????

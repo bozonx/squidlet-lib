@@ -153,7 +153,7 @@ export function deduplicate(arr) {
     }
     return result;
 }
-// TODO: это чё за хуйн???
+// TODO: это чё за хуйн??? - используется в squidlet ServicesManager
 /**
  * Make a new array which contains items which are different in samples.
  * Examples:
@@ -163,22 +163,21 @@ export function deduplicate(arr) {
  * @param testArr - array to check, we not sure about it.
  * @param samples - means all the available values
  */
-// export function arraysDifference(testArr: any[], samples: any[]): any[] {
-//   if (typeof testArr === 'undefined' || !testArr.length) return [];
-//   else if (typeof samples === 'undefined' || !samples.length) return testArr;
-//
-//   const diffArr: any[] = [];
-//
-//   for (let item of testArr) {
-//     if (typeof item === 'undefined') continue;
-//
-//     if (samples.indexOf(item) === -1) {
-//       diffArr.push(item);
-//     }
-//   }
-//
-//   return diffArr;
-// }
+export function arraysDifference(testArr, samples) {
+    if (typeof testArr === 'undefined' || !testArr.length)
+        return [];
+    else if (typeof samples === 'undefined' || !samples.length)
+        return testArr;
+    const diffArr = [];
+    for (let item of testArr) {
+        if (typeof item === 'undefined')
+            continue;
+        if (samples.indexOf(item) === -1) {
+            diffArr.push(item);
+        }
+    }
+    return diffArr;
+}
 // TODO: доделать test
 /**
  * Remove keys which are duplicate each other and return only those

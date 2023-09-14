@@ -13,24 +13,24 @@ export class LogPublisher {
   }
 
 
-  debug(message: string) {
+  debug = (message: string) => {
     this.eventHandler('debug', message)
   }
 
 
-  log(message: string) {
+  log = (message: string) => {
     this.eventHandler('log', message)
   }
 
-  info(message: string) {
+  info = (message: string) => {
     this.eventHandler('info', message)
   }
 
-  warn(message: string) {
+  warn = (message: string) => {
     this.eventHandler('warn', message)
   }
 
-  error(message: string | Error) {
+  error = (message: string | Error) => {
     this.eventHandler('error', String(message))
   }
 

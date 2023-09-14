@@ -1,7 +1,7 @@
 import {cloneDeepObject, isEmptyObject, mergeDeepObjects} from '../lib/objects';
 import {concatUniqStrArrays} from '../lib/arrays';
 import {Dictionary} from '../lib/interfaces/Types';
-import Queue, {JobId} from '../lib/Queue';
+import Queue, {JobId} from './Queue';
 import {pickObj} from '../lib/objects';
 import {arraysDifference} from '../lib/arrays';
 

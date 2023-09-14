@@ -52,6 +52,7 @@ export declare function deduplicate(arr?: any[]): any[];
  * @param testArr - array to check, we not sure about it.
  * @param samples - means all the available values
  */
+export declare function arraysDifference(testArr: any[], samples: any[]): any[];
 /**
  * Remove keys which are duplicate each other and return only those
  * keys which are only ones

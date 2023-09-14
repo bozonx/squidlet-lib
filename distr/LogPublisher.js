@@ -3,19 +3,19 @@ export class LogPublisher {
     constructor(eventHandler) {
         this.eventHandler = eventHandler;
     }
-    debug(message) {
+    debug = (message) => {
         this.eventHandler('debug', message);
-    }
-    log(message) {
+    };
+    log = (message) => {
         this.eventHandler('log', message);
-    }
-    info(message) {
+    };
+    info = (message) => {
         this.eventHandler('info', message);
-    }
-    warn(message) {
+    };
+    warn = (message) => {
         this.eventHandler('warn', message);
-    }
-    error(message) {
+    };
+    error = (message) => {
         this.eventHandler('error', String(message));
-    }
+    };
 }
