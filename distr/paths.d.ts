@@ -11,3 +11,4 @@ export declare function pathBasename(pathToDirOrFile: string): string;
 export declare function clearRelPathLeft(rawPath: string): string;
 export declare function pathTrimExt(fileName: string): string;
 export declare function replaceExt(fileName: string, newExt: string): string;
+export declare function getExt(fileName: string): string;

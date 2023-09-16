@@ -1,3 +1,4 @@
+import { HTTP_CONTENT_TYPES } from "./interfaces/Http.js";
 // TODO: does it need support of null????
 const STRING_CONTENT_TYPES = ['text/plain', 'application/javascript', 'application/xml'];
 export function isHtml(str) {
@@ -16,6 +17,7 @@ export function parseBody(contentType, body) {
         }
         return;
     }
+    // TODO: контент тайп содержит charset
     if (contentType === 'application/octet-stream') {
         if (!(body instanceof Uint8Array)) {
             throw new Error(`parseBody: Incorrect body: it has to be instance of Uint8Array ` +
@@ -62,6 +64,7 @@ export function prepareBody(contentType, fullBody) {
         }
         return;
     }
+    // TODO: контент тайп содержит charset
     if (contentType === 'application/octet-stream') {
         if (!(fullBody instanceof Uint8Array)) {
             throw new Error(`prepareBody: Incorrect body: it has to be instance of Uint8Array ` +
@@ -110,13 +113,13 @@ export function resolveBodyType(fullBody) {
         return;
     }
     else if (fullBody instanceof Uint8Array) {
-        return 'application/octet-stream';
+        return HTTP_CONTENT_TYPES.octet;
     }
     else if (typeof fullBody === 'string') {
         if (isHtml(fullBody))
-            return 'text/html';
-        return 'text/plain';
+            return HTTP_CONTENT_TYPES.html;
+        return HTTP_CONTENT_TYPES.text;
     }
     // number, boolean, null, [] or {}
-    return 'application/json';
+    return HTTP_CONTENT_TYPES.json;
 }

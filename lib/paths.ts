@@ -78,3 +78,11 @@ export function pathTrimExt(fileName: string): string {
 export function replaceExt(fileName: string, newExt: string): string {
   return `${pathTrimExt(fileName)}.${trimCharStart(newExt, '.')}`
 }
+
+export function getExt(fileName: string): string {
+  const match = fileName.match(/\.(\w+)$/i)
+
+  if (!match) return ''
+
+  return match[1].toLowerCase()
+}

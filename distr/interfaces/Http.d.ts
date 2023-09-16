@@ -1,23 +1,34 @@
 export type HttpMethods = 'get' | 'post' | 'put' | 'patch' | 'delete';
-export type HttpContentType = 'text/plain' | 'text/html' | 'application/json' | 'application/javascript' | 'application/xml' | 'application/octet-stream';
-interface CommonHeaders {
-    'content-type'?: HttpContentType;
-}
-export interface HttpRequestHeaders extends CommonHeaders {
-}
-export interface HttpResponseHeaders extends CommonHeaders {
-}
+export declare const HTTP_CONTENT_TYPES: {
+    text: string;
+    js: string;
+    json: string;
+    xml: string;
+    yaml: string;
+    css: string;
+    html: string;
+    octet: string;
+};
+export declare const HTTP_FILE_EXT_CONTENT_TYPE: {
+    txt: string;
+    js: string;
+    json: string;
+    css: string;
+    html: string;
+    xml: string;
+    yml: string;
+    yaml: string;
+};
 export interface HttpRequestBase {
     method: HttpMethods;
     url: string;
-    headers: HttpRequestHeaders;
+    headers: Record<string, string>;
 }
 export interface HttpRequest extends HttpRequestBase {
     body?: string | Uint8Array;
 }
 export interface HttpResponse {
-    headers: HttpResponseHeaders;
+    headers: Record<string, string>;
     status: number;
     body?: string | Uint8Array;
 }
-export {};

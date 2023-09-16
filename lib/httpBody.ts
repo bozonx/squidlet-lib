@@ -1,5 +1,5 @@
 import {JsonTypes} from './interfaces/Types.js';
-import {HttpContentType} from './interfaces/Http.js';
+import {HTTP_CONTENT_TYPES} from "./interfaces/Http.js";
 
 
 // TODO: does it need support of null????
@@ -19,7 +19,7 @@ export function isHtml(str: any): boolean {
  * But if content-type isn't supported then body will be used as is.
  */
 export function parseBody(
-  contentType?: HttpContentType,
+  contentType?: string,
   body?: string | Uint8Array
 ): JsonTypes | Uint8Array | undefined {
   if (!contentType) {
@@ -29,6 +29,8 @@ export function parseBody(
 
     return;
   }
+
+  // TODO: контент тайп содержит charset
 
   if (contentType === 'application/octet-stream') {
     if (!(body instanceof Uint8Array)) {
@@ -86,7 +88,7 @@ export function parseBody(
  * Prepare body to response
  */
 export function prepareBody(
-  contentType: HttpContentType | undefined,
+  contentType: string | undefined,
   fullBody?: JsonTypes | Uint8Array
 ): string | Uint8Array | undefined {
   if (!contentType) {
@@ -96,6 +98,8 @@ export function prepareBody(
 
     return;
   }
+
+  // TODO: контент тайп содержит charset
 
   if (contentType === 'application/octet-stream') {
     if (!(fullBody instanceof Uint8Array)) {
@@ -154,19 +158,19 @@ export function prepareBody(
  * * string
  * * number, boolean, null, [] or {} => application/json
  */
-export function resolveBodyType(fullBody?: JsonTypes | Uint8Array): HttpContentType | undefined {
+export function resolveBodyType(fullBody?: JsonTypes | Uint8Array): string | undefined {
   if (typeof fullBody === 'undefined') {
     return;
   }
   else if (fullBody instanceof Uint8Array) {
-    return 'application/octet-stream';
+    return HTTP_CONTENT_TYPES.octet
   }
   else if (typeof fullBody === 'string') {
-    if (isHtml(fullBody)) return 'text/html';
+    if (isHtml(fullBody)) return HTTP_CONTENT_TYPES.html
 
-    return 'text/plain';
+    return HTTP_CONTENT_TYPES.text
   }
 
   // number, boolean, null, [] or {}
-  return 'application/json';
+  return HTTP_CONTENT_TYPES.json
 }
