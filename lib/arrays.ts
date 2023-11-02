@@ -214,7 +214,28 @@ export function arraysDifference(testArr: any[], samples: any[]): any[] {
   return diffArr;
 }
 
+// TODO: test
+/**
+ * Find similar items in arrays
+ * [1,2] => [2,3] => [2]
+ * @param arrs
+ */
+export function arraySimilar(...arrs: any[][]): any[] {
+  const allItems: any[] = arrs.flat()
+  const res: any[] = []
+
+  for (const item of allItems) {
+    if (
+      !res.includes(item)
+      && allItems.filter((i) => i === item).length > 1
+    ) res.push(item)
+  }
+
+  return res
+}
+
 // TODO: доделать test
+// TODO: поидее можно просто сделать dedeplicate
 /**
  * Remove keys which are duplicate each other and return only those
  * keys which are only ones

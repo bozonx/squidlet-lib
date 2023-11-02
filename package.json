@@ -1,6 +1,6 @@
 {
   "name": "squidlet-lib",
-  "version": "0.1.4",
+  "version": "0.1.7",
   "description": "Common lib for squidlet projects",
   "author": "Ivan Kozyrin <ipkozyrin@gmail.com>",
   "repository": "git@github.com:bozonx/squidlet-lib.git",

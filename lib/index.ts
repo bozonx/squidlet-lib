@@ -23,6 +23,7 @@ export * from './route.js'
 export * from './strings.js'
 export * from './uniqId.js'
 export * from './url.js'
+export * from './serialize.js'
 
 export * from './interfaces/Logger.js'
 export * from './interfaces/AsyncLogger.js'

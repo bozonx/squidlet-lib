@@ -54,6 +54,12 @@ export declare function deduplicate(arr?: any[]): any[];
  */
 export declare function arraysDifference(testArr: any[], samples: any[]): any[];
 /**
+ * Find similar items in arrays
+ * [1,2] => [2,3] => [2]
+ * @param arrs
+ */
+export declare function arraySimilar(...arrs: any[][]): any[];
+/**
  * Remove keys which are duplicate each other and return only those
  * keys which are only ones
  */
