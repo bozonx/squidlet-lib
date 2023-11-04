@@ -1,4 +1,10 @@
+lib
+notUsed
 test
+
 .editorconfig
+.gitignore
+.mocharc.yaml
 .nvmrc
 README.md
+tsconfig.json

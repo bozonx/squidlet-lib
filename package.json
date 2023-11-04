@@ -1,6 +1,6 @@
 {
   "name": "squidlet-lib",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "Common lib for squidlet projects",
   "author": "Ivan Kozyrin <ipkozyrin@gmail.com>",
   "repository": "git@github.com:bozonx/squidlet-lib.git",
@@ -17,7 +17,6 @@
   "type": "module",
   "license": "MIT",
   "scripts": {
-    "start": "ts-node ./control/index.ts",
     "build": "tsc",
     "test": "mocha"
   },
