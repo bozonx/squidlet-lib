@@ -10,7 +10,7 @@
   "types": "lib/index.ts",
   "publishConfig": {
     "exports": {
-      ".": "./distr/src/index.js"
+      ".": "./distr/lib/index.js"
     },
     "types": "distr/types/index.d.ts"
   },

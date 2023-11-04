@@ -104,10 +104,11 @@
 
     "verbatimModuleSyntax": true,
     "declaration": true,
-    "composite": true,
+    "declarationMap": true,
+    //"composite": true,
     "rootDir": "lib",
-    "declarationDir": "./distr/types",
-    "outDir": "./distr/src"
+    //"declarationDir": "./distr/types",
+    "outDir": "./distr/lib"
   },
   "include": ["**/*.ts", "**/*.tsx", "next-env.d.ts", "next.config.js"],
   "exclude": ["distr", "notUsed", "node_modules"]
