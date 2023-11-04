@@ -1,6 +1,7 @@
 import {isEqualUint8Array} from './binaryHelpers.js';
 import {concatUniqStrArrays} from './arrays.js';
-import {LOG_LEVELS, Logger, LogLevel} from './interfaces/Logger.js'
+import {LOG_LEVELS} from './interfaces/Logger.js'
+import type {Logger, LogLevel} from './interfaces/Logger.js'
 
 
 // TODO: test

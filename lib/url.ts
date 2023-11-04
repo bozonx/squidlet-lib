@@ -1,4 +1,4 @@
-import {JsonTypes} from './interfaces/Types.js';
+import type {JsonTypes} from './interfaces/Types.js';
 import {omitUndefined} from './objects.js';
 
 

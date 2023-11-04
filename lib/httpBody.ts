@@ -1,4 +1,4 @@
-import {JsonTypes} from './interfaces/Types.js';
+import type {JsonTypes} from './interfaces/Types.js';
 import {HTTP_CONTENT_TYPES} from "./interfaces/Http.js";
 
 

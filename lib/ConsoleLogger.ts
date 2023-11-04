@@ -1,4 +1,5 @@
-import {Logger, LogLevel, LOG_LEVELS} from './interfaces/Logger.js'
+import {LOG_LEVELS} from './interfaces/Logger.js'
+import type {Logger, LogLevel} from './interfaces/Logger.js'
 import {calcAllowedLogLevels} from './common.js'
 
 

@@ -1,4 +1,4 @@
-import {Primitives} from './interfaces/Types.js';
+import type {Primitives} from './interfaces/Types.js';
 import {parseValue} from './common.js';
 
 

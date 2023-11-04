@@ -4,14 +4,22 @@
   "description": "Common lib for squidlet projects",
   "author": "Ivan Kozyrin <ipkozyrin@gmail.com>",
   "repository": "git@github.com:bozonx/squidlet-lib.git",
-  "exports": "./distr/index.js",
+  "exports": {
+    ".": "./lib/index.ts"
+  },
+  "types": "lib/index.ts",
+  "publishConfig": {
+    "exports": {
+      ".": "./distr/src/index.js"
+    },
+    "types": "distr/types/index.d.ts"
+  },
   "type": "module",
   "license": "MIT",
   "scripts": {
     "start": "ts-node ./control/index.ts",
     "build": "tsc",
-    "test": "mocha",
-    "lint": "tslint -p tsconfig.json"
+    "test": "mocha"
   },
   "directories": {
     "lib": "./lib",
@@ -19,15 +27,14 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@types/node": "^20.2.1",
-    "chai": "^4.3.7",
+    "@types/node": "^20.8.10",
+    "chai": "^4.3.10",
     "chai-as-promised": "^7.1.1",
     "mocha": "^10.2.0",
-    "rewire": "^6.0.0",
-    "sinon": "^15.1.0",
+    "rewire": "^7.0.0",
+    "sinon": "^17.0.1",
     "sinon-chai": "^3.7.0",
     "ts-node": "^10.9.1",
-    "tslint": "^6.1.3",
-    "typescript": "^5.0.4"
+    "typescript": "^5.2.2"
   }
 }

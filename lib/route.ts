@@ -1,6 +1,6 @@
 import {URL_DELIMITER} from './url.js';
 import {trimCharEnd, trimCharStart} from './strings.js';
-import {Primitives} from './interfaces/Types.js';
+import type {Primitives} from './interfaces/Types.js';
 import {parseValue} from './common.js';
 
 

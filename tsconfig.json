@@ -100,10 +100,14 @@
 
     /* Completeness */
     // "skipDefaultLibCheck": true,                      /* Skip type checking .d.ts files that are included with TypeScript. */
-    "skipLibCheck": true,                                 /* Skip type checking all .d.ts files. */
-    //"rootDir": "lib",
+    "skipLibCheck": true,                                /* Skip type checking all .d.ts files. */
+
+    "verbatimModuleSyntax": true,
     "declaration": true,
-    "outDir": "./distr"
+    "composite": true,
+    "rootDir": "lib",
+    "declarationDir": "./distr/types",
+    "outDir": "./distr/src"
   },
   "include": ["**/*.ts", "**/*.tsx", "next-env.d.ts", "next.config.js"],
   "exclude": ["distr", "notUsed", "node_modules"]

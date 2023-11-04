@@ -1,4 +1,4 @@
-import {LogLevel} from './interfaces/Logger.js'
+import type {LogLevel} from './interfaces/Logger.js'
 
 
 type EventHandler = (logLevel: LogLevel, msg: string) => void
