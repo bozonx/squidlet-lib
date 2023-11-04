@@ -4,39 +4,45 @@ import {trimChar, trimCharEnd, trimCharStart} from './strings.js';
 export const PATH_SEP = '/';
 
 
+// TODO: test - если первый аргемент '/'
 /**
  * Join paths.
  * pathJoin('/path/', '/to/', './dir') => '/path/to/./dir'.
  * It clears doubling of delimiters
  */
 export function pathJoin (...paths: string[]): string {
-  const prepared: string[] = [];
+  const prepared: string[] = []
 
   for (let i = 0; i < paths.length; i++) {
-    let cleared: string;
 
     if (typeof paths[i] !== 'string') {
       throw new Error(`pathJoin: paths have to be strings`);
     }
-    else if (i === 0) {
-      // the first one - clear right delimiter
-      cleared = trimCharEnd(paths[i], PATH_SEP);
-    }
-    else if (i === (paths.length -1)) {
-      // the right one - clear left delimiter
-      cleared = trimCharStart(paths[i], PATH_SEP);
-    }
-    else {
-      // in the middle - clear both delimiters
-      cleared = trimChar(paths[i], PATH_SEP);
+
+    prepared.push(paths[i])
+
+    if (i < paths.length - 1) {
+      // not last
+      if (paths[i] !== PATH_SEP) prepared.push(PATH_SEP)
     }
 
-    prepared.push(cleared);
+    //let cleared: string = paths[i]
+    // else if (i === 0) {
+    //   // the first one - clear right delimiter
+    //   cleared = trimCharEnd(paths[i], PATH_SEP)
+    // }
+    // else if (i === (paths.length -1)) {
+    //   // the right one - clear left delimiter
+    //   cleared = trimCharStart(paths[i], PATH_SEP)
+    // }
+    // else {
+    //   // in the middle - clear both delimiters
+    //   cleared = trimChar(paths[i], PATH_SEP)
+    // }
+    //prepared.push(cleared)
   }
 
-  return prepared
-    .filter((item) => Boolean(item))
-    .join(PATH_SEP);
+  return prepared.join('')
 }
 
 export function pathIsAbsolute(pathToDirOrFile: string): boolean {

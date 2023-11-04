@@ -1,5 +1,6 @@
 import {deepGet} from './deepManipulate.js';
 import {removeItemFromArray} from './arrays.js';
+import {trimChar} from './strings.js';
 
 
 /**
@@ -196,6 +197,39 @@ export function collectEachObjValues(
   }
 
   return res
+}
+
+// TODO: test
+/**
+ * Get property of any objects include class instances.
+ * Use it to get deep value from mixed objects and class instances
+ * because deepGet() doesn't work with class instances.
+ */
+export function getDeepPropValue(obj: any, pathTo: string): any {
+  if (!pathTo || typeof pathTo !== 'string') return obj
+
+  const splat: string[] = trimChar(pathTo.trim(), '.').split('.')
+
+  if (splat.length === 0) return obj
+  else if (splat.length === 1) return obj[splat[0]]
+  // else go deeper
+  return getDeepPropValue(obj[splat[0]], splat.slice(1).join('.'))
+}
+
+// TODO: test
+/**
+ * Get method from deep class instance.
+ * It will be returned as bind with it's class
+ */
+export function getDeepMethod(obj: any, pathTo: string): any {
+  const splat = trimChar(pathTo.trim(), '.').split('.')
+
+  if (splat.length === 0) return obj
+  else if (splat.length === 1) return obj[splat[0]].bind(obj)
+  // else get class
+  const classInstance = getDeepPropValue(obj, splat.slice(0, splat.length - 1).join('.'))
+
+  return classInstance[splat[splat.length - 1]].bind(classInstance)
 }
 
 // TODO: хуёва работает
