@@ -216,7 +216,8 @@ export function arraysDifference(testArr: any[], samples: any[]): any[] {
 
 // TODO: test
 /**
- * Find similar items in arrays
+ * Find similar items in arrays.
+ * It is actually finds intersections
  * [1,2] => [2,3] => [2]
  * @param arrs
  */

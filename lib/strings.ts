@@ -108,3 +108,26 @@ export function padStart(srcString: string, length: number = 0, chars: string = 
   //
   // return `${filled.fill(chars).join('')}${srcString}`;
 }
+
+// TODO: test
+export function simpleTemplate(tmpl: string, data: Record<string, any> = {}): string {
+  if (!tmpl) return ''
+
+  let res = tmpl
+
+  for (const key of Object.keys(data)) {
+    res = res.replace(
+      new RegExp(`\\$\\{${key}\\}`, 'g'),
+      String(data[key])
+    )
+  }
+
+  return res
+}
+
+// TODO: test
+export function replaceLineBreak(str: string): string {
+  if (!str) return ''
+
+  return str.replace(/\\n/g, '\n')
+}
