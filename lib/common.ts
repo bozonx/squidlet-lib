@@ -4,6 +4,10 @@ import {LOG_LEVELS} from './interfaces/Logger.js'
 import type {Logger, LogLevel} from './interfaces/Logger.js'
 
 
+export function isNil(val: any): boolean {
+  return typeof val === 'undefined' || val === null
+}
+
 // TODO: test
 /**
  * If it is undefined or null then true

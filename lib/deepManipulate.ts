@@ -257,12 +257,12 @@ export function deepClone(src?: any): any {
  * @param onlyPlainObjects - default is true. It means skip class instances and
  *                           process only plain objects
  */
-export function deepFindObj(
+export function deepFindObj<T = Record<any, any>>(
   src?: Record<any, any> | Record<any, any>[],
   handler?: (obj: Record<any, any>, key: string | number, path: string) => (any | undefined),
   initialPath?: string,
   onlyPlainObjects: boolean = true
-): Record<any, any> | undefined {
+): T | undefined {
   if (!handler || !src || (!Array.isArray(src) && typeof src !== 'object')) return
 
   const keys: (string | number)[] = (Array.isArray(src))
@@ -308,12 +308,12 @@ export function deepFindObj(
  * @param onlyPlainObjects - default is true. It means skip class instances and
  *                           process only plain objects
  */
-export async function deepFindObjAsync(
+export async function deepFindObjAsync<T = Record<any, any>>(
   src?: Record<any, any> | Record<any, any>[],
   handler?: (obj: Record<any, any>, key: string | number, path: string) => (any | undefined),
   initialPath?: string,
   onlyPlainObjects: boolean = true
-): Promise<Record<any, any> | undefined> {
+): Promise<T | undefined> {
   if (!handler || !src || (!Array.isArray(src) && typeof src !== 'object')) return
 
   const keys: (string | number)[] = (Array.isArray(src))

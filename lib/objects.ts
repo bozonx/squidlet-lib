@@ -61,7 +61,7 @@ export function omitObj(
     }
   }
 
-  return result;
+  return result
 }
 
 /**
