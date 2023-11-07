@@ -93,6 +93,11 @@ describe('lib/argv', () => {
       normalizeArgs([' --param1 ', ' v ', ' command ', ' -p1 ', ' -p2 ']),
       ['--param1 v', '-p1', '-p2', 'command']
     )
+    // process.argv style. boolean before --
+    assert.deepEqual(
+      normalizeArgs([' --param1 ', ' -- ', ' command ']),
+      ['--param1', 'command']
+    )
   })
 
 })
