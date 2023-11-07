@@ -5,7 +5,8 @@
   "author": "Ivan Kozyrin <ipkozyrin@gmail.com>",
   "repository": "git@github.com:bozonx/squidlet-lib.git",
   "exports": {
-    ".": "./lib/index.ts"
+    ".": "./lib/index.ts",
+    "./js": "./distr/lib/index.js"
   },
   "types": "lib/index.ts",
   "publishConfig": {

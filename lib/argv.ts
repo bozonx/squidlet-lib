@@ -24,7 +24,7 @@ import {parseValue} from './common.js'
  */
 export function parseArgs(
   rawArgs: string | string [],
-  booleanParams: string[]
+  booleanParams: string[] = []
 ): {params: Record<string, any>, args: string[]} {
   const params: Record<string, any> = {}
   const args: string[] = []
@@ -42,6 +42,9 @@ export function parseArgs(
     if (match) {
       // parameter
       const paramName = match[1]
+
+      // TODO: если аргумент в кавычках ???
+
       const paramValue = parseValue(match[3])
 
       params[paramName] = (!paramValue)
