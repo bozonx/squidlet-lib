@@ -67,8 +67,24 @@ export function pathBasename(pathToDirOrFile: string): string {
   return pathParts[pathParts.length - 1];
 }
 
-export function clearRelPathLeft(rawPath: string): string {
-  return rawPath.replace(/^[\s.\\~\/]*/, '')
+// TODO: неправильно - если relative то не должен удалять начальный /
+// export function clearRelPathLeft(rawPath: string): string {
+//   return rawPath.replace(/^[\s.\\~\/]*/, '')
+// }
+
+/**
+ * Remove from path './', '../', '~/'
+ * @param rawPath
+ */
+export function clearRelPath(rawPath: string): string {
+  if (!rawPath) return ''
+
+  return rawPath
+    .trim()
+    // remove ./ and ../ from full path
+    .replace(/\.\.?\//g, '')
+    // remove ~/ from the start of path
+    .replace(/^~\//, '')
 }
 
 export function pathTrimExt(fileName: string): string {
