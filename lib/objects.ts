@@ -199,37 +199,58 @@ export function collectEachObjValues(
   return res
 }
 
-// TODO: test
 /**
  * Get property of any objects include class instances.
  * Use it to get deep value from mixed objects and class instances
  * because deepGet() doesn't work with class instances.
+ * Arrays are supported
  */
 export function getDeepPropValue(obj: any, pathTo: string): any {
-  if (!pathTo || typeof pathTo !== 'string') return obj
+  if (typeof obj !== 'object' || !pathTo || typeof pathTo !== 'string') return undefined
 
   const splat: string[] = trimChar(pathTo.trim(), '.').split('.')
 
-  if (splat.length === 0) return obj
+  if (splat.length === 0) return undefined
   else if (splat.length === 1) return obj[splat[0]]
   // else go deeper
   return getDeepPropValue(obj[splat[0]], splat.slice(1).join('.'))
 }
 
-// TODO: test
 /**
  * Get method from deep class instance.
  * It will be returned as bind with it's class
  */
-export function getDeepMethod(obj: any, pathTo: string): any {
+export function getDeepMethod(obj: any, pathTo: string): Function | undefined {
+  if (typeof obj !== 'object' || !pathTo || typeof pathTo !== 'string') return undefined
+
   const splat = trimChar(pathTo.trim(), '.').split('.')
 
-  if (splat.length === 0) return obj
-  else if (splat.length === 1) return obj[splat[0]].bind(obj)
-  // else get class
-  const classInstance = getDeepPropValue(obj, splat.slice(0, splat.length - 1).join('.'))
+  if (splat.length <= 0) return undefined
+  else if (splat.length === 1) {
+    // it is like 'methodName'
+    const method = obj[splat[0]]
 
-  return classInstance[splat[splat.length - 1]].bind(classInstance)
+    if (typeof method !== 'function') return undefined
+    // return the first child method and bind the obj
+    return method.bind(obj)
+  }
+
+  const methodName = splat[splat.length - 1]
+
+  // else get class
+  const classInstance = getDeepPropValue(
+    obj,
+    splat.slice(0, splat.length - 1).join('.')
+  )
+
+
+  if (!classInstance) return
+
+  const method = classInstance[methodName]
+
+  if (typeof method !== 'function') return undefined
+
+  return method.bind(classInstance)
 }
 
 // TODO: хуёва работает

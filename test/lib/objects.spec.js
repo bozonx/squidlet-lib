@@ -7,7 +7,7 @@ import {
   findObj,
   isPlainObject,
   getKeyOfObject,
-  clearObject,
+  clearObject, getDeepMethod, getDeepPropValue,
 } from '../../lib/objects.js'
 
 
@@ -113,6 +113,51 @@ describe('lib/objects', () => {
     assert.doesNotThrow(() => clearObject(5))
     assert.doesNotThrow(() => clearObject('s'))
     assert.doesNotThrow(() => clearObject([]))
+  })
+
+  it('getDeepPropValue', () => {
+    class Cls {
+      prop = 1
+    }
+    const structure = {
+      a: {
+        b: new Cls()
+      }
+    }
+
+    assert.equal(getDeepPropValue(structure, 'a.b.prop'), 1)
+    // can't find
+    assert.isUndefined(getDeepPropValue(structure, 'a.b.no-prop'))
+    assert.isUndefined(getDeepPropValue('a', 'a.no-prop'))
+    assert.equal(getDeepPropValue([0], 'length'), 1)
+    assert.isUndefined(getDeepPropValue({a: 1}, 'no'))
+    assert.isUndefined(getDeepPropValue({a: 1}, ''))
+    assert.isUndefined(getDeepPropValue({a: 1}))
+    assert.isUndefined(getDeepPropValue(undefined, 'a'))
+  })
+
+  it('getDeepMethod', () => {
+    class Cls {
+      prop = 1
+      method() {
+        return this.prop
+      }
+    }
+    const structure = {
+      a: {
+        b: {
+          c: new Cls()
+        }
+      }
+    }
+
+    assert.equal(getDeepMethod(structure, 'a.b.c.method')(), 1)
+    assert.equal(getDeepMethod(structure.a.b.c, 'method')(), 1)
+    assert.isUndefined(getDeepMethod(undefined, 'a.b.c.method'))
+    assert.isUndefined(getDeepMethod('a', 'a.b.c.method'))
+    assert.isUndefined(getDeepMethod([], 'a.b.c.method'))
+    // can't find
+    assert.isUndefined(getDeepMethod(structure, 'a.b.c.no-method'))
   })
 
 })
