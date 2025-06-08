@@ -72,12 +72,18 @@ export class Promised<T = any> {
   /**
    * Start the promise.
    */
-  constructor(timoutMs?: number) {
+  constructor() {
     this._promise = new Promise<T>((resolve: any, reject) => {
       this.promiseResolve = resolve;
       this.promiseReject = reject;
     });
+  }
 
+  /**
+   * Start the promise.
+   * @param timoutMs - timeout in milliseconds
+   */
+  async start(externalPromise: Promise<T>, timoutMs?: number): Promise<T> {
     if (timoutMs) {
       this._timeoutMs = timoutMs;
       this._timeoutId = setTimeout(() => {
@@ -101,6 +107,8 @@ export class Promised<T = any> {
         delete this.promiseReject;
       }, timoutMs);
     }
+
+    return this._promise;
   }
 
   destroy() {
