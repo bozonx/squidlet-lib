@@ -9,7 +9,7 @@ export class IndexedEvents<T extends AnyHandler> {
 
   // TODO: test
   get isDestroyed(): boolean {
-    return typeof this.handlers === 'undefined'
+    return typeof this.handlers === "undefined";
   }
 
   /**
@@ -36,7 +36,7 @@ export class IndexedEvents<T extends AnyHandler> {
 
       await handler(...args);
     }
-  }
+  };
 
   // TODO: можно сделать вариант когда выполняются все, ошибочные пропускаются и выводятся ошибки списокм
 
@@ -55,7 +55,7 @@ export class IndexedEvents<T extends AnyHandler> {
     }
 
     return Promise.all(promises).then(() => undefined);
-  }
+  };
 
   /**
    * Register listener and return its index.
@@ -80,10 +80,10 @@ export class IndexedEvents<T extends AnyHandler> {
   }
 
   removeListener(handlerIndex?: number): void {
-    if (typeof handlerIndex === 'undefined') return
+    if (typeof handlerIndex === "undefined") return;
     // TODO: test что после дестроя не будет поднимать ошибки
-    else if (this.isDestroyed) return
-    else if (!this.handlers[handlerIndex]) return
+    else if (this.isDestroyed) return;
+    else if (!this.handlers[handlerIndex]) return;
 
     delete this.handlers[handlerIndex];
   }
@@ -97,4 +97,32 @@ export class IndexedEvents<T extends AnyHandler> {
     delete this.handlers;
   }
 
+  // TODO: test
+  /**
+   * Wait for event to be emitted.
+   * @param testCb - Callback to check if the event has been emitted.
+   * @param timeoutMs - Timeout in milliseconds.
+   * @returns Promise that resolves when the event has been emitted.
+   */
+  wait(
+    testCb: (...args: any[]) => boolean | void,
+    timeoutMs: number
+  ): Promise<any> {
+    return new Promise((resolve, reject) => {
+      const waitTimeout = setTimeout(() => {
+        this.removeListener(handlerIndex);
+        reject(new Error("Timeout"));
+      }, timeoutMs);
+
+      const handler = async (...args: any[]): Promise<void> => {
+        if (testCb(...args)) {
+          clearTimeout(waitTimeout);
+          this.removeListener(handlerIndex);
+          resolve(args);
+        }
+      };
+  
+      const handlerIndex = this.addListener(handler as any);
+    });
+  }
 }

@@ -38,18 +38,27 @@ export const HTTP_FILE_EXT_CONTENT_TYPE = {
 // export interface HttpResponseHeaders extends CommonHeaders {
 // }
 
-export interface HttpRequestBase {
-  method: HttpMethods
-  url: string
-  headers: Record<string, string>
+interface HttpRequestBase {
+  body?: string | Uint8Array;
+  headers: Record<string, string>;
 }
 
 export interface HttpRequest extends HttpRequestBase {
-  body?: string | Uint8Array
+  method: HttpMethods;
+  url: string;
+
+  httpVersion: string;
+  httpVersionMajor: number;
+  httpVersionMinor: number;
+  complete: boolean;
+  rawHeaders: string[];
+
+  destroyed: boolean;
+  readonly closed: boolean;
+  readonly errored: Error | null;
 }
 
-export interface HttpResponse {
-  headers: Record<string, string>
-  status: number
-  body?: string | Uint8Array
+export interface HttpResponse extends HttpRequestBase {
+  status: number;
+  statusMessage: string;
 }
