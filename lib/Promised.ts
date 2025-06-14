@@ -25,12 +25,19 @@ export class Promised<T = any> {
     return promised;
   }
 
-  private _resolvedHandlers: ((result: T) => void)[] = [];
+  private _resolvedHandlers: ((result?: T) => void)[] = [];
   private _rejectedHandlers: ((err: Error | string) => void)[] = [];
   private _canceledHandlers: (() => void)[] = [];
   private _exceededHandlers: (() => void)[] = [];
   private _anyStateChangeHandlers: (() => void)[] = [];
+  // except canceled state
   private _finalyHandlers: (() => void)[] = [];
+
+  private _resolved: boolean = false;
+  private _rejected: boolean = false;
+  private _canceled: boolean = false;
+  // is timeout of promise exceeded
+  private _exceeded: boolean = false;
 
   private _startTimeoutMs?: number;
   private _startTimeoutId?: NodeJS.Timeout;
@@ -39,15 +46,6 @@ export class Promised<T = any> {
   private _result: T | undefined;
   private _error: Error | string | undefined;
   private _testCb: ((...args: any[]) => boolean | undefined) | undefined;
-  // TODO: впринципе можно удалить
-  private _promise: Promise<T>;
-  private promiseResolve?: (result?: T) => void;
-  private promiseReject?: (err: Error | string) => void;
-  private _resolved: boolean = false;
-  private _rejected: boolean = false;
-  private _canceled: boolean = false;
-  // is timeout of promise exceeded
-  private _exceeded: boolean = false;
 
   /**
    * Get the final result of the promise.
@@ -65,9 +63,9 @@ export class Promised<T = any> {
     return this._error;
   }
 
-  get promise(): Promise<T> {
-    return this._promise;
-  }
+  // get promise(): Promise<T> {
+  //   return this._promise;
+  // }
 
   /**
    * Get the timeout in ms of the start function.
@@ -85,12 +83,7 @@ export class Promised<T = any> {
     return this._waitTimeoutMs;
   }
 
-  constructor() {
-    this._promise = new Promise<T>((resolve: any, reject) => {
-      this.promiseResolve = resolve;
-      this.promiseReject = reject;
-    });
-  }
+  constructor() {}
 
   destroy() {
     if (this._startTimeoutId) {
@@ -105,10 +98,7 @@ export class Promised<T = any> {
 
     if (this._testCb) delete this._testCb;
 
-    delete this.promiseResolve;
-    delete this.promiseReject;
-    // @ts-ignore
-    delete this._promise;
+    this._clearHandlers();
   }
 
   // TODO: add test
@@ -128,9 +118,7 @@ export class Promised<T = any> {
     this._waitTimeoutId = setTimeout(() => {
       if (!this.isPending()) return;
 
-      this._exceeded = true;
-
-      this.reject(new Error(`Promise exceeded timeout of ${timeoutMs}ms`));
+      this.exceed();
     }, timeoutMs);
 
     return this;
@@ -171,9 +159,7 @@ export class Promised<T = any> {
       this._startTimeoutId = setTimeout(() => {
         if (!this.isPending()) return;
 
-        this._exceeded = true;
-
-        this.reject(new Error(`Promise exceeded timeout of ${timoutMs}ms`));
+        this.exceed();
       }, timoutMs);
     }
 
@@ -193,21 +179,18 @@ export class Promised<T = any> {
   }
 
   catch(cb: (err: Error | string) => void): Promised<T> {
-    // this._promise.catch(cb);
     this._rejectedHandlers.push(cb);
 
     return this;
   }
 
-  then(cb: (result: T) => void): Promised<T> {
-    // this._promise.then(cb);
+  then(cb: (result?: T) => void): Promised<T> {
     this._resolvedHandlers.push(cb);
 
     return this;
   }
 
   finally(cb: () => void): Promised<T> {
-    // this._promise.finally(cb);
     this._finalyHandlers.push(cb);
 
     return this;
@@ -259,10 +242,19 @@ export class Promised<T = any> {
     this._result = result;
     this._resolved = true;
 
-    if (this.promiseResolve) this.promiseResolve(result);
+    for (const handler of this._resolvedHandlers) {
+      handler(result);
+    }
 
-    delete this.promiseResolve;
-    delete this.promiseReject;
+    for (const handler of this._anyStateChangeHandlers) {
+      handler();
+    }
+
+    for (const handler of this._finalyHandlers) {
+      handler();
+    }
+
+    this._clearHandlers();
   };
 
   /**
@@ -288,10 +280,61 @@ export class Promised<T = any> {
     this._error = err;
     this._rejected = true;
 
-    if (this.promiseReject) this.promiseReject(err);
+    for (const handler of this._rejectedHandlers) {
+      handler(err);
+    }
 
-    delete this.promiseResolve;
-    delete this.promiseReject;
+    for (const handler of this._anyStateChangeHandlers) {
+      handler();
+    }
+
+    for (const handler of this._finalyHandlers) {
+      handler();
+    }
+
+    this._clearHandlers();
+  };
+
+  /**
+   * Change to exceeded state.
+   */
+  exceed = () => {
+    if (this._startTimeoutId) {
+      clearTimeout(this._startTimeoutId);
+      delete this._startTimeoutId;
+    }
+
+    if (this._waitTimeoutId) {
+      clearTimeout(this._waitTimeoutId);
+      delete this._waitTimeoutId;
+    }
+
+    if (this._testCb) delete this._testCb;
+
+    // can't reject more than once
+    if (this._rejected || this._canceled || this._resolved) return;
+
+    this._error = new Error(`Promise exceeded timeout`);
+    this._rejected = true;
+    this._exceeded = true;
+
+    for (const handler of this._rejectedHandlers) {
+      handler(this._error);
+    }
+
+    for (const handler of this._exceededHandlers) {
+      handler();
+    }
+
+    for (const handler of this._anyStateChangeHandlers) {
+      handler();
+    }
+
+    for (const handler of this._finalyHandlers) {
+      handler();
+    }
+
+    this._clearHandlers();
   };
 
   /**
@@ -313,8 +356,15 @@ export class Promised<T = any> {
 
     this._canceled = true;
 
-    delete this.promiseResolve;
-    delete this.promiseReject;
+    for (const handler of this._canceledHandlers) {
+      handler();
+    }
+
+    for (const handler of this._anyStateChangeHandlers) {
+      handler();
+    }
+
+    this._clearHandlers();
   }
 
   isResolved(): boolean {
@@ -341,5 +391,14 @@ export class Promised<T = any> {
 
   isExceeded(): boolean {
     return this._exceeded;
+  }
+
+  private _clearHandlers() {
+    this._resolvedHandlers = [];
+    this._rejectedHandlers = [];
+    this._canceledHandlers = [];
+    this._exceededHandlers = [];
+    this._anyStateChangeHandlers = [];
+    this._finalyHandlers = [];
   }
 }
