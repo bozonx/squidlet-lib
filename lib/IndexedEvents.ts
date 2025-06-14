@@ -1,7 +1,7 @@
-import {isPromise} from './common.js';
+import { isPromise } from "./common.js";
 import { Promised } from "./Promised.js";
 
-export type AnyHandler = (...args: any[]) => void;
+export type AnyHandler = (...args: any[]) => void | Promise<void>;
 
 export class IndexedEvents<T extends AnyHandler> {
   // all the handlers by index, removed handlers are empty
@@ -34,6 +34,7 @@ export class IndexedEvents<T extends AnyHandler> {
     for (let handler of this.handlers) {
       if (!handler) continue;
 
+      // TODO: если это обычная фукция?
       await handler(...args);
     }
   };
