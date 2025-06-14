@@ -108,9 +108,9 @@ export class IndexedEvents<T extends AnyHandler> {
     testCb: (...args: any[]) => boolean | undefined,
     timeoutMs: number
   ): Promised<any> {
-    const promised = new Promised<any>().wait(testCb, timeoutMs);
+    const promised = new Promised<any[]>().wait(testCb, timeoutMs);
     const handler = (...args: any[]): void => {
-      promised.test(testCb(...args));
+      promised.test(...args);
     };
 
     let handlerIndex = this.addListener(handler as T);

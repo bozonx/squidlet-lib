@@ -1,4 +1,4 @@
-export class Promised<T = any> {
+export class Promised<T = any | any[]> {
   /**
    * Create a promised which is already resolved.
    * @param result - result of promise
@@ -17,7 +17,7 @@ export class Promised<T = any> {
    * @param err - error of promise
    * @returns promised
    */
-  static alreadyRejected(err: Error | string): Promised {
+  static alreadyRejected(err: Error): Promised {
     const promised = new Promised();
 
     promised.reject(err);
@@ -26,7 +26,7 @@ export class Promised<T = any> {
   }
 
   private _resolvedHandlers: ((result?: T) => void)[] = [];
-  private _rejectedHandlers: ((err: Error | string) => void)[] = [];
+  private _rejectedHandlers: ((err: Error) => void)[] = [];
   private _canceledHandlers: (() => void)[] = [];
   private _exceededHandlers: (() => void)[] = [];
   private _anyStateChangeHandlers: (() => void)[] = [];
@@ -44,7 +44,7 @@ export class Promised<T = any> {
   private _waitTimeoutMs?: number;
   private _waitTimeoutId?: NodeJS.Timeout;
   private _result: T | undefined;
-  private _error: Error | string | undefined;
+  private _error: Error | undefined;
   private _testCb: ((...args: any[]) => boolean | undefined) | undefined;
 
   /**
@@ -105,6 +105,7 @@ export class Promised<T = any> {
   /**
    * Wait for the promise to be resolved or rejected.
    * Do not call this and start function again.
+   * ‼️ Important handlers of "then" function will receive an array of arguments.
    * @param testCb - callback to test the promise. If it returns true then the promise will be resolved.
    * @param timeoutMs - timeout in milliseconds
    * @returns promised
@@ -141,7 +142,8 @@ export class Promised<T = any> {
     }
 
     if (result) {
-      this.resolve();
+      // ‼️ Important there will be an array of arguments
+      this.resolve(args as T);
     }
 
     return this;
@@ -181,7 +183,7 @@ export class Promised<T = any> {
    * @param cb - callback to handle rejection
    * @returns promised
    */
-  catch(cb: (err: Error | string) => void): Promised<T> {
+  catch(cb: (err: Error) => void): Promised<T> {
     this._rejectedHandlers.push(cb);
 
     return this;
@@ -274,7 +276,7 @@ export class Promised<T = any> {
    * Do reject the promise.
    * @param err - error of promise
    */
-  reject = (err: Error | string) => {
+  reject = (err: Error) => {
     if (this._startTimeoutId) {
       clearTimeout(this._startTimeoutId);
       delete this._startTimeoutId;
