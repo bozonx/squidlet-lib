@@ -158,7 +158,6 @@ export class Promised<T = any> {
       this._startTimeoutMs = timoutMs;
       this._startTimeoutId = setTimeout(() => {
         if (!this.isPending()) return;
-
         this.exceed();
       }, timoutMs);
     }
@@ -166,7 +165,6 @@ export class Promised<T = any> {
     externalPromise
       .then((result) => {
         if (!this.isPending()) return;
-
         this.resolve(result);
       })
       .catch((error) => {
@@ -178,18 +176,33 @@ export class Promised<T = any> {
     return this;
   }
 
+  /**
+   * Handle promise rejection
+   * @param cb - callback to handle rejection
+   * @returns promised
+   */
   catch(cb: (err: Error | string) => void): Promised<T> {
     this._rejectedHandlers.push(cb);
 
     return this;
   }
 
+  /**
+   * Handle promise resolution
+   * @param cb - callback to handle resolution
+   * @returns promised
+   */
   then(cb: (result?: T) => void): Promised<T> {
     this._resolvedHandlers.push(cb);
 
     return this;
   }
 
+  /**
+   * Handle promise finalization
+   * @param cb - callback to handle finalization
+   * @returns promised
+   */
   finally(cb: () => void): Promised<T> {
     this._finalyHandlers.push(cb);
 
@@ -275,7 +288,7 @@ export class Promised<T = any> {
     if (this._testCb) delete this._testCb;
 
     // can't reject more than once
-    if (this._rejected || this._canceled || this._resolved) return;
+    if (!this.isPending()) return;
 
     this._error = err;
     this._rejected = true;
@@ -312,12 +325,11 @@ export class Promised<T = any> {
 
     if (this._testCb) delete this._testCb;
 
-    // can't reject more than once
-    if (this._rejected || this._canceled || this._resolved) return;
+    if (!this.isPending()) return;
 
     this._error = new Error(`Promise exceeded timeout`);
-    this._rejected = true;
     this._exceeded = true;
+    this._rejected = true;
 
     for (const handler of this._rejectedHandlers) {
       handler(this._error);
