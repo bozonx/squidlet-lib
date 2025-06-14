@@ -297,6 +297,7 @@ export class Promised<T = any> {
 
   /**
    * Change to exceeded state.
+   * It will reject the promise also.
    */
   exceed = () => {
     if (this._startTimeoutId) {
