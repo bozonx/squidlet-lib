@@ -27,6 +27,7 @@ export class Promised<T = any | any[]> {
 
   private _resolvedHandlers: ((result?: T) => void)[] = [];
   private _rejectedHandlers: ((err: Error) => void)[] = [];
+  private _catchHandlers: ((err: Error) => void)[] = [];
   private _canceledHandlers: (() => void)[] = [];
   private _exceededHandlers: (() => void)[] = [];
   private _anyStateChangeHandlers: (() => void)[] = [];
@@ -45,7 +46,7 @@ export class Promised<T = any | any[]> {
   private _waitTimeoutId?: NodeJS.Timeout;
   private _result: T | undefined;
   private _error: Error | undefined;
-  private _testCb: ((...args: any[]) => boolean | undefined) | undefined;
+  private _testCb: ((args: any | any[]) => boolean | undefined) | undefined;
 
   /**
    * Get the final result of the promise.
@@ -105,7 +106,6 @@ export class Promised<T = any | any[]> {
   /**
    * Wait for the promise to be resolved or rejected.
    * Do not call this and start function again.
-   * ‼️ Important handlers of "then" function will receive an array of arguments.
    * @param testCb - callback to test the promise. If it returns true then the promise will be resolved.
    * @param timeoutMs - timeout in milliseconds
    * @returns promised
@@ -130,20 +130,19 @@ export class Promised<T = any | any[]> {
    * @param args - arguments to test the cb
    * @returns promised
    */
-  test(...args: any[]): Promised<T> {
+  test(data: any | any[]): Promised<T> {
     if (!this._testCb) return this;
 
     let result: boolean | undefined;
 
     try {
-      result = this._testCb(...args);
+      result = this._testCb(data);
     } catch (err) {
       // skip error
     }
 
     if (result) {
-      // ‼️ Important there will be an array of arguments
-      this.resolve(args as T);
+      this.resolve(data);
     }
 
     return this;
@@ -179,11 +178,22 @@ export class Promised<T = any | any[]> {
   }
 
   /**
-   * Handle promise rejection
+   * Handle promise rejection and exceeded states
    * @param cb - callback to handle rejection
    * @returns promised
    */
   catch(cb: (err: Error) => void): Promised<T> {
+    this._catchHandlers.push(cb);
+
+    return this;
+  }
+
+  /**
+   * Handle only promise rejection
+   * @param cb - callback to handle rejection
+   * @returns promised
+   */
+  rejected(cb: (err: Error) => void): Promised<T> {
     this._rejectedHandlers.push(cb);
 
     return this;
@@ -299,6 +309,10 @@ export class Promised<T = any | any[]> {
       handler(err);
     }
 
+    for (const handler of this._catchHandlers) {
+      handler(err);
+    }
+
     for (const handler of this._anyStateChangeHandlers) {
       handler();
     }
@@ -333,7 +347,7 @@ export class Promised<T = any | any[]> {
     this._exceeded = true;
     this._rejected = true;
 
-    for (const handler of this._rejectedHandlers) {
+    for (const handler of this._catchHandlers) {
       handler(this._error);
     }
 
@@ -386,6 +400,18 @@ export class Promised<T = any | any[]> {
     return this._resolved;
   }
 
+  /**
+   * Check if the promise is caught error or exceeded timeout.
+   * @returns true if the promise is caught
+   */
+  isCaught(): boolean {
+    return this._rejected || this._exceeded;
+  }
+
+  /**
+   * Check if the promise is rejected.
+   * @returns true if the promise is rejected
+   */
   isRejected(): boolean {
     return this._rejected;
   }
@@ -411,6 +437,7 @@ export class Promised<T = any | any[]> {
   private _clearHandlers() {
     this._resolvedHandlers = [];
     this._rejectedHandlers = [];
+    this._catchHandlers = [];
     this._canceledHandlers = [];
     this._exceededHandlers = [];
     this._anyStateChangeHandlers = [];
