@@ -29,7 +29,9 @@ export interface ParsedUrl {
   port?: number;
   // relative part of url e.g / or /page/ or empty string
   path?: string;
-  search?: {[index: string]: JsonTypes};
+  // whole right part of url including search and anchor
+  pathname?: string;
+  search?: { [index: string]: JsonTypes };
   anchor?: string;
 }
 
@@ -46,9 +48,13 @@ export function parseUrl(rawUrl: string): ParsedUrl {
   const decodedUrl = decodeURIComponent(rawUrl.trim());
   const { left, right } = splitUrl(decodedUrl);
 
+  const leftPart = left ? parseLeftPartOfUrl(left) : {};
+  const rightPart = right ? parseRightPartOfUrl(right) : {};
+
   return {
-    ...(left) ? parseLeftPartOfUrl(left) : {},
-    ...(right) ? parseRightPartOfUrl(right) : {},
+    ...leftPart,
+    ...rightPart,
+    pathname: right,
   };
 }
 

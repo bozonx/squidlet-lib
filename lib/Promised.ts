@@ -1,6 +1,3 @@
-
-// TODO: может наследовать от Promise
-
 export class Promised<T = any> {
   /**
    * Create a promised which is already resolved.
@@ -28,23 +25,42 @@ export class Promised<T = any> {
     return promised;
   }
 
-  private _timeoutMs?: number;
-  private _timeoutId?: NodeJS.Timeout;
+  private _resolvedHandlers: ((result: T) => void)[] = [];
+  private _rejectedHandlers: ((err: Error | string) => void)[] = [];
+  private _canceledHandlers: (() => void)[] = [];
+  private _exceededHandlers: (() => void)[] = [];
+  private _anyStateChangeHandlers: (() => void)[] = [];
+  private _finalyHandlers: (() => void)[] = [];
+
+  private _startTimeoutMs?: number;
+  private _startTimeoutId?: NodeJS.Timeout;
+  private _waitTimeoutMs?: number;
+  private _waitTimeoutId?: NodeJS.Timeout;
   private _result: T | undefined;
   private _error: Error | string | undefined;
+  private _testCb: ((...args: any[]) => boolean | undefined) | undefined;
+  // TODO: впринципе можно удалить
   private _promise: Promise<T>;
   private promiseResolve?: (result?: T) => void;
   private promiseReject?: (err: Error | string) => void;
-  private resolved: boolean = false;
-  private rejected: boolean = false;
-  private canceled: boolean = false;
+  private _resolved: boolean = false;
+  private _rejected: boolean = false;
+  private _canceled: boolean = false;
   // is timeout of promise exceeded
-  private exceeded: boolean = false;
+  private _exceeded: boolean = false;
 
+  /**
+   * Get the final result of the promise.
+   * @returns result of promise
+   */
   get result() {
     return this._result;
   }
 
+  /**
+   * Get the final error of the promise.
+   * @returns error of promise
+   */
   get error() {
     return this._error;
   }
@@ -53,25 +69,22 @@ export class Promised<T = any> {
     return this._promise;
   }
 
-  get catch() {
-    return this._promise.catch;
-  }
-
-  get then() {
-    return this._promise.then;
-  }
-
-  get finally() {
-    return this._promise.finally;
-  }
-
-  get timeoutMs(): number | undefined {
-    return this._timeoutMs;
+  /**
+   * Get the timeout in ms of the start function.
+   * @returns timeout of promise
+   */
+  get startTimeoutMs(): number | undefined {
+    return this._startTimeoutMs;
   }
 
   /**
-   * Start the promise.
+   * Get the timeout in ms of the wait function.
+   * @returns timeout of promise
    */
+  get waitTimeoutMs(): number | undefined {
+    return this._waitTimeoutMs;
+  }
+
   constructor() {
     this._promise = new Promise<T>((resolve: any, reject) => {
       this.promiseResolve = resolve;
@@ -79,43 +92,18 @@ export class Promised<T = any> {
     });
   }
 
-  /**
-   * Start the promise.
-   * @param timoutMs - timeout in milliseconds
-   */
-  async start(externalPromise: Promise<T>, timoutMs?: number): Promise<T> {
-    if (timoutMs) {
-      this._timeoutMs = timoutMs;
-      this._timeoutId = setTimeout(() => {
-        if (this.canceled || this.resolved || this.rejected) {
-          delete this._timeoutId;
-          return;
-        }
-
-        this.exceeded = true;
-
-        // TODO: вызвать reject
-
-        // if (this.promiseReject)
-        //   this.promiseReject(
-        //     new Error(`Promise exceeded timeout of ${timoutMs}ms`)
-        //   );
-
-        // TODO: отвязаться от промиса
-
-        delete this.promiseResolve;
-        delete this.promiseReject;
-      }, timoutMs);
-    }
-
-    return this._promise;
-  }
-
   destroy() {
-    if (this._timeoutId) {
-      clearTimeout(this._timeoutId);
-      delete this._timeoutId;
+    if (this._startTimeoutId) {
+      clearTimeout(this._startTimeoutId);
+      delete this._startTimeoutId;
     }
+
+    if (this._waitTimeoutId) {
+      clearTimeout(this._waitTimeoutId);
+      delete this._waitTimeoutId;
+    }
+
+    if (this._testCb) delete this._testCb;
 
     delete this.promiseResolve;
     delete this.promiseReject;
@@ -123,23 +111,155 @@ export class Promised<T = any> {
     delete this._promise;
   }
 
+  // TODO: add test
+  /**
+   * Wait for the promise to be resolved or rejected.
+   * Do not call this and start function again.
+   * @param testCb - callback to test the promise. If it returns true then the promise will be resolved.
+   * @param timeoutMs - timeout in milliseconds
+   * @returns promised
+   */
+  wait(
+    testCb: (...args: any[]) => boolean | undefined,
+    timeoutMs: number
+  ): Promised<T> {
+    this._testCb = testCb;
+    this._waitTimeoutMs = timeoutMs;
+    this._waitTimeoutId = setTimeout(() => {
+      if (!this.isPending()) return;
+
+      this._exceeded = true;
+
+      this.reject(new Error(`Promise exceeded timeout of ${timeoutMs}ms`));
+    }, timeoutMs);
+
+    return this;
+  }
+
+  /**
+   * Test the cb of wait function.
+   * @param args - arguments to test the cb
+   * @returns promised
+   */
+  test(...args: any[]): Promised<T> {
+    if (!this._testCb) return this;
+
+    let result: boolean | undefined;
+
+    try {
+      result = this._testCb(...args);
+    } catch (err) {
+      // skip error
+    }
+
+    if (result) {
+      this.resolve();
+    }
+
+    return this;
+  }
+
+  // TODO: add test
+  /**
+   * Start the promise.
+   * Do not call this and wait function again.
+   * @param timoutMs - timeout in milliseconds. If exceeded then promise will be rejected.
+   */
+  start(externalPromise: Promise<T>, timoutMs?: number): Promised<T> {
+    if (timoutMs) {
+      this._startTimeoutMs = timoutMs;
+      this._startTimeoutId = setTimeout(() => {
+        if (!this.isPending()) return;
+
+        this._exceeded = true;
+
+        this.reject(new Error(`Promise exceeded timeout of ${timoutMs}ms`));
+      }, timoutMs);
+    }
+
+    externalPromise
+      .then((result) => {
+        if (!this.isPending()) return;
+
+        this.resolve(result);
+      })
+      .catch((error) => {
+        if (!this.isPending()) return;
+
+        this.reject(error as Error);
+      });
+
+    return this;
+  }
+
+  catch(cb: (err: Error | string) => void): Promised<T> {
+    // this._promise.catch(cb);
+    this._rejectedHandlers.push(cb);
+
+    return this;
+  }
+
+  then(cb: (result: T) => void): Promised<T> {
+    // this._promise.then(cb);
+    this._resolvedHandlers.push(cb);
+
+    return this;
+  }
+
+  finally(cb: () => void): Promised<T> {
+    // this._promise.finally(cb);
+    this._finalyHandlers.push(cb);
+
+    return this;
+  }
+
+  onExceeded(cb: () => void): Promised<T> {
+    this._exceededHandlers.push(cb);
+
+    return this;
+  }
+
+  onCancel(cb: () => void): Promised<T> {
+    this._canceledHandlers.push(cb);
+
+    return this;
+  }
+
+  /**
+   * On any change state: resolved, rejected, canceled, exceeded.
+   * @param cb - callback to do
+   * @returns promised
+   */
+  onStateChange(cb: () => void): Promised<T> {
+    this._anyStateChangeHandlers.push(cb);
+
+    return this;
+  }
+
   /**
    * Do resolve the promise.
    * @param result - result of promise
    */
   resolve = (result?: T) => {
-    if (this._timeoutId) {
-      clearTimeout(this._timeoutId);
-      delete this._timeoutId;
+    if (this._startTimeoutId) {
+      clearTimeout(this._startTimeoutId);
+      delete this._startTimeoutId;
     }
 
+    if (this._waitTimeoutId) {
+      clearTimeout(this._waitTimeoutId);
+      delete this._waitTimeoutId;
+    }
+
+    if (this._testCb) delete this._testCb;
+
+    // can't resolve more than once
     if (!this.isPending()) return;
 
     this._result = result;
+    this._resolved = true;
 
     if (this.promiseResolve) this.promiseResolve(result);
-
-    this.resolved = true;
 
     delete this.promiseResolve;
     delete this.promiseReject;
@@ -150,18 +270,25 @@ export class Promised<T = any> {
    * @param err - error of promise
    */
   reject = (err: Error | string) => {
-    if (this._timeoutId) {
-      clearTimeout(this._timeoutId);
-      delete this._timeoutId;
+    if (this._startTimeoutId) {
+      clearTimeout(this._startTimeoutId);
+      delete this._startTimeoutId;
     }
 
-    if (!this.isPending()) return;
+    if (this._waitTimeoutId) {
+      clearTimeout(this._waitTimeoutId);
+      delete this._waitTimeoutId;
+    }
+
+    if (this._testCb) delete this._testCb;
+
+    // can't reject more than once
+    if (this._rejected || this._canceled || this._resolved) return;
 
     this._error = err;
+    this._rejected = true;
 
     if (this.promiseReject) this.promiseReject(err);
-
-    this.rejected = true;
 
     delete this.promiseResolve;
     delete this.promiseReject;
@@ -172,40 +299,47 @@ export class Promised<T = any> {
    * If promise was fulfilled it can't be cancelled.
    */
   cancel() {
-    if (this._timeoutId) {
-      clearTimeout(this._timeoutId);
-      delete this._timeoutId;
+    if (this._startTimeoutId) {
+      clearTimeout(this._startTimeoutId);
+      delete this._startTimeoutId;
+    }
+
+    if (this._waitTimeoutId) {
+      clearTimeout(this._waitTimeoutId);
+      delete this._waitTimeoutId;
     }
 
     if (!this.isPending()) return;
 
-    this.canceled = true;
+    this._canceled = true;
 
     delete this.promiseResolve;
     delete this.promiseReject;
   }
 
   isResolved(): boolean {
-    return this.resolved;
+    return this._resolved;
   }
 
   isRejected(): boolean {
-    return this.rejected;
-  }
-
-  isCanceled(): boolean {
-    return this.canceled;
+    return this._rejected;
   }
 
   isFulfilled(): boolean {
-    return this.resolved || this.rejected;
-  }
-
-  isExceeded(): boolean {
-    return this.exceeded;
+    return this._resolved || this._rejected;
   }
 
   isPending(): boolean {
-    return !this.resolved && !this.rejected && !this.canceled && !this.exceeded;
+    return (
+      !this._resolved && !this._rejected && !this._canceled && !this._exceeded
+    );
+  }
+
+  isCanceled(): boolean {
+    return this._canceled;
+  }
+
+  isExceeded(): boolean {
+    return this._exceeded;
   }
 }

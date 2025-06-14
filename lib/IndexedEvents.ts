@@ -1,7 +1,7 @@
 import {isPromise} from './common.js';
+import { Promised } from "./Promised.js";
 
 export type AnyHandler = (...args: any[]) => void;
-
 
 export class IndexedEvents<T extends AnyHandler> {
   // all the handlers by index, removed handlers are empty
@@ -105,24 +105,20 @@ export class IndexedEvents<T extends AnyHandler> {
    * @returns Promise that resolves when the event has been emitted.
    */
   wait(
-    testCb: (...args: any[]) => boolean | void,
+    testCb: (...args: any[]) => boolean | undefined,
     timeoutMs: number
-  ): Promise<any> {
-    return new Promise((resolve, reject) => {
-      const waitTimeout = setTimeout(() => {
-        this.removeListener(handlerIndex);
-        reject(new Error("Timeout"));
-      }, timeoutMs);
+  ): Promised<any> {
+    const promised = new Promised<any>().wait(testCb, timeoutMs);
+    const handler = (...args: any[]): void => {
+      promised.test(testCb(...args));
+    };
 
-      const handler = async (...args: any[]): Promise<void> => {
-        if (testCb(...args)) {
-          clearTimeout(waitTimeout);
-          this.removeListener(handlerIndex);
-          resolve(args);
-        }
-      };
-  
-      const handlerIndex = this.addListener(handler as any);
+    let handlerIndex = this.addListener(handler as T);
+
+    promised.onStateChange(() => {
+      this.removeListener(handlerIndex);
     });
+
+    return promised;
   }
 }
