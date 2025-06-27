@@ -58,7 +58,7 @@ export interface HttpRequest {
 export interface HttpResponse {
   body?: string | Uint8Array;
   headers?: Record<string, string>;
-  status: number;
+  statusCode: number;
   statusMessage?: string;
   // means that body has been read
   bodyUsed?: boolean;

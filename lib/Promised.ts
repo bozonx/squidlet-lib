@@ -396,6 +396,12 @@ export class Promised<T = any | any[]> {
     this._clearHandlers();
   }
 
+  extractPromise(): Promise<T> {
+    return new Promise((resolve, reject) => {
+      this.then((result) => resolve(result as T)).catch(reject);
+    });
+  }
+
   isResolved(): boolean {
     return this._resolved;
   }

@@ -1,14 +1,13 @@
 type Timeout = NodeJS.Timeout;
 
-import {Promised} from '../../lib/Promised';
+import { Promised } from "../Promised.js";
 
-
-export const DEFAULT_ID = 'default';
+export const DEBOUNCE_DEFAULT_ID = "default";
 
 export enum ItemPosition {
   lastCbToCall,
   promiseForWholeDebounce,
-  timeout
+  timeout,
 }
 export type DebounceCb = (...args: any[]) => void;
 // Array like [ lastCbToCall, promiseForWholeDebounce, Timeout ]
@@ -18,16 +17,16 @@ export type DebounceItem = [DebounceCb, Promised<void>, Timeout];
  * Call only the LAST callback of specified id.
  * Timer sets up on the first call and the next calls don't increase it!
  */
-export default class DebounceCall {
+export class DebounceCall {
   // items by id
-  protected items: {[index: string]: DebounceItem} = {};
+  protected items: { [index: string]: DebounceItem } = {};
 
   // TODO: test
   get isDestroyed(): boolean {
-    return typeof this.items === 'undefined';
+    return typeof this.items === "undefined";
   }
 
-  isInvoking(id: string | number = DEFAULT_ID): boolean {
+  isInvoking(id: string | number = DEBOUNCE_DEFAULT_ID): boolean {
     return Boolean(this.items[id]);
   }
 
@@ -39,7 +38,7 @@ export default class DebounceCall {
   invoke(
     cb: DebounceCb,
     debounceMs: number | undefined,
-    id: string | number = DEFAULT_ID,
+    id: string | number = DEBOUNCE_DEFAULT_ID
   ): Promise<void> {
     // if there isn't debounce time - call immediately
     if (!debounceMs || debounceMs < 0) return this.callCbImmediately(id, cb);
@@ -52,17 +51,20 @@ export default class DebounceCall {
     else {
       const timeout = setTimeout(() => this.callCb(id), debounceMs);
       // make a new item
-      this.items[id] = [ cb, new Promised<void>(), timeout ];
+      this.items[id] = [cb, new Promised<void>(), timeout];
     }
 
     // return promise of item
-    return this.items[id][ItemPosition.promiseForWholeDebounce].promise;
+    return this.items[id][
+      ItemPosition.promiseForWholeDebounce
+    ].extractPromise();
   }
 
-  clear(id: string | number = DEFAULT_ID) {
+  clear(id: string | number = DEBOUNCE_DEFAULT_ID) {
     if (!this.items[id]) return;
 
-    if (this.items[id][ItemPosition.timeout]) clearTimeout(this.items[id][ItemPosition.timeout]);
+    if (this.items[id][ItemPosition.timeout])
+      clearTimeout(this.items[id][ItemPosition.timeout]);
     // TODO: может лучше зарезолвить промис. Но при дестрое дестроить
     this.items[id][ItemPosition.promiseForWholeDebounce].destroy();
 
@@ -85,7 +87,6 @@ export default class DebounceCall {
     delete this.items;
   }
 
-
   protected updateItem(
     item: DebounceItem,
     id: string | number,
@@ -105,16 +106,16 @@ export default class DebounceCall {
     try {
       // just call cb and don't handle the result and don't wait for promise
       this.items[id][ItemPosition.lastCbToCall]();
-    }
-    catch (err) {
-      return this.endOfDebounce(err, id);
+    } catch (err) {
+      return this.endOfDebounce(err as Error, id);
     }
 
     this.endOfDebounce(undefined, id);
   }
 
   protected endOfDebounce(err: Error | undefined, id: string | number) {
-    if (this.items[id][ItemPosition.timeout]) clearTimeout(this.items[id][ItemPosition.timeout]);
+    if (this.items[id][ItemPosition.timeout])
+      clearTimeout(this.items[id][ItemPosition.timeout]);
 
     const promised = this.items[id][ItemPosition.promiseForWholeDebounce];
 
@@ -122,8 +123,7 @@ export default class DebounceCall {
 
     if (err) {
       promised.reject(err);
-    }
-    else {
+    } else {
       promised.resolve();
     }
 
@@ -131,9 +131,8 @@ export default class DebounceCall {
   }
 
   protected async callCbImmediately(id: string | number, cb: DebounceCb) {
-    if (typeof this.items[id] !== 'undefined') this.clear(id);
+    if (typeof this.items[id] !== "undefined") this.clear(id);
 
     cb();
   }
-
 }
