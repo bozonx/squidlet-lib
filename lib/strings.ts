@@ -183,8 +183,12 @@ export function normalizeText(text?: string): string {
   // Определяем формат текста и восстанавливаем в читаемый вид
   let words: string[] = [];
 
+  // Проверяем на текст, уже разделенный пробелами
+  if (text.includes(" ")) {
+    words = text.split(" ");
+  }
   // Проверяем на SnakeCase (слова разделены подчеркиванием)
-  if (text.includes("_")) {
+  else if (text.includes("_")) {
     words = text.split("_");
   }
   // Проверяем на KebabCase (слова разделены дефисами)
@@ -192,9 +196,10 @@ export function normalizeText(text?: string): string {
     words = text.split("-");
   }
   // Проверяем на CamelCase/PascalCase (слова разделены заглавными буквами)
-  else if (/[A-Z]/.test(text)) {
+  else if (/[\p{Lu}]/u.test(text)) {
     // Разделяем по заглавным буквам, сохраняя их
-    words = text.split(/(?=[A-Z])/);
+    // Используем Unicode свойства для поддержки любых языков
+    words = text.split(/(?=[\p{Lu}])/u);
   }
   // Если нет специальных разделителей, считаем что это одно слово
   else {
