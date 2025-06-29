@@ -178,9 +178,34 @@ export function toKebabCase(text?: string): string {
 
 // TODO: test
 export function normalizeText(text?: string): string {
-  if (!text) return ''
+  if (!text) return "";
 
-  // TODO: восстановить из camel, snake и тд
+  // Определяем формат текста и восстанавливаем в читаемый вид
+  let words: string[] = [];
 
-  return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
+  // Проверяем на SnakeCase (слова разделены подчеркиванием)
+  if (text.includes("_")) {
+    words = text.split("_");
+  }
+  // Проверяем на KebabCase (слова разделены дефисами)
+  else if (text.includes("-")) {
+    words = text.split("-");
+  }
+  // Проверяем на CamelCase/PascalCase (слова разделены заглавными буквами)
+  else if (/[A-Z]/.test(text)) {
+    // Разделяем по заглавным буквам, сохраняя их
+    words = text.split(/(?=[A-Z])/);
+  }
+  // Если нет специальных разделителей, считаем что это одно слово
+  else {
+    words = [text];
+  }
+
+  // Обрабатываем каждое слово: первая буква заглавная, остальные строчные
+  const normalizedWords = words
+    .filter((word) => word.length > 0) // Убираем пустые строки
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase());
+
+  // Объединяем слова пробелами
+  return normalizedWords.join(" ");
 }
