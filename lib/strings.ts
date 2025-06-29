@@ -204,7 +204,15 @@ export function normalizeText(text?: string): string {
   // Обрабатываем каждое слово: первая буква заглавная, остальные строчные
   const normalizedWords = words
     .filter((word) => word.length > 0) // Убираем пустые строки
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase());
+    .map((word, index) => {
+      if (index === 0) {
+        // Первое слово: первая буква заглавная, остальные строчные
+        return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+      } else {
+        // Остальные слова: все буквы строчные
+        return word.toLowerCase();
+      }
+    });
 
   // Объединяем слова пробелами
   return normalizedWords.join(" ");
