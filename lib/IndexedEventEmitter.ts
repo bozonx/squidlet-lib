@@ -26,9 +26,11 @@ export class IndexedEventEmitter<T extends DefaultHandler = DefaultHandler> {
 
       // TODO: test
       if (!handler) {
-        throw new Error(
-          `IndexedEventEmitter.emit: can't find handler of event "${eventName}" by index "${index}"`
-        )
+        // TODO: Изза того что может не правильно удалить получается что хэндлер может быть undefined
+        continue;
+        // throw new Error(
+        //   `IndexedEventEmitter.emit: can't find handler of event "${eventName}" by index "${index}"`
+        // )
       }
 
       handler(...args)

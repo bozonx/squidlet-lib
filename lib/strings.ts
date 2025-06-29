@@ -131,3 +131,56 @@ export function replaceLineBreak(str: string): string {
 
   return str.replace(/\\n/g, '\n')
 }
+
+// TODO: test
+export function toCamelCase(text?: string): string {
+  if (!text) return ''
+  
+  return text
+    .split(/[\s-_]+/)
+    .map((word, index) =>
+      index === 0
+        ? word.toLowerCase()
+        : word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+    )
+    .join("");
+};
+
+// TODO: test
+export function toPascalCase(text?: string): string {
+  if (!text) return ''
+  
+  return text
+    .split(/[\s-_]+/)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join("");
+};
+
+// TODO: test
+export function toSnakeCase(text?: string): string {
+  if (!text) return ''
+  
+  return text
+    .split(/[\s-_]+/)
+    .map((word) => word.toLowerCase())
+    .join("_");
+};
+
+// TODO: test
+export function toKebabCase(text?: string): string {
+  if (!text) return ''
+
+  return text
+    .split(/[\s-_]+/)
+    .map((word) => word.toLowerCase())
+    .join("-");
+};
+
+// TODO: test
+export function normalizeText(text?: string): string {
+  if (!text) return ''
+
+  // TODO: восстановить из camel, snake и тд
+
+  return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
+}
