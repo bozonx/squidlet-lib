@@ -38,6 +38,12 @@ export function trimChar(src: string, char: string = ' '): string {
   return trimCharEnd( trimCharStart(src, char), char);
 }
 
+// TODO: text
+export function truncate(src: string, maxLength: number, suffix: string = '...'): string {
+  if (src.length <= maxLength) return src;
+  return src.slice(0, maxLength) + suffix;
+}
+
 /**
  * Turn only the first letter to upper case
  */

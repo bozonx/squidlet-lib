@@ -67,7 +67,8 @@ export function mergeDeepObjects<T = Record<string, any>>(
 export function cloneDeepObject<T = Record<string, any>>(
 obj?: {[index: string]: any}
 ): T {
-  return mergeDeepObjects<T>({}, obj)
+  // TODO: use structuredClone()
+  return mergeDeepObjects<T>({}, obj);
 }
 
 
