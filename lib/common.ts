@@ -1,11 +1,9 @@
 import {isEqualUint8Array} from './binaryHelpers.js';
 import {concatUniqStrArrays} from './arrays.js';
-import {LOG_LEVELS} from './interfaces/Logger.js'
-import type {Logger, LogLevel} from './interfaces/Logger.js'
-
+import { type Logger, LogLevels } from "./interfaces/Logger.js";
 
 export function isNil(val: any): boolean {
-  return typeof val === 'undefined' || val === null
+  return typeof val === "undefined" || val === null;
 }
 
 // TODO: test
@@ -18,12 +16,12 @@ export function isNil(val: any): boolean {
  * @param some
  */
 export function isEmpty(some?: any | any[]): boolean {
-  if (typeof some === 'undefined' || some === null) return true
-  else if (Array.isArray(some) && !some.length) return true
-  else if (typeof some === 'object' && !Object.keys(some).length) return true
-  else if (some === '') return true
+  if (typeof some === "undefined" || some === null) return true;
+  else if (Array.isArray(some) && !some.length) return true;
+  else if (typeof some === "object" && !Object.keys(some).length) return true;
+  else if (some === "") return true;
   // boolean, 0, number, etc
-  return false
+  return false;
 }
 
 /**
@@ -31,7 +29,12 @@ export function isEmpty(some?: any | any[]): boolean {
  */
 export function isEqual(first: any, second: any): boolean {
   // primitives and null
-  if (typeof first !== 'object' || typeof second !== 'object' || !first || !second) {
+  if (
+    typeof first !== "object" ||
+    typeof second !== "object" ||
+    !first ||
+    !second
+  ) {
     return first === second;
   }
   // uint
@@ -49,7 +52,7 @@ export function isEqual(first: any, second: any): boolean {
     return true;
   }
   // plain objects and instances
-  else if (typeof first === 'object' && typeof second === 'object') {
+  else if (typeof first === "object" && typeof second === "object") {
     const firstKeys: string[] = Object.keys(first);
 
     // keys of both objects
@@ -70,22 +73,17 @@ export function isEqual(first: any, second: any): boolean {
  * Parse string numbers and constants to pure numbers and constants
  */
 export function parseValue(rawValue: any): any {
-  if (typeof rawValue !== 'string') {
+  if (typeof rawValue !== "string") {
     return rawValue;
-  }
-  else if (rawValue === 'true') {
+  } else if (rawValue === "true") {
     return true;
-  }
-  else if (rawValue === 'false') {
+  } else if (rawValue === "false") {
     return false;
-  }
-  else if (rawValue === 'undefined') {
+  } else if (rawValue === "undefined") {
     return undefined;
-  }
-  else if (rawValue === 'null') {
+  } else if (rawValue === "null") {
     return null;
-  }
-  else if (rawValue === 'NaN') {
+  } else if (rawValue === "NaN") {
     return NaN;
   }
   // it is for - 2. strings
@@ -115,8 +113,7 @@ export function callPromised(method: Function, ...params: any[]): Promise<any> {
 
         resolve(data);
       });
-    }
-    catch (err) {
+    } catch (err) {
       reject(err);
     }
   });
@@ -131,17 +128,15 @@ export function callSafely(
   ...params: any[]
 ): Promise<any> {
   try {
-    const result = method(...params)
+    const result = method(...params);
 
     if (isPromise(result)) {
-      return result
+      return result;
+    } else {
+      return Promise.resolve(result);
     }
-    else {
-      return Promise.resolve(result)
-    }
-  }
-  catch (e) {
-    return Promise.reject(e)
+  } catch (e) {
+    return Promise.reject(e);
   }
 }
 
@@ -149,28 +144,31 @@ export function callSafely(
  * Is number or number as string.
  */
 export function isKindOfNumber(value: any): boolean {
-  if (typeof value === 'string') {
+  if (typeof value === "string") {
     return !Number.isNaN(Number(value));
   }
 
-  return typeof value === 'number';
+  return typeof value === "number";
 }
 
 export function isPromise(toCheck: any): boolean {
-  return toCheck
-    && typeof toCheck === 'object'
-    && typeof toCheck.then === 'function'
-    || false
+  return (
+    (toCheck &&
+      typeof toCheck === "object" &&
+      typeof toCheck.then === "function") ||
+    false
+  );
 }
 
 /**
  * Makes ['info', 'warn', 'error'] if log level is 'info'
  */
-export function calcAllowedLogLevels(logLevel: LogLevel): LogLevel[] {
-  const logLevels = Object.keys(LOG_LEVELS)
-  const currentLevelIndex: number = logLevels.indexOf(logLevel)
+export function calcAllowedLogLevels(logLevel: LogLevels): LogLevels[] {
+  // TODO: так будет работать???
+  const logLevels = Object.values(LogLevels);
+  const currentLevelIndex: number = logLevels.indexOf(logLevel);
 
-  return logLevels.slice(currentLevelIndex) as LogLevel[]
+  return logLevels.slice(currentLevelIndex) as LogLevels[];
 }
 
 // /**
@@ -179,21 +177,20 @@ export function calcAllowedLogLevels(logLevel: LogLevel): LogLevel[] {
 //  * @param toCheck
 //  */
 
-
 // TODO: test
 export function handleLogEvent(logger: Logger) {
-  return (logLevel: LogLevel, msg: string) => {
+  return (logLevel: LogLevels, msg: string) => {
     switch (logLevel) {
-      case 'debug':
-        return logger.debug(msg)
-      case 'info':
-        return logger.info(msg)
-      case 'warn':
-        return logger.warn(msg)
-      case 'error':
-        return logger.error(msg)
-      case 'log':
-        return logger.log(msg)
+      case "debug":
+        return logger.debug(msg);
+      case "info":
+        return logger.info(msg);
+      case "warn":
+        return logger.warn(msg);
+      case "error":
+        return logger.error(msg);
+      case "log":
+        return logger.log(msg);
     }
-  }
+  };
 }
