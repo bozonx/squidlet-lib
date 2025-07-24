@@ -1,4 +1,4 @@
-export class Promised<T = any | any[]> {
+export class Promised<T = any | any[]> extends Promise<T> {
   /**
    * Create a promised which is already resolved.
    * @param result - result of promise
@@ -84,7 +84,18 @@ export class Promised<T = any | any[]> {
     return this._waitTimeoutMs;
   }
 
-  constructor() {}
+  constructor(
+    executor?: (
+      resolve: (value: T | PromiseLike<T>) => void,
+      reject: (reason?: any) => void
+    ) => void
+  ) {
+    if (executor) {
+      super(executor);
+    } else {
+      super(() => {});
+    }
+  }
 
   destroy() {
     if (this._startTimeoutId) {
@@ -178,17 +189,6 @@ export class Promised<T = any | any[]> {
   }
 
   /**
-   * Handle promise rejection and exceeded states
-   * @param cb - callback to handle rejection
-   * @returns promised
-   */
-  catch(cb: (err: Error) => void): Promised<T> {
-    this._catchHandlers.push(cb);
-
-    return this;
-  }
-
-  /**
    * Handle only promise rejection
    * @param cb - callback to handle rejection
    * @returns promised
@@ -200,25 +200,191 @@ export class Promised<T = any | any[]> {
   }
 
   /**
-   * Handle promise resolution
+   * Handle promise rejection and exceeded states (custom handler)
+   * @param cb - callback to handle rejection
+   * @returns promised
+   */
+  onCatch(cb: (err: Error) => void): Promised<T> {
+    this._catchHandlers.push(cb);
+
+    return this;
+  }
+
+  /**
+   * Handle promise resolution (custom handler)
    * @param cb - callback to handle resolution
    * @returns promised
    */
-  then(cb: (result?: T) => void): Promised<T> {
+  onThen(cb: (result?: T) => void): Promised<T> {
     this._resolvedHandlers.push(cb);
 
     return this;
   }
 
   /**
-   * Handle promise finalization
+   * Handle promise finalization (custom handler)
    * @param cb - callback to handle finalization
    * @returns promised
    */
-  finally(cb: () => void): Promised<T> {
+  onFinally(cb: () => void): Promised<T> {
     this._finalyHandlers.push(cb);
 
     return this;
+  }
+
+  /**
+   * Override native Promise.then method to maintain compatibility
+   * @param onfulfilled - callback for successful resolution
+   * @param onrejected - callback for rejection
+   * @returns new Promised instance
+   */
+  then<TResult1 = T, TResult2 = never>(
+    onfulfilled?:
+      | ((value: T) => TResult1 | PromiseLike<TResult1>)
+      | null
+      | undefined,
+    onrejected?:
+      | ((reason: any) => TResult2 | PromiseLike<TResult2>)
+      | null
+      | undefined
+  ): Promised<TResult1 | TResult2> {
+    // Create a new native Promise that wraps our custom logic
+    const nativePromise = new Promise<TResult1 | TResult2>(
+      (resolve, reject) => {
+        // Handle resolution
+        this._resolvedHandlers.push((result) => {
+          if (onfulfilled) {
+            try {
+              const transformedResult = onfulfilled(result as T);
+              if (transformedResult instanceof Promise) {
+                transformedResult.then(resolve).catch(reject);
+              } else {
+                resolve(transformedResult);
+              }
+            } catch (error) {
+              reject(error);
+            }
+          } else {
+            resolve(result as TResult1);
+          }
+        });
+
+        // Handle rejection
+        this._catchHandlers.push((error) => {
+          if (onrejected) {
+            try {
+              const transformedResult = onrejected(error);
+              if (transformedResult instanceof Promise) {
+                transformedResult.then(resolve).catch(reject);
+              } else {
+                resolve(transformedResult);
+              }
+            } catch (finalError) {
+              reject(finalError);
+            }
+          } else {
+            reject(error);
+          }
+        });
+
+        // If already resolved/rejected, trigger immediately
+        if (this._resolved) {
+          if (onfulfilled) {
+            try {
+              const transformedResult = onfulfilled(this._result as T);
+              if (transformedResult instanceof Promise) {
+                transformedResult.then(resolve).catch(reject);
+              } else {
+                resolve(transformedResult);
+              }
+            } catch (error) {
+              reject(error);
+            }
+          } else {
+            resolve(this._result as TResult1);
+          }
+        } else if (this._rejected) {
+          if (onrejected) {
+            try {
+              const transformedResult = onrejected(this._error!);
+              if (transformedResult instanceof Promise) {
+                transformedResult.then(resolve).catch(reject);
+              } else {
+                resolve(transformedResult);
+              }
+            } catch (finalError) {
+              reject(finalError);
+            }
+          } else {
+            reject(this._error!);
+          }
+        }
+      }
+    );
+
+    // Create new Promised instance that wraps the native promise
+    const newPromised = new Promised<TResult1 | TResult2>();
+    nativePromise.then(
+      (result) => newPromised.resolve(result),
+      (error) => newPromised.reject(error)
+    );
+
+    return newPromised;
+  }
+
+  /**
+   * Override native Promise.catch method to maintain compatibility
+   * @param onrejected - callback for rejection
+   * @returns new Promised instance
+   */
+  catch<TResult = never>(
+    onrejected?:
+      | ((reason: any) => TResult | PromiseLike<TResult>)
+      | null
+      | undefined
+  ): Promised<T | TResult> {
+    return this.then(undefined, onrejected);
+  }
+
+  /**
+   * Override native Promise.finally method to maintain compatibility
+   * @param onfinally - callback for finalization
+   * @returns new Promised instance
+   */
+  finally(onfinally?: (() => void) | null | undefined): Promised<T> {
+    // Create a new native Promise that wraps our custom logic
+    const nativePromise = new Promise<T>((resolve, reject) => {
+      const handleFinally = () => {
+        if (onfinally) {
+          try {
+            onfinally();
+          } catch (error) {
+            reject(error);
+            return;
+          }
+        }
+        if (this._resolved) {
+          resolve(this._result as T);
+        } else if (this._rejected) {
+          reject(this._error!);
+        }
+      };
+
+      if (this._resolved || this._rejected) {
+        handleFinally();
+      } else {
+        this._finalyHandlers.push(handleFinally);
+      }
+    });
+
+    // Create new Promised instance that wraps the native promise
+    const newPromised = new Promised<T>();
+    nativePromise.then(
+      (result) => newPromised.resolve(result),
+      (error) => newPromised.reject(error)
+    );
+
+    return newPromised;
   }
 
   onExceeded(cb: () => void): Promised<T> {
@@ -398,7 +564,7 @@ export class Promised<T = any | any[]> {
 
   extractPromise(): Promise<T> {
     return new Promise((resolve, reject) => {
-      this.then((result) => resolve(result as T)).catch(reject);
+      this.onThen((result) => resolve(result as T)).onCatch(reject);
     });
   }
 

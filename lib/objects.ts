@@ -64,6 +64,7 @@ export function omitObj(
   return result
 }
 
+// TODO: что есть тип unknown?
 /**
  * It creates a new object which doesn't include keys which values are undefined.
  */
