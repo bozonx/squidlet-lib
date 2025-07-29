@@ -8,7 +8,7 @@
     ".": "./lib/index.ts",
     "./js": "./distr/lib/index.js"
   },
-  "types": "lib/index.ts",
+  "types": "distr/index.d.ts",
   "publishConfig": {
     "exports": {
       ".": "./distr/lib/index.js"

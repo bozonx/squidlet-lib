@@ -381,19 +381,19 @@ export function getAsciiNumber(num: number): number {
 }
 
 // TODO: ненужен поидее, можно использовать синтаксис ...
-export function concatUint8Arr(...arrs: Uint8Array[]): Uint8Array {
-  let offset: number = 0;
-  const lengths: number = arrs.map((item) => item.length)
-    .reduce((prev: number, cur: number) => prev + cur);
-  const result = new Uint8Array(lengths);
+// export function concatUint8Arr(...arrs: Uint8Array[]): Uint8Array {
+//   let offset: number = 0;
+//   const lengths: number = arrs.map((item) => item.length)
+//     .reduce((prev: number, cur: number) => prev + cur);
+//   const result = new Uint8Array(lengths);
 
-  for (let uint8Arr of arrs) {
-    result.set(uint8Arr, offset);
-    offset += uint8Arr.length;
-  }
+//   for (let uint8Arr of arrs) {
+//     result.set(uint8Arr, offset);
+//     offset += uint8Arr.length;
+//   }
 
-  return result;
-}
+//   return result;
+// }
 
 /**
  * Make 1 byte from 2 4-bit number.

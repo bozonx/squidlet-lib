@@ -46,11 +46,15 @@ export function pathJoin (...paths: string[]): string {
 }
 
 export function pathIsAbsolute(pathToDirOrFile: string): boolean {
-  if (typeof pathToDirOrFile !== 'string') {
+  if (typeof pathToDirOrFile !== "string") {
     throw new Error(`pathIsAbsolute: path has to be a string`);
   }
 
-  return pathToDirOrFile.indexOf('/') === 0 || pathToDirOrFile.indexOf('~') === 0;
+  // TODO: support ~/
+
+  return (
+    pathToDirOrFile.indexOf("/") === 0 || pathToDirOrFile.indexOf("~") === 0
+  );
 }
 
 export function pathDirname(pathToDirOrFile: string): string {

@@ -1,14 +1,11 @@
-import {concatUint8Arr, int32ToUint8Arr, uint8ToNum} from './binaryHelpers.js';
+import { int32ToUint8Arr, uint8ToNum } from './binaryHelpers.js'
 
+const BIN_MARK = '!BIN!'
+const UNDEFINED_MARK = '!UNDEF!'
+const BIN_LENGTH_SEP = ':'
 
-const BIN_MARK = '!BIN!';
-const UNDEFINED_MARK = '!UNDEF!';
-const BIN_LENGTH_SEP = ':';
-
-
-declare const btoa: ((data: any) => any) | undefined;
-declare const atob: ((data: any) => any) | undefined;
-
+declare const btoa: ((data: any) => any) | undefined
+declare const atob: ((data: any) => any) | undefined
 
 // TODO: check test
 export function base64ToString(str: string): string {
@@ -51,9 +48,9 @@ export function asciiToUint8Array(str: string): Uint8Array {
 // see https://stackoverflow.com/questions/17191945/conversion-between-utf-8-arraybuffer-and-string
 export function uint8ArrayToUtf8Text(uintArray: Uint8Array): string {
   // TODO: use uint8ArrayToAscii
-  const encodedString = String.fromCharCode.apply(undefined, uintArray as any);
+  const encodedString = String.fromCharCode.apply(undefined, uintArray as any)
 
-  return decodeURIComponent(escape(stringToBase64(encodedString)));
+  return decodeURIComponent(escape(stringToBase64(encodedString)))
 
   // var uint8array = new TextEncoder("utf-8").encode("Plain Text");
   // var string = new TextDecoder().decode(uint8array);
@@ -62,16 +59,16 @@ export function uint8ArrayToUtf8Text(uintArray: Uint8Array): string {
 
 // TODO: check test
 export function utf8TextToUint8Array(str: string): Uint8Array {
-  const string = base64ToString(unescape(encodeURIComponent(str)));
+  const string = base64ToString(unescape(encodeURIComponent(str)))
   // TODO: use asciiToUint8Array
-  const charList = string.split('');
-  const uintArray = [];
+  const charList = string.split('')
+  const uintArray = []
 
   for (let i = 0; i < charList.length; i++) {
-    uintArray.push(charList[i].charCodeAt(0));
+    uintArray.push(charList[i].charCodeAt(0))
   }
 
-  return new Uint8Array(uintArray);
+  return new Uint8Array(uintArray)
 }
 
 /**
@@ -91,11 +88,10 @@ export function serializeJson(data: any): Uint8Array {
     if (value instanceof Uint8Array) {
       const start = binDataTail.length
       const length = value.length
-      binDataTail = concatUint8Arr(binDataTail, value)
+      binDataTail = new Uint8Array([...binDataTail, ...value])
 
       return BIN_MARK + start + BIN_LENGTH_SEP + length
-    }
-    else if (typeof value === 'undefined') {
+    } else if (typeof value === 'undefined') {
       return UNDEFINED_MARK
     }
 
@@ -105,11 +101,7 @@ export function serializeJson(data: any): Uint8Array {
   // 4 bytes of json binary length
   const jsonLengthBin = int32ToUint8Arr(jsonBin.length)
 
-  return concatUint8Arr(
-    jsonLengthBin,
-    jsonBin,
-    binDataTail,
-  )
+  return new Uint8Array([...jsonLengthBin, ...jsonBin, ...binDataTail])
 }
 
 /**
@@ -118,7 +110,7 @@ export function serializeJson(data: any): Uint8Array {
  */
 export function deserializeJson(serialized: Uint8Array | any) {
   if (!(serialized instanceof Uint8Array)) {
-    throw new Error(`deserializeJson: serialized data has to be a Uint8Array`);
+    throw new Error(`deserializeJson: serialized data has to be a Uint8Array`)
   }
 
   const binJsonLength: Uint8Array = serialized.subarray(0, 4)
@@ -136,28 +128,34 @@ export function deserializeJson(serialized: Uint8Array | any) {
       const length = Number(splat[1])
 
       return binaryTail.subarray(start, start + length)
-    }
-    else if (typeof value === 'string' && value.indexOf(UNDEFINED_MARK) === 0) {
+    } else if (
+      typeof value === 'string' &&
+      value.indexOf(UNDEFINED_MARK) === 0
+    ) {
       return undefined
     }
 
     return value
-  });
+  })
 }
 
 // TODO: test
-export function serializeStringArray(arr: string[], lengthBytes: number = 1): Uint8Array {
-  if (lengthBytes !== 1) throw new Error(`Bigger length than 1 byte isn't supported`);
+export function serializeStringArray(
+  arr: string[],
+  lengthBytes: number = 1
+): Uint8Array {
+  if (lengthBytes !== 1)
+    throw new Error(`Bigger length than 1 byte isn't supported`)
 
-  const result: number[] = [];
+  const result: number[] = []
 
   for (let item of arr) {
     // TODO: проверить длину элемента массива
-    result.push(item.length);
-    result.push(...asciiToUint8Array(item));
+    result.push(item.length)
+    result.push(...asciiToUint8Array(item))
   }
 
-  return new Uint8Array(result);
+  return new Uint8Array(result)
 }
 
 // TODO: test
@@ -174,21 +172,21 @@ export function deserializeStringArray(
   startIndex: number,
   count: number
 ): [string[], number] {
-  const result: string[] = [];
-  let i: number;
+  const result: string[] = []
+  let i: number
 
   for (i = startIndex; i < data.length; i++) {
-    const itemLength: number = data[i];
-    const itemData = data.slice(i + 1, i + itemLength + 1);
+    const itemLength: number = data[i]
+    const itemData = data.slice(i + 1, i + itemLength + 1)
 
-    result.push(uint8ArrayToAscii(itemData));
+    result.push(uint8ArrayToAscii(itemData))
 
-    i = i + itemLength;
+    i = i + itemLength
 
-    if (result.length >= count) break;
+    if (result.length >= count) break
   }
 
-  return [result, i];
+  return [result, i]
 }
 
 // TODO: test
@@ -196,24 +194,24 @@ export function deserializeUint8Array(
   data: Uint8Array,
   startIndex: number = 0,
   count?: number
-): {arrays: Uint8Array[], lastElementIndex: number} {
-  const resolvedCount = (typeof count === 'undefined') ? data.length : count;
-  const result: Uint8Array[] = [];
-  let i: number;
+): { arrays: Uint8Array[]; lastElementIndex: number } {
+  const resolvedCount = typeof count === 'undefined' ? data.length : count
+  const result: Uint8Array[] = []
+  let i: number
 
   for (i = startIndex; i < data.length; i++) {
-    const itemLength: number = data[i];
+    const itemLength: number = data[i]
 
-    if (!itemLength) break;
+    if (!itemLength) break
 
-    const itemData = data.slice(i + 1, i + itemLength + 1);
+    const itemData = data.slice(i + 1, i + itemLength + 1)
 
-    result.push(itemData);
+    result.push(itemData)
 
-    i = i + itemLength;
+    i = i + itemLength
 
-    if (result.length >= resolvedCount) break;
+    if (result.length >= resolvedCount) break
   }
 
-  return {arrays: result, lastElementIndex: i};
+  return { arrays: result, lastElementIndex: i }
 }
