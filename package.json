@@ -4,22 +4,37 @@
   "description": "Common lib for squidlet projects",
   "author": "Ivan Kozyrin <ipkozyrin@gmail.com>",
   "repository": "git@github.com:bozonx/squidlet-lib.git",
+  "main": "./distr/lib/index.js",
+  "module": "./distr/lib/index.js",
+  "types": "./distr/types/index.d.ts",
   "exports": {
-    ".": "./lib/index.ts",
-    "./js": "./distr/lib/index.js"
+    ".": {
+      "types": "./distr/types/index.d.ts",
+      "import": "./distr/lib/index.js",
+      "require": "./distr/lib/index.js"
+    }
   },
-  "types": "distr/index.d.ts",
+  "files": [
+    "distr"
+  ],
   "publishConfig": {
+    "main": "./distr/lib/index.js",
+    "module": "./distr/lib/index.js",
+    "types": "./distr/types/index.d.ts",
     "exports": {
-      ".": "./distr/lib/index.js"
-    },
-    "types": "distr/types/index.d.ts"
+      ".": {
+        "types": "./distr/types/index.d.ts",
+        "import": "./distr/lib/index.js",
+        "require": "./distr/lib/index.js"
+      }
+    }
   },
   "type": "module",
   "license": "MIT",
   "scripts": {
     "build": "tsc",
-    "test": "mocha"
+    "test": "jest",
+    "prepublishOnly": "npm run build"
   },
   "directories": {
     "lib": "./lib",
