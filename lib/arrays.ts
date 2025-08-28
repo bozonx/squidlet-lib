@@ -1,19 +1,14 @@
-/**
- * Are arrays equal.
- * If one of them not Array then it returns false.
- */
-import {cloneDeepObject} from './deepObjects.js';
-
+/** Are arrays equal. If one of them not Array then it returns false. */
+import { cloneDeepObject } from './deepObjects.js'
 
 // shift when you calculates length
 export const ARRAY_INDEX_SHIFT = 1
 
-
 // TODO: test
 /**
- * If it is not array - return false
- * If it is nudefied or null then it returns false
- * If it is an array then check its length
+ * If it is not array - return false If it is nudefied or null then it returns
+ * false If it is an array then check its length
+ *
  * @param arr
  */
 export function isEmptyArray(arr?: any): boolean {
@@ -26,17 +21,20 @@ export function isEmptyArray(arr?: any): boolean {
 // TODO: хотя можно этот сделать error safe
 // TODO: можно добавить установку length
 export function fill(array: any[], value: any): any[] {
-  const result: any[] = [];
+  const result: any[] = []
 
   for (let index in array) {
-    array[index] = value;
+    array[index] = value
   }
 
-  return result;
+  return result
 }
 
 // TODO: test
-export function fillWithNumberIncrement(start: number, itemsNum: number): number[] {
+export function fillWithNumberIncrement(
+  start: number,
+  itemsNum: number
+): number[] {
   const result: number[] = []
 
   for (let i = start; i < start + itemsNum; i++) result.push(i)
@@ -76,34 +74,38 @@ export function isArrayIncludesIndex(arr?: any[], index?: number): boolean {
 }
 
 // TODO: test
-export function isLastIndex(arr: any[], currentIndex: number | string): boolean {
-  return (arr.length - ARRAY_INDEX_SHIFT) === Number(currentIndex)
+export function isLastIndex(
+  arr: any[],
+  currentIndex: number | string
+): boolean {
+  return arr.length - ARRAY_INDEX_SHIFT === Number(currentIndex)
 }
 
 export function compactUndefined(arr: any[]): any[] {
-  return arr.filter((item) => typeof item !== 'undefined');
+  return arr.filter((item) => typeof item !== 'undefined')
 }
 
 export function clearArray(arr: any[]): void {
-  arr.splice(0, arr.length);
+  arr.splice(0, arr.length)
 }
 
 /**
- * Make new array with specified dimension.
- * If arr smaller than "count" then odd items will be empty
- * If arr bigger than "count" then odd items will be omitted
+ * Make new array with specified dimension. If arr smaller than "count" then odd
+ * items will be empty If arr bigger than "count" then odd items will be
+ * omitted
  */
 export function makeSizedArray(arr: any[], count: number): any[] {
-  const result: any[] = new Array(count);
+  const result: any[] = new Array(count)
 
-  for (let i = 0; i < count; i++) result[i] = arr[i];
+  for (let i = 0; i < count; i++) result[i] = arr[i]
 
-  return result;
+  return result
 }
 
 // TODO: test
 /**
  * Remove item from array in mutate way
+ *
  * @param arr
  * @param item
  */
@@ -118,37 +120,42 @@ export function spliceItem(arr: any[] | undefined, item: any) {
 }
 
 /**
- * Remove item from array. E.g removeItemFromArray(['a', 'b', 'c'], 'b') => ['a', 'c']
- * It can remove all the found items
- *     removeItemFromArray(['a', 'b', 'c', 'b'], 'b', false) => ['a', 'c']
- * Or remove only the first found item:
- *     removeItemFromArray(['a', 'b', 'c', 'b'], 'b') => ['a', 'c', 'b']
- * It doesn't mutates an array, it just returns a new one.
+ * Remove item from array. E.g removeItemFromArray(['a', 'b', 'c'], 'b') =>
+ * ['a', 'c'] It can remove all the found items removeItemFromArray(['a', 'b',
+ * 'c', 'b'], 'b', false) => ['a', 'c'] Or remove only the first found item:
+ * removeItemFromArray(['a', 'b', 'c', 'b'], 'b') => ['a', 'c', 'b'] It doesn't
+ * mutates an array, it just returns a new one.
  */
-export function removeItemFromArray(arr: any[] | undefined, item: any, firstEntry: boolean = true): any[] {
+export function removeItemFromArray(
+  arr: any[] | undefined,
+  item: any,
+  firstEntry: boolean = true
+): any[] {
   if (!Array.isArray(arr)) return []
 
   if (firstEntry) {
-    const index: number = arr.indexOf(item);
+    const index: number = arr.indexOf(item)
 
-    if (index < 0) return arr;
+    if (index < 0) return arr
 
-    const clonedArr = [...arr];
+    const clonedArr = [...arr]
 
-    clonedArr.splice(index, 1);
+    clonedArr.splice(index, 1)
 
-    return clonedArr;
-  }
-  else {
+    return clonedArr
+  } else {
     return arr.filter((currentItem: any) => {
-      return currentItem !== item;
-    });
+      return currentItem !== item
+    })
   }
 }
 
 // TODO: test
 // TODO: может как-то оптимизировать???
-export function removeSomeItemsFromArray(arr: any[] | undefined, items: any[]): any[] {
+export function removeSomeItemsFromArray(
+  arr: any[] | undefined,
+  items: any[]
+): any[] {
   if (!Array.isArray(arr) || !arr.length) return []
   else if (!Array.isArray(items) || !items.length) return [...arr]
 
@@ -157,20 +164,17 @@ export function removeSomeItemsFromArray(arr: any[] | undefined, items: any[]): 
   })
 }
 
-/**
- * Concat arrays and remove duplicates.
- * This is much faster than deduplicate
- */
+/** Concat arrays and remove duplicates. This is much faster than deduplicate */
 export function concatUniqStrArrays(...arrays: string[][]): string[] {
-  const result: {[index: string]: true} = {};
+  const result: { [index: string]: true } = {}
 
   for (const arr of arrays) {
     for (const value of arr) {
-      result[value] = true;
+      result[value] = true
     }
   }
 
-  return Object.keys(result);
+  return Object.keys(result)
 }
 
 // TODO: test
@@ -186,39 +190,40 @@ export function deduplicate(arr?: any[]): any[] {
   return result
 }
 
-
 // TODO: это чё за хуйн??? - используется в squidlet ServicesManager
 /**
  * Make a new array which contains items which are different in samples.
  * Examples:
- * * [1,4], [1,2,3] => [4]
- * * [1,3], [1,2,3] => []
- * WARNING: be careful with choosing between testArr and samples
- * @param testArr - array to check, we not sure about it.
- * @param samples - means all the available values
+ *
+ * - [1,4], [1,2,3] => [4]
+ * - [1,3], [1,2,3] => [] WARNING: be careful with choosing between testArr and
+ *   samples
+ *
+ * @param testArr - Array to check, we not sure about it.
+ * @param samples - Means all the available values
  */
 export function arraysDifference(testArr: any[], samples: any[]): any[] {
-  if (typeof testArr === 'undefined' || !testArr.length) return [];
-  else if (typeof samples === 'undefined' || !samples.length) return testArr;
+  if (typeof testArr === 'undefined' || !testArr.length) return []
+  else if (typeof samples === 'undefined' || !samples.length) return testArr
 
-  const diffArr: any[] = [];
+  const diffArr: any[] = []
 
   for (let item of testArr) {
-    if (typeof item === 'undefined') continue;
+    if (typeof item === 'undefined') continue
 
     if (samples.indexOf(item) === -1) {
-      diffArr.push(item);
+      diffArr.push(item)
     }
   }
 
-  return diffArr;
+  return diffArr
 }
 
 // TODO: test
 /**
- * Find similar items in arrays.
- * It is actually finds intersections
- * [1,2] => [2,3] => [2]
+ * Find similar items in arrays. It is actually finds intersections [1,2] =>
+ * [2,3] => [2]
+ *
  * @param arrs
  */
 export function arraySimilar(...arrs: any[][]): any[] {
@@ -226,20 +231,23 @@ export function arraySimilar(...arrs: any[][]): any[] {
   const res: any[] = []
 
   for (const item of allItems) {
-    if (
-      !res.includes(item)
-      && allItems.filter((i) => i === item).length > 1
-    ) res.push(item)
+    if (!res.includes(item) && allItems.filter((i) => i === item).length > 1)
+      res.push(item)
   }
 
   return res
 }
 
+// TODO: это тоже что  и arrayDifference ?? ипользуется в темплейте сайта
+export function arraysIntersection(arr1 = [], arr2 = []) {
+  return arr1.filter((x) => arr2.includes(x))
+}
+
 // TODO: доделать test
 // TODO: поидее можно просто сделать dedeplicate
 /**
- * Remove keys which are duplicate each other and return only those
- * keys which are only ones
+ * Remove keys which are duplicate each other and return only those keys which
+ * are only ones
  */
 export function arrayDifference(...arrs: any[][]) {
   const uniqueValues: any[] = []
@@ -256,10 +264,10 @@ export function arrayDifference(...arrs: any[][]) {
         uniqueValues.push(item)
 
         valuesIntersections[uniqueValues.length - 1] = 1
-      }
-      else {
+      } else {
         // found duplicate
-        valuesIntersections[resItemIndex] = valuesIntersections[resItemIndex] + 1
+        valuesIntersections[resItemIndex] =
+          valuesIntersections[resItemIndex] + 1
       }
     }
   }
@@ -270,32 +278,33 @@ export function arrayDifference(...arrs: any[][]) {
 }
 
 export function cloneDeepArray(arr?: any[]): any[] {
-  if (!arr) return [];
+  if (!arr) return []
 
-  const result: any[] = [];
+  const result: any[] = []
 
   for (let item of arr) {
     if (Array.isArray(item)) {
       // go deeper
-      result.push(cloneDeepArray(item));
-    }
-    else if (typeof item === 'object') {
+      result.push(cloneDeepArray(item))
+    } else if (typeof item === 'object') {
       // clone object
-      result.push(cloneDeepObject(item));
-    }
-    else {
-      result.push(item);
+      result.push(cloneDeepObject(item))
+    } else {
+      result.push(item)
     }
   }
 
-  return result;
+  return result
 }
 
 export function stringArrayToNumber(arr: string[]): number[] {
-  return arr.map((item) => Number(item));
+  return arr.map((item) => Number(item))
 }
 
-export function filterBlackList(allItems: string[], blackList: string[] = []): string[] {
+export function filterBlackList(
+  allItems: string[],
+  blackList: string[] = []
+): string[] {
   if (!blackList || !blackList.length) return allItems
 
   let whiteList: string[] = []
@@ -311,6 +320,7 @@ export function filterBlackList(allItems: string[], blackList: string[] = []): s
 // TODO: test
 /**
  * Get a new array without the first element
+ *
  * @param arr
  */
 export function withoutFirstItem(arr?: any[]): any[] {
@@ -326,6 +336,7 @@ export function withoutFirstItem(arr?: any[]): any[] {
 // TODO: test
 /**
  * Get a new array without the first element
+ *
  * @param arr
  */
 export function withoutLastItem(arr?: any[]): any[] {
