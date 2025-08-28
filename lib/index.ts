@@ -24,10 +24,11 @@ export * from './strings.js'
 export * from './uniqId.js'
 export * from './url.js'
 export * from './serialize.js'
+export * from './smartTruncate.js'
 export * from './argv.js'
-export * from "./debounceCall/DebounceCallIncreasing.js";
-export * from "./debounceCall/ThrottleCall.js";
-export * from "./debounceCall/DebounceCall.js";
+export * from './debounceCall/DebounceCallIncreasing.js'
+export * from './debounceCall/ThrottleCall.js'
+export * from './debounceCall/DebounceCall.js'
 
 export * from './interfaces/Logger.js'
 export * from './interfaces/AsyncLogger.js'
