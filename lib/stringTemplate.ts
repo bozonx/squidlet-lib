@@ -11,6 +11,10 @@ export function mustacheTemplate(
   tmpl: string,
   data: Record<string, any>
 ): string {
+  // Проверяем входные параметры на null и undefined
+  if (tmpl === null || tmpl === undefined) return ''
+  if (data === null || data === undefined) return tmpl
+
   let res = tmpl
   const mustacheRegex = /\{\{([^}]+)\}\}/g
   let match
@@ -21,12 +25,15 @@ export function mustacheTemplate(
     // Экранируем специальные символы для безопасного использования в регулярном выражении
     const escapedKey = key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
     const replaceRegex = new RegExp(`\\{\\{${escapedKey}\\}\\}`, 'g')
-
     // Получаем значение по пути с точками
     const value = deepGet(data, key)
 
+    // Безопасное преобразование значения в строку
+    const stringValue =
+      value === null || value === undefined ? '' : String(value)
+
     // Заменяем все вхождения
-    res = res.replace(replaceRegex, String(value || ''))
+    res = res.replace(replaceRegex, stringValue)
   }
 
   return res
@@ -43,6 +50,10 @@ export function standardTemplate(
   tmpl: string,
   data: Record<string, any>
 ): string {
+  // Проверяем входные параметры на null и undefined
+  if (tmpl === null || tmpl === undefined) return ''
+  if (data === null || data === undefined) return tmpl
+
   let res = tmpl
   const templateRegex = /\$\{([^}]+)\}/g
   let match
@@ -57,8 +68,12 @@ export function standardTemplate(
     // Получаем значение по пути с точками
     const value = deepGet(data, key)
 
+    // Безопасное преобразование значения в строку
+    const stringValue =
+      value === null || value === undefined ? '' : String(value)
+
     // Заменяем все вхождения
-    res = res.replace(replaceRegex, String(value || ''))
+    res = res.replace(replaceRegex, stringValue)
   }
 
   return res
