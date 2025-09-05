@@ -19,6 +19,7 @@ interface SmartTruncateOptions {
   position?: number
   /** Whether to respect word boundaries. Default is false */
   respectWords?: boolean
+  removeReturns?: boolean
 }
 
 export const smartTruncate = (
@@ -28,6 +29,7 @@ export const smartTruncate = (
     mark = '\u2026', // ellipsis = …
     position = length - 1,
     respectWords = false,
+    removeReturns = true,
   }: SmartTruncateOptions = {}
 ): string => {
   if (typeof mark !== 'string') return string
@@ -40,6 +42,13 @@ export const smartTruncate = (
   if (typeof str === 'string') {
     str = str.trim()
   }
+
+  if (removeReturns) {
+    str = str.replace(/\n/g, ' ')
+  }
+
+  // replace multiple spaces with one
+  str = str.replace(/\s+/g, ' ')
 
   const invalid =
     typeof str !== 'string' ||
