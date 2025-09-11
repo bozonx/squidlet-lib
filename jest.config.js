@@ -1,7 +1,7 @@
 /** @type {import('jest').Config} */
-module.exports = {
+export default {
   // Современная конфигурация Jest для ES модулей
-  preset: 'ts-jest/presets/default-esm',
+  preset: 'ts-jest',
 
   // Расширения файлов для тестов
   testMatch: ['**/test/**/*.spec.ts'],
@@ -27,7 +27,7 @@ module.exports = {
           esModuleInterop: true,
           isolatedModules: true,
           module: 'ESNext',
-          moduleResolution: 'bundler',
+          moduleResolution: 'Node',
           target: 'ES2022',
         },
       },
