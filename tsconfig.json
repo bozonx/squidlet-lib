@@ -56,6 +56,6 @@
     "verbatimModuleSyntax": false,
     "rootDir": "lib"
   },
-  "include": ["lib/**/*.ts"],
-  "exclude": ["distr", "notUsed", "node_modules", "test"]
+  "include": ["lib/**/*.ts", "test/**/*.ts"],
+  "exclude": ["distr", "notUsed", "node_modules"]
 }

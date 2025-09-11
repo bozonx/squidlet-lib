@@ -1,4 +1,4 @@
-import { mustacheTemplate, standardTemplate } from '../../lib/stringTemplate'
+import { mustacheTemplate, standardTemplate } from '../../lib/stringTemplate.js'
 
 describe('lib/stringTemplate', () => {
   const testData = {
