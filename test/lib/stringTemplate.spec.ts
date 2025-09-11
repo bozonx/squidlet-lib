@@ -419,5 +419,219 @@ describe('lib/stringTemplate', () => {
         expect(standardTemplate(template, testData)).toBe(template)
       })
     })
+
+    describe('eval option', () => {
+      const evalTestData = {
+        a: 10,
+        b: 20,
+        name: 'John',
+        age: 30,
+        items: [1, 2, 3, 4, 5],
+        user: { score: 100, active: true },
+        prices: { apple: 1.5, banana: 2.0 },
+      }
+
+      it('should evaluate arithmetic expressions', () => {
+        expect(standardTemplate('${a + b}', evalTestData, { eval: true })).toBe(
+          '30'
+        )
+        expect(standardTemplate('${a * b}', evalTestData, { eval: true })).toBe(
+          '200'
+        )
+        expect(standardTemplate('${b - a}', evalTestData, { eval: true })).toBe(
+          '10'
+        )
+        expect(standardTemplate('${b / a}', evalTestData, { eval: true })).toBe(
+          '2'
+        )
+        expect(standardTemplate('${a % 3}', evalTestData, { eval: true })).toBe(
+          '1'
+        )
+      })
+
+      it('should evaluate comparison expressions', () => {
+        expect(standardTemplate('${a > b}', evalTestData, { eval: true })).toBe(
+          'false'
+        )
+        expect(standardTemplate('${a < b}', evalTestData, { eval: true })).toBe(
+          'true'
+        )
+        expect(
+          standardTemplate('${a === 10}', evalTestData, { eval: true })
+        ).toBe('true')
+        expect(
+          standardTemplate('${a !== b}', evalTestData, { eval: true })
+        ).toBe('true')
+        expect(
+          standardTemplate('${a >= 10}', evalTestData, { eval: true })
+        ).toBe('true')
+        expect(
+          standardTemplate('${a <= 10}', evalTestData, { eval: true })
+        ).toBe('true')
+      })
+
+      it('should evaluate logical expressions', () => {
+        expect(
+          standardTemplate('${a > 5 && b > 15}', evalTestData, { eval: true })
+        ).toBe('true')
+        expect(
+          standardTemplate('${a > 15 || b > 15}', evalTestData, { eval: true })
+        ).toBe('true')
+        expect(
+          standardTemplate('${!user.active}', evalTestData, { eval: true })
+        ).toBe('false')
+      })
+
+      it('should evaluate ternary operator', () => {
+        expect(
+          standardTemplate('${a > b ? "bigger" : "smaller"}', evalTestData, {
+            eval: true,
+          })
+        ).toBe('smaller')
+        expect(
+          standardTemplate(
+            '${user.active ? "active" : "inactive"}',
+            evalTestData,
+            { eval: true }
+          )
+        ).toBe('active')
+      })
+
+      it('should evaluate array access with expressions', () => {
+        expect(
+          standardTemplate('${items[0]}', evalTestData, { eval: true })
+        ).toBe('1')
+        expect(
+          standardTemplate('${items[a - 9]}', evalTestData, { eval: true })
+        ).toBe('2')
+        expect(
+          standardTemplate('${items.length}', evalTestData, { eval: true })
+        ).toBe('5')
+      })
+
+      it('should evaluate object property access', () => {
+        expect(
+          standardTemplate('${user.score}', evalTestData, { eval: true })
+        ).toBe('100')
+        expect(
+          standardTemplate('${user.active}', evalTestData, { eval: true })
+        ).toBe('true')
+      })
+
+      it('should evaluate complex expressions', () => {
+        expect(
+          standardTemplate('${(a + b) * 2}', evalTestData, { eval: true })
+        ).toBe('60')
+        expect(
+          standardTemplate(
+            '${user.score > 50 ? "high" : "low"}',
+            evalTestData,
+            { eval: true }
+          )
+        ).toBe('high')
+        expect(
+          standardTemplate('${items[0] + items[1]}', evalTestData, {
+            eval: true,
+          })
+        ).toBe('3')
+      })
+
+      it('should handle string concatenation', () => {
+        expect(
+          standardTemplate('${name + " is " + age}', evalTestData, {
+            eval: true,
+          })
+        ).toBe('John is 30')
+        expect(
+          standardTemplate('${"Hello " + name}', evalTestData, { eval: true })
+        ).toBe('Hello John')
+      })
+
+      it('should handle type conversion', () => {
+        expect(
+          standardTemplate('${String(a)}', evalTestData, { eval: true })
+        ).toBe('10')
+        expect(
+          standardTemplate('${Number("20")}', evalTestData, { eval: true })
+        ).toBe('20')
+        expect(
+          standardTemplate('${Boolean(0)}', evalTestData, { eval: true })
+        ).toBe('false')
+      })
+
+      it('should handle invalid expressions gracefully', () => {
+        expect(
+          standardTemplate('${invalidVariable}', evalTestData, { eval: true })
+        ).toBe('')
+        expect(
+          standardTemplate('${items[10]}', evalTestData, { eval: true })
+        ).toBe('')
+        expect(
+          standardTemplate('${user.nonexistent}', evalTestData, { eval: true })
+        ).toBe('')
+        expect(
+          standardTemplate('${syntax error}', evalTestData, { eval: true })
+        ).toBe('')
+      })
+
+      it('should handle empty expressions', () => {
+        expect(standardTemplate('${}', evalTestData, { eval: true })).toBe('')
+        expect(standardTemplate('${ }', evalTestData, { eval: true })).toBe('')
+      })
+
+      it('should work with mixed eval and non-eval templates', () => {
+        const template = 'Name: ${name}, Sum: ${a + b}, Age: ${age}'
+        expect(standardTemplate(template, evalTestData, { eval: true })).toBe(
+          'Name: John, Sum: 30, Age: 30'
+        )
+      })
+
+      it('should handle null and undefined values in expressions', () => {
+        const nullData = { a: null, b: undefined, c: 10 }
+        expect(standardTemplate('${a}', nullData, { eval: true })).toBe('')
+        expect(standardTemplate('${b}', nullData, { eval: true })).toBe('')
+        expect(standardTemplate('${c}', nullData, { eval: true })).toBe('10')
+        expect(standardTemplate('${a || c}', nullData, { eval: true })).toBe(
+          '10'
+        )
+      })
+
+      it('should handle mathematical functions', () => {
+        expect(
+          standardTemplate('${Math.max(a, b)}', evalTestData, { eval: true })
+        ).toBe('20')
+        expect(
+          standardTemplate('${Math.min(a, b)}', evalTestData, { eval: true })
+        ).toBe('10')
+        expect(
+          standardTemplate('${Math.round(3.7)}', evalTestData, { eval: true })
+        ).toBe('4')
+      })
+
+      it('should handle array methods', () => {
+        expect(
+          standardTemplate('${items.join(",")}', evalTestData, { eval: true })
+        ).toBe('1,2,3,4,5')
+        expect(
+          standardTemplate('${items.slice(0, 2).join("-")}', evalTestData, {
+            eval: true,
+          })
+        ).toBe('1-2')
+      })
+
+      it('should handle string methods', () => {
+        expect(
+          standardTemplate('${name.toUpperCase()}', evalTestData, {
+            eval: true,
+          })
+        ).toBe('JOHN')
+        expect(
+          standardTemplate('${name.length}', evalTestData, { eval: true })
+        ).toBe('4')
+        expect(
+          standardTemplate('${name.charAt(0)}', evalTestData, { eval: true })
+        ).toBe('J')
+      })
+    })
   })
 })
