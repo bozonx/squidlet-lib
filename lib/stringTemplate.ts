@@ -1,5 +1,6 @@
 import { deepGet } from './deepManipulate.js'
 
+
 /**
  * Обрабатывает mustache шаблоны с синтаксисом {{value.child}}
  *

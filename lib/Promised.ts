@@ -1,67 +1,71 @@
 export class Promised<T = any | any[]> extends Promise<T> {
   /**
    * Create a promised which is already resolved.
-   * @param result - result of promise
-   * @returns promised
+   *
+   * @param result - Result of promise
+   * @returns Promised
    */
   static alreadyResolved<T = any>(result: T): Promised<T> {
-    const promised = new Promised<T>();
+    const promised = new Promised<T>()
 
-    promised.resolve(result);
+    promised.resolve(result)
 
-    return promised;
+    return promised
   }
 
   /**
    * Create a promised which is already rejected.
-   * @param err - error of promise
-   * @returns promised
+   *
+   * @param err - Error of promise
+   * @returns Promised
    */
   static alreadyRejected(err: Error): Promised {
-    const promised = new Promised();
+    const promised = new Promised()
 
-    promised.reject(err);
+    promised.reject(err)
 
-    return promised;
+    return promised
   }
 
-  private _resolvedHandlers: ((result?: T) => void)[] = [];
-  private _rejectedHandlers: ((err: Error) => void)[] = [];
-  private _catchHandlers: ((err: Error) => void)[] = [];
-  private _canceledHandlers: (() => void)[] = [];
-  private _exceededHandlers: (() => void)[] = [];
-  private _anyStateChangeHandlers: (() => void)[] = [];
+  private _resolvedHandlers: ((result?: T) => void)[] = []
+  private _rejectedHandlers: ((err: Error) => void)[] = []
+  private _catchHandlers: ((err: Error) => void)[] = []
+  private _canceledHandlers: (() => void)[] = []
+  private _exceededHandlers: (() => void)[] = []
+  private _anyStateChangeHandlers: (() => void)[] = []
   // except canceled state
-  private _finalyHandlers: (() => void)[] = [];
+  private _finalyHandlers: (() => void)[] = []
 
-  private _resolved: boolean = false;
-  private _rejected: boolean = false;
-  private _canceled: boolean = false;
+  private _resolved: boolean = false
+  private _rejected: boolean = false
+  private _canceled: boolean = false
   // is timeout of promise exceeded
-  private _exceeded: boolean = false;
+  private _exceeded: boolean = false
 
-  private _startTimeoutMs?: number;
-  private _startTimeoutId?: NodeJS.Timeout;
-  private _waitTimeoutMs?: number;
-  private _waitTimeoutId?: NodeJS.Timeout;
-  private _result: T | undefined;
-  private _error: Error | undefined;
-  private _testCb: ((args: any | any[]) => boolean | undefined) | undefined;
+  private _startTimeoutMs?: number
+  private _startTimeoutId?: NodeJS.Timeout
+  private _waitTimeoutMs?: number
+  private _waitTimeoutId?: NodeJS.Timeout
+  private _result: T | undefined
+  private _error: Error | undefined
+  private _testCb: ((args: any | any[]) => boolean | undefined) | undefined
 
   /**
    * Get the final result of the promise.
-   * @returns result of promise
+   *
+   * @returns Result of promise
    */
   get result() {
-    return this._result;
+    return this._result
   }
 
   /**
    * Get the final error of the promise.
-   * @returns error of promise
+   *
+   * @returns Error of promise
    */
   get error() {
-    return this._error;
+    return this._error
   }
 
   // get promise(): Promise<T> {
@@ -70,18 +74,20 @@ export class Promised<T = any | any[]> extends Promise<T> {
 
   /**
    * Get the timeout in ms of the start function.
-   * @returns timeout of promise
+   *
+   * @returns Timeout of promise
    */
   get startTimeoutMs(): number | undefined {
-    return this._startTimeoutMs;
+    return this._startTimeoutMs
   }
 
   /**
    * Get the timeout in ms of the wait function.
-   * @returns timeout of promise
+   *
+   * @returns Timeout of promise
    */
   get waitTimeoutMs(): number | undefined {
-    return this._waitTimeoutMs;
+    return this._waitTimeoutMs
   }
 
   constructor(
@@ -91,152 +97,161 @@ export class Promised<T = any | any[]> extends Promise<T> {
     ) => void
   ) {
     if (executor) {
-      super(executor);
+      super(executor)
     } else {
-      super(() => {});
+      super(() => {})
     }
   }
 
   destroy() {
     if (this._startTimeoutId) {
-      clearTimeout(this._startTimeoutId);
-      delete this._startTimeoutId;
+      clearTimeout(this._startTimeoutId)
+      delete this._startTimeoutId
     }
 
     if (this._waitTimeoutId) {
-      clearTimeout(this._waitTimeoutId);
-      delete this._waitTimeoutId;
+      clearTimeout(this._waitTimeoutId)
+      delete this._waitTimeoutId
     }
 
-    if (this._testCb) delete this._testCb;
+    if (this._testCb) delete this._testCb
 
-    this._clearHandlers();
+    this._clearHandlers()
   }
 
   // TODO: add test
   /**
-   * Wait for the promise to be resolved or rejected.
-   * Do not call this and start function again.
-   * @param testCb - callback to test the promise. If it returns true then the promise will be resolved.
-   * @param timeoutMs - timeout in milliseconds
-   * @returns promised
+   * Wait for the promise to be resolved or rejected. Do not call this and start
+   * function again.
+   *
+   * @param testCb - Callback to test the promise. If it returns true then the
+   *   promise will be resolved.
+   * @param timeoutMs - Timeout in milliseconds
+   * @returns Promised
    */
   wait(
     testCb: (...args: any[]) => boolean | undefined,
     timeoutMs: number
   ): Promised<T> {
-    this._testCb = testCb;
-    this._waitTimeoutMs = timeoutMs;
+    this._testCb = testCb
+    this._waitTimeoutMs = timeoutMs
     this._waitTimeoutId = setTimeout(() => {
-      if (!this.isPending()) return;
+      if (!this.isPending()) return
 
-      this.exceed();
-    }, timeoutMs);
+      this.exceed()
+    }, timeoutMs)
 
-    return this;
+    return this
   }
 
   /**
    * Test the cb of wait function.
-   * @param args - arguments to test the cb
-   * @returns promised
+   *
+   * @param args - Arguments to test the cb
+   * @returns Promised
    */
   test(data: any | any[]): Promised<T> {
-    if (!this._testCb) return this;
+    if (!this._testCb) return this
 
-    let result: boolean | undefined;
+    let result: boolean | undefined
 
     try {
-      result = this._testCb(data);
+      result = this._testCb(data)
     } catch (err) {
       // skip error
     }
 
     if (result) {
-      this.resolve(data);
+      this.resolve(data)
     }
 
-    return this;
+    return this
   }
 
   // TODO: add test
   /**
-   * Start the promise.
-   * Do not call this and wait function again.
-   * @param timoutMs - timeout in milliseconds. If exceeded then promise will be rejected.
+   * Start the promise. Do not call this and wait function again.
+   *
+   * @param timoutMs - Timeout in milliseconds. If exceeded then promise will be
+   *   rejected.
    */
   start(externalPromise: Promise<T>, timoutMs?: number): Promised<T> {
     if (timoutMs) {
-      this._startTimeoutMs = timoutMs;
+      this._startTimeoutMs = timoutMs
       this._startTimeoutId = setTimeout(() => {
-        if (!this.isPending()) return;
-        this.exceed();
-      }, timoutMs);
+        if (!this.isPending()) return
+        this.exceed()
+      }, timoutMs)
     }
 
     externalPromise
       .then((result) => {
-        if (!this.isPending()) return;
-        this.resolve(result);
+        if (!this.isPending()) return
+        this.resolve(result)
       })
       .catch((error) => {
-        if (!this.isPending()) return;
+        if (!this.isPending()) return
 
-        this.reject(error as Error);
-      });
+        this.reject(error as Error)
+      })
 
-    return this;
+    return this
   }
 
   /**
    * Handle only promise rejection
-   * @param cb - callback to handle rejection
-   * @returns promised
+   *
+   * @param cb - Callback to handle rejection
+   * @returns Promised
    */
   rejected(cb: (err: Error) => void): Promised<T> {
-    this._rejectedHandlers.push(cb);
+    this._rejectedHandlers.push(cb)
 
-    return this;
+    return this
   }
 
   /**
    * Handle promise rejection and exceeded states (custom handler)
-   * @param cb - callback to handle rejection
-   * @returns promised
+   *
+   * @param cb - Callback to handle rejection
+   * @returns Promised
    */
   onCatch(cb: (err: Error) => void): Promised<T> {
-    this._catchHandlers.push(cb);
+    this._catchHandlers.push(cb)
 
-    return this;
+    return this
   }
 
   /**
    * Handle promise resolution (custom handler)
-   * @param cb - callback to handle resolution
-   * @returns promised
+   *
+   * @param cb - Callback to handle resolution
+   * @returns Promised
    */
   onThen(cb: (result?: T) => void): Promised<T> {
-    this._resolvedHandlers.push(cb);
+    this._resolvedHandlers.push(cb)
 
-    return this;
+    return this
   }
 
   /**
    * Handle promise finalization (custom handler)
-   * @param cb - callback to handle finalization
-   * @returns promised
+   *
+   * @param cb - Callback to handle finalization
+   * @returns Promised
    */
   onFinally(cb: () => void): Promised<T> {
-    this._finalyHandlers.push(cb);
+    this._finalyHandlers.push(cb)
 
-    return this;
+    return this
   }
 
   /**
    * Override native Promise.then method to maintain compatibility
-   * @param onfulfilled - callback for successful resolution
-   * @param onrejected - callback for rejection
-   * @returns new Promised instance
+   *
+   * @param onfulfilled - Callback for successful resolution
+   * @param onrejected - Callback for rejection
+   * @returns New Promised instance
    */
   then<TResult1 = T, TResult2 = never>(
     onfulfilled?:
@@ -255,87 +270,88 @@ export class Promised<T = any | any[]> extends Promise<T> {
         this._resolvedHandlers.push((result) => {
           if (onfulfilled) {
             try {
-              const transformedResult = onfulfilled(result as T);
+              const transformedResult = onfulfilled(result as T)
               if (transformedResult instanceof Promise) {
-                transformedResult.then(resolve).catch(reject);
+                transformedResult.then(resolve).catch(reject)
               } else {
-                resolve(transformedResult);
+                resolve(transformedResult)
               }
             } catch (error) {
-              reject(error);
+              reject(error)
             }
           } else {
-            resolve(result as TResult1);
+            resolve(result as TResult1)
           }
-        });
+        })
 
         // Handle rejection
         this._catchHandlers.push((error) => {
           if (onrejected) {
             try {
-              const transformedResult = onrejected(error);
+              const transformedResult = onrejected(error)
               if (transformedResult instanceof Promise) {
-                transformedResult.then(resolve).catch(reject);
+                transformedResult.then(resolve).catch(reject)
               } else {
-                resolve(transformedResult);
+                resolve(transformedResult)
               }
             } catch (finalError) {
-              reject(finalError);
+              reject(finalError)
             }
           } else {
-            reject(error);
+            reject(error)
           }
-        });
+        })
 
         // If already resolved/rejected, trigger immediately
         if (this._resolved) {
           if (onfulfilled) {
             try {
-              const transformedResult = onfulfilled(this._result as T);
+              const transformedResult = onfulfilled(this._result as T)
               if (transformedResult instanceof Promise) {
-                transformedResult.then(resolve).catch(reject);
+                transformedResult.then(resolve).catch(reject)
               } else {
-                resolve(transformedResult);
+                resolve(transformedResult)
               }
             } catch (error) {
-              reject(error);
+              reject(error)
             }
           } else {
-            resolve(this._result as TResult1);
+            resolve(this._result as TResult1)
           }
         } else if (this._rejected) {
           if (onrejected) {
             try {
-              const transformedResult = onrejected(this._error!);
+              const transformedResult = onrejected(this._error!)
               if (transformedResult instanceof Promise) {
-                transformedResult.then(resolve).catch(reject);
+                transformedResult.then(resolve).catch(reject)
               } else {
-                resolve(transformedResult);
+                resolve(transformedResult)
               }
             } catch (finalError) {
-              reject(finalError);
+              reject(finalError)
             }
           } else {
-            reject(this._error!);
+            reject(this._error!)
           }
         }
       }
-    );
+    )
 
     // Create new Promised instance that wraps the native promise
-    const newPromised = new Promised<TResult1 | TResult2>();
+    const newPromised = new Promised<TResult1 | TResult2>()
     nativePromise.then(
       (result) => newPromised.resolve(result),
       (error) => newPromised.reject(error)
-    );
+    )
 
-    return newPromised;
+    return newPromised
   }
 
   /**
    * Override native Promise.catch method to maintain compatibility
-   * @param onrejected - callback for rejection
-   * @returns new Promised instance
+   *
+   * @param onrejected - Callback for rejection
+   * @returns New Promised instance
    */
   catch<TResult = never>(
     onrejected?:
@@ -343,13 +359,14 @@ export class Promised<T = any | any[]> extends Promise<T> {
       | null
       | undefined
   ): Promised<T | TResult> {
-    return this.then(undefined, onrejected);
+    return this.then(undefined, onrejected)
   }
 
   /**
    * Override native Promise.finally method to maintain compatibility
-   * @param onfinally - callback for finalization
-   * @returns new Promised instance
+   *
+   * @param onfinally - Callback for finalization
+   * @returns New Promised instance
    */
   finally(onfinally?: (() => void) | null | undefined): Promised<T> {
     // Create a new native Promise that wraps our custom logic
@@ -357,262 +374,264 @@ export class Promised<T = any | any[]> extends Promise<T> {
       const handleFinally = () => {
         if (onfinally) {
           try {
-            onfinally();
+            onfinally()
           } catch (error) {
-            reject(error);
-            return;
+            reject(error)
+            return
           }
         }
         if (this._resolved) {
-          resolve(this._result as T);
+          resolve(this._result as T)
         } else if (this._rejected) {
-          reject(this._error!);
+          reject(this._error!)
         }
-      };
+      }
 
       if (this._resolved || this._rejected) {
-        handleFinally();
+        handleFinally()
       } else {
-        this._finalyHandlers.push(handleFinally);
+        this._finalyHandlers.push(handleFinally)
       }
-    });
+    })
 
     // Create new Promised instance that wraps the native promise
-    const newPromised = new Promised<T>();
+    const newPromised = new Promised<T>()
     nativePromise.then(
       (result) => newPromised.resolve(result),
       (error) => newPromised.reject(error)
-    );
+    )
 
-    return newPromised;
+    return newPromised
   }
 
   onExceeded(cb: () => void): Promised<T> {
-    this._exceededHandlers.push(cb);
+    this._exceededHandlers.push(cb)
 
-    return this;
+    return this
   }
 
   onCancel(cb: () => void): Promised<T> {
-    this._canceledHandlers.push(cb);
+    this._canceledHandlers.push(cb)
 
-    return this;
+    return this
   }
 
   /**
    * On any change state: resolved, rejected, canceled, exceeded.
-   * @param cb - callback to do
-   * @returns promised
+   *
+   * @param cb - Callback to do
+   * @returns Promised
    */
   onStateChange(cb: () => void): Promised<T> {
-    this._anyStateChangeHandlers.push(cb);
+    this._anyStateChangeHandlers.push(cb)
 
-    return this;
+    return this
   }
 
   /**
    * Do resolve the promise.
-   * @param result - result of promise
+   *
+   * @param result - Result of promise
    */
   resolve = (result?: T) => {
     if (this._startTimeoutId) {
-      clearTimeout(this._startTimeoutId);
-      delete this._startTimeoutId;
+      clearTimeout(this._startTimeoutId)
+      delete this._startTimeoutId
     }
 
     if (this._waitTimeoutId) {
-      clearTimeout(this._waitTimeoutId);
-      delete this._waitTimeoutId;
+      clearTimeout(this._waitTimeoutId)
+      delete this._waitTimeoutId
     }
 
-    if (this._testCb) delete this._testCb;
+    if (this._testCb) delete this._testCb
 
     // can't resolve more than once
-    if (!this.isPending()) return;
+    if (!this.isPending()) return
 
-    this._result = result;
-    this._resolved = true;
+    this._result = result
+    this._resolved = true
 
     for (const handler of this._resolvedHandlers) {
-      handler(result);
+      handler(result)
     }
 
     for (const handler of this._anyStateChangeHandlers) {
-      handler();
+      handler()
     }
 
     for (const handler of this._finalyHandlers) {
-      handler();
+      handler()
     }
 
-    this._clearHandlers();
-  };
+    this._clearHandlers()
+  }
 
   /**
    * Do reject the promise.
-   * @param err - error of promise
+   *
+   * @param err - Error of promise
    */
   reject = (err: Error) => {
     if (this._startTimeoutId) {
-      clearTimeout(this._startTimeoutId);
-      delete this._startTimeoutId;
+      clearTimeout(this._startTimeoutId)
+      delete this._startTimeoutId
     }
 
     if (this._waitTimeoutId) {
-      clearTimeout(this._waitTimeoutId);
-      delete this._waitTimeoutId;
+      clearTimeout(this._waitTimeoutId)
+      delete this._waitTimeoutId
     }
 
-    if (this._testCb) delete this._testCb;
+    if (this._testCb) delete this._testCb
 
     // can't reject more than once
-    if (!this.isPending()) return;
+    if (!this.isPending()) return
 
-    this._error = err;
-    this._rejected = true;
+    this._error = err
+    this._rejected = true
 
     for (const handler of this._rejectedHandlers) {
-      handler(err);
+      handler(err)
     }
 
     for (const handler of this._catchHandlers) {
-      handler(err);
+      handler(err)
     }
 
     for (const handler of this._anyStateChangeHandlers) {
-      handler();
+      handler()
     }
 
     for (const handler of this._finalyHandlers) {
-      handler();
+      handler()
     }
 
-    this._clearHandlers();
-  };
+    this._clearHandlers()
+  }
 
-  /**
-   * Change to exceeded state.
-   * It will reject the promise also.
-   */
+  /** Change to exceeded state. It will reject the promise also. */
   exceed = () => {
     if (this._startTimeoutId) {
-      clearTimeout(this._startTimeoutId);
-      delete this._startTimeoutId;
+      clearTimeout(this._startTimeoutId)
+      delete this._startTimeoutId
     }
 
     if (this._waitTimeoutId) {
-      clearTimeout(this._waitTimeoutId);
-      delete this._waitTimeoutId;
+      clearTimeout(this._waitTimeoutId)
+      delete this._waitTimeoutId
     }
 
-    if (this._testCb) delete this._testCb;
+    if (this._testCb) delete this._testCb
 
-    if (!this.isPending()) return;
+    if (!this.isPending()) return
 
-    this._error = new Error(`Promise exceeded timeout`);
-    this._exceeded = true;
-    this._rejected = true;
+    this._error = new Error(`Promise exceeded timeout`)
+    this._exceeded = true
+    this._rejected = true
 
     for (const handler of this._catchHandlers) {
-      handler(this._error);
+      handler(this._error)
     }
 
     for (const handler of this._exceededHandlers) {
-      handler();
+      handler()
     }
 
     for (const handler of this._anyStateChangeHandlers) {
-      handler();
+      handler()
     }
 
     for (const handler of this._finalyHandlers) {
-      handler();
+      handler()
     }
 
-    this._clearHandlers();
-  };
+    this._clearHandlers()
+  }
 
   /**
-   * After cancel promise won't be able to be fulfilled.
-   * If promise was fulfilled it can't be cancelled.
+   * After cancel promise won't be able to be fulfilled. If promise was
+   * fulfilled it can't be cancelled.
    */
   cancel() {
     if (this._startTimeoutId) {
-      clearTimeout(this._startTimeoutId);
-      delete this._startTimeoutId;
+      clearTimeout(this._startTimeoutId)
+      delete this._startTimeoutId
     }
 
     if (this._waitTimeoutId) {
-      clearTimeout(this._waitTimeoutId);
-      delete this._waitTimeoutId;
+      clearTimeout(this._waitTimeoutId)
+      delete this._waitTimeoutId
     }
 
-    if (!this.isPending()) return;
+    if (!this.isPending()) return
 
-    this._canceled = true;
+    this._canceled = true
 
     for (const handler of this._canceledHandlers) {
-      handler();
+      handler()
     }
 
     for (const handler of this._anyStateChangeHandlers) {
-      handler();
+      handler()
     }
 
-    this._clearHandlers();
+    this._clearHandlers()
   }
 
   extractPromise(): Promise<T> {
     return new Promise((resolve, reject) => {
-      this.onThen((result) => resolve(result as T)).onCatch(reject);
-    });
+      this.onThen((result) => resolve(result as T)).onCatch(reject)
+    })
   }
 
   isResolved(): boolean {
-    return this._resolved;
+    return this._resolved
   }
 
   /**
    * Check if the promise is caught error or exceeded timeout.
-   * @returns true if the promise is caught
+   *
+   * @returns True if the promise is caught
    */
   isCaught(): boolean {
-    return this._rejected || this._exceeded;
+    return this._rejected || this._exceeded
   }
 
   /**
    * Check if the promise is rejected.
-   * @returns true if the promise is rejected
+   *
+   * @returns True if the promise is rejected
    */
   isRejected(): boolean {
-    return this._rejected;
+    return this._rejected
   }
 
   isFulfilled(): boolean {
-    return this._resolved || this._rejected;
+    return this._resolved || this._rejected
   }
 
   isPending(): boolean {
     return (
       !this._resolved && !this._rejected && !this._canceled && !this._exceeded
-    );
+    )
   }
 
   isCanceled(): boolean {
-    return this._canceled;
+    return this._canceled
   }
 
   isExceeded(): boolean {
-    return this._exceeded;
+    return this._exceeded
   }
 
   private _clearHandlers() {
-    this._resolvedHandlers = [];
-    this._rejectedHandlers = [];
-    this._catchHandlers = [];
-    this._canceledHandlers = [];
-    this._exceededHandlers = [];
-    this._anyStateChangeHandlers = [];
-    this._finalyHandlers = [];
+    this._resolvedHandlers = []
+    this._rejectedHandlers = []
+    this._catchHandlers = []
+    this._canceledHandlers = []
+    this._exceededHandlers = []
+    this._anyStateChangeHandlers = []
+    this._finalyHandlers = []
   }
 }

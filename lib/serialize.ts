@@ -4,6 +4,7 @@ const BIN_MARK = '!BIN!'
 const UNDEFINED_MARK = '!UNDEF!'
 const BIN_LENGTH_SEP = ':'
 
+
 declare const btoa: ((data: any) => any) | undefined
 declare const atob: ((data: any) => any) | undefined
 

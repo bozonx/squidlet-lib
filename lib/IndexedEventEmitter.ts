@@ -15,6 +15,7 @@ export class IndexedEventEmitter<T extends DefaultHandler = DefaultHandler> {
   }
 
 
+  
   emit = (eventName: string | number, ...args: any[]) => {
     if (!this.indexes[eventName]) return
 

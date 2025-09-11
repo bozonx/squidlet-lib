@@ -1,16 +1,13 @@
-import {cloneDeepArray} from './arrays.js';
-import {isPlainObject} from './objects.js';
-
+import { cloneDeepArray } from './arrays.js'
+import { isPlainObject } from './objects.js'
 
 // TODO: да наверное не особо нужно - есть deepMerge()
 // TODO: review and review tests
 // TODO: move to object.ts
 /**
- * Merges two objects deeply.
- * It doesn't mutate any object.
- * If you obviously set undefined to one of top's param - it will removes this key from the result object.
- * Arrays will be cloned.
- * It clones the top object.
+ * Merges two objects deeply. It doesn't mutate any object. If you obviously set
+ * undefined to one of top's param - it will removes this key from the result
+ * object. Arrays will be cloned. It clones the top object.
  */
 export function mergeDeepObjects<T = Record<string, any>>(
   top: Record<string, any> = {},
@@ -28,12 +25,10 @@ export function mergeDeepObjects<T = Record<string, any>>(
   for (const key of Object.keys(top)) {
     if (typeof top[key] === 'undefined') {
       topUndefinedKeys.push(key)
-    }
-    else {
+    } else {
       if (Array.isArray(top[key])) {
         result[key] = cloneDeepArray(top[key])
-      }
-      else {
+      } else {
         result[key] = top[key]
       }
     }
@@ -45,8 +40,7 @@ export function mergeDeepObjects<T = Record<string, any>>(
       // only if it obviously doesn't mark as undefined
       if (Array.isArray(bottom[key])) {
         result[key] = cloneDeepArray(bottom[key])
-      }
-      else {
+      } else {
         result[key] = bottom[key]
       }
     }
@@ -61,40 +55,32 @@ export function mergeDeepObjects<T = Record<string, any>>(
 }
 
 // TODO: review and review tests
-/**
- * Clone object deeply.
- */
-export function cloneDeepObject<T = Record<string, any>>(
-obj?: {[index: string]: any}
-): T {
+/** Clone object deeply. */
+export function cloneDeepObject<T = Record<string, any>>(obj?: {
+  [index: string]: any
+}): T {
   // TODO: use structuredClone()
-  return mergeDeepObjects<T>({}, obj);
+  return mergeDeepObjects<T>({}, obj)
 }
 
-
 // TODO: test
-/**
- * Sort keys of object recursively.
- * Arrays won't be sorted.
- */
+/** Sort keys of object recursively. Arrays won't be sorted. */
 export function sortObject(preObj: Record<string, any>): Record<string, any> {
-  const sortedKeys = Object.keys(preObj).sort();
-  const result: Record<string, any> = {};
+  const sortedKeys = Object.keys(preObj).sort()
+  const result: Record<string, any> = {}
 
   for (let key of sortedKeys) {
     if (Array.isArray(preObj[key])) {
       // don't sort arrays
-      result[key] = preObj[key];
-    }
-    else if (typeof preObj[key] === 'object') {
+      result[key] = preObj[key]
+    } else if (typeof preObj[key] === 'object') {
       // sort recursively
-      result[key] = sortObject(preObj[key]);
-    }
-    else {
+      result[key] = sortObject(preObj[key])
+    } else {
       // other primitives
-      result[key] = preObj[key];
+      result[key] = preObj[key]
     }
   }
 
-  return result;
+  return result
 }

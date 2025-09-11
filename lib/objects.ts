@@ -1,17 +1,17 @@
-import {deepGet} from './deepManipulate.js';
-import {removeItemFromArray} from './arrays.js';
-import {trimChar} from './strings.js';
+import { deepGet } from './deepManipulate.js'
+import { removeItemFromArray } from './arrays.js'
+import { trimChar } from './strings.js'
 
-
-/**
- * Get all the class members include prototype's exclude "constructor".
- */
-export function getAllTheClassMembers(obj: Object, exclude: string[] = []): string[] {
+/** Get all the class members include prototype's exclude "constructor". */
+export function getAllTheClassMembers(
+  obj: Object,
+  exclude: string[] = []
+): string[] {
   const props: string[] = [
     ...Object.getOwnPropertyNames(obj),
     // TODO: maybe make getting prototypes recursive ?
     ...Object.getOwnPropertyNames(Object.getPrototypeOf(obj)),
-  ];
+  ]
 
   const excludeProps: string[] = [
     'constructor',
@@ -26,38 +26,37 @@ export function getAllTheClassMembers(obj: Object, exclude: string[] = []): stri
     'toString',
     'valueOf',
     'toLocaleString',
-    ...exclude
-  ];
+    ...exclude,
+  ]
 
   // TODO: optimize
-  return props.filter((item: string) => !excludeProps.includes(item));
+  return props.filter((item: string) => !excludeProps.includes(item))
 }
 
 /**
- * Check is object is empty.
- * For other types it will return true.
- * Null means an empty object too. Better is not to use null.
+ * Check is object is empty. For other types it will return true. Null means an
+ * empty object too. Better is not to use null.
  */
-export function isEmptyObject(obj: Record<any, any> | null | undefined): boolean {
+export function isEmptyObject(
+  obj: Record<any, any> | null | undefined
+): boolean {
   if (!obj || Array.isArray(obj) || typeof obj !== 'object') return true
 
   return !Object.keys(obj || {}).length
 }
 
-/**
- * Make a new object which doesn't include specified keys
- */
+/** Make a new object which doesn't include specified keys */
 export function omitObj(
   obj: Record<any, any> | null | undefined,
   ...keysToExclude: string[]
 ): Record<any, any> {
   if (!obj || Array.isArray(obj) || typeof obj !== 'object') return {}
 
-  const result: {[index: string]: any} = {};
+  const result: { [index: string]: any } = {}
 
   for (let key of Object.keys(obj)) {
     if (keysToExclude.indexOf(key) < 0) {
-      result[key] = obj[key];
+      result[key] = obj[key]
     }
   }
 
@@ -66,14 +65,15 @@ export function omitObj(
 
 // TODO: что есть тип unknown?
 /**
- * It creates a new object which doesn't include keys which values are undefined.
+ * It creates a new object which doesn't include keys which values are
+ * undefined.
  */
 export function omitUndefined(
-  obj: {[index: string]: any} | null | undefined
+  obj: { [index: string]: any } | null | undefined
 ): Record<any, any> {
   if (!obj || Array.isArray(obj) || typeof obj !== 'object') return {}
 
-  const result: {[index: string]: any} = {}
+  const result: { [index: string]: any } = {}
 
   for (const key of Object.keys(obj)) {
     if (typeof obj[key] === 'undefined') continue
@@ -84,9 +84,7 @@ export function omitUndefined(
   return result
 }
 
-/**
- * Create a new object which includes only specified keys
- */
+/** Create a new object which includes only specified keys */
 export function pickObj(
   obj: Record<any, any> | null | undefined,
   ...keysToPick: string[]
@@ -102,18 +100,17 @@ export function pickObj(
   return result
 }
 
-/**
- * Find element in object. Like lodash's find function.
- */
+/** Find element in object. Like lodash's find function. */
 export function findObj<T extends any>(
   obj: Record<any, any> | null | undefined,
   cb: (item: any, index: string) => any
 ): T | undefined {
   if (obj === null || typeof obj === 'undefined') {
     return
-  }
-  else if (typeof obj !== 'object') {
-    throw new Error(`findObj: unsupported type of object "${JSON.stringify(obj)}"`);
+  } else if (typeof obj !== 'object') {
+    throw new Error(
+      `findObj: unsupported type of object "${JSON.stringify(obj)}"`
+    )
   }
 
   for (const key of Object.keys(obj)) {
@@ -130,13 +127,15 @@ export function findObj<T extends any>(
 export function isPlainObject(obj: any): boolean {
   if (!obj || Array.isArray(obj) || typeof obj !== 'object') return false
 
-  return obj.constructor === Object // separate instances (Array, DOM, ...)
-    && Object.prototype.toString.call(obj) === '[object Object]' // separate build-in like Math
+  return (
+    obj.constructor === Object && // separate instances (Array, DOM, ...)
+    Object.prototype.toString.call(obj) === '[object Object]'
+  ) // separate build-in like Math
 }
 
 /**
- * Get the first key of value
- * E.g getKeyOfObject({key1: 'value1'}, 'value1') - then it returns 'key1'
+ * Get the first key of value E.g getKeyOfObject({key1: 'value1'}, 'value1') -
+ * then it returns 'key1'
  */
 export function getKeyOfObject(
   obj?: Record<any, any>,
@@ -151,14 +150,11 @@ export function getKeyOfObject(
   return
 }
 
-/**
- * Clear all the props in object.
- * It mutates the object.
- */
-export function clearObject(obj: {[index: string]: any}) {
+/** Clear all the props in object. It mutates the object. */
+export function clearObject(obj: { [index: string]: any }) {
   if (!obj || Array.isArray(obj) || typeof obj !== 'object') return
 
-  for (let name of Object.keys(obj)) delete obj[name];
+  for (let name of Object.keys(obj)) delete obj[name]
 }
 
 // TODO: test
@@ -201,13 +197,13 @@ export function collectEachObjValues(
 }
 
 /**
- * Get property of any objects include class instances.
- * Use it to get deep value from mixed objects and class instances
- * because deepGet() doesn't work with class instances.
- * Arrays are supported
+ * Get property of any objects include class instances. Use it to get deep value
+ * from mixed objects and class instances because deepGet() doesn't work with
+ * class instances. Arrays are supported
  */
 export function getDeepPropValue(obj: any, pathTo: string): any {
-  if (typeof obj !== 'object' || !pathTo || typeof pathTo !== 'string') return undefined
+  if (typeof obj !== 'object' || !pathTo || typeof pathTo !== 'string')
+    return undefined
 
   const splat: string[] = trimChar(pathTo.trim(), '.').split('.')
 
@@ -218,11 +214,12 @@ export function getDeepPropValue(obj: any, pathTo: string): any {
 }
 
 /**
- * Get method from deep class instance.
- * It will be returned as bind with it's class
+ * Get method from deep class instance. It will be returned as bind with it's
+ * class
  */
 export function getDeepMethod(obj: any, pathTo: string): Function | undefined {
-  if (typeof obj !== 'object' || !pathTo || typeof pathTo !== 'string') return undefined
+  if (typeof obj !== 'object' || !pathTo || typeof pathTo !== 'string')
+    return undefined
 
   const splat = trimChar(pathTo.trim(), '.').split('.')
 
@@ -244,7 +241,6 @@ export function getDeepMethod(obj: any, pathTo: string): Function | undefined {
     splat.slice(0, splat.length - 1).join('.')
   )
 
-
   if (!classInstance) return
 
   const method = classInstance[methodName]
@@ -263,7 +259,6 @@ export function getDeepMethod(obj: any, pathTo: string): Function | undefined {
 //     'constructor'
 //   )
 // }
-
 
 // /**
 //  * Compare 2 objects and collect keys whose VALUES are different (not equals to the same key in the sourceObj).
@@ -332,9 +327,6 @@ export function getDeepMethod(obj: any, pathTo: string): Function | undefined {
 //
 //   throw new Error(`cloneDeep: unsupported type of value "${JSON.stringify(value)}"`);
 // }
-
-
-
 
 // export function isEmpty(toCheck: any): boolean {
 //   if (typeof toCheck == 'undefined' || toCheck === null || toCheck === '') return true;

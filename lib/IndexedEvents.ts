@@ -124,3 +124,4 @@ export class IndexedEvents<T extends AnyHandler> {
     return promised;
   }
 }
+

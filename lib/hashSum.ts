@@ -10,6 +10,7 @@ function pad (hash: any, len: number) {
   return hash;
 }
 
+
 function fold (hash: any, text: any) {
   var i;
   var chr;

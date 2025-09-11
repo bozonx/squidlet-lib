@@ -8,6 +8,7 @@ import {HTTP_CONTENT_TYPES} from "./interfaces/Http.js";
 const STRING_CONTENT_TYPES = ['text/plain', 'application/javascript', 'application/xml'];
 
 
+
 export function isHtml(str: any): boolean {
   if (typeof str !== 'string') return false;
 

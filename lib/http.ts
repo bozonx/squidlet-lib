@@ -1,4 +1,3 @@
-
 // TODO: add more statuses - see https://httpstatuses.com/
 
 const HTTP_STATUS_MESSAGES: Record<string, string> = {
@@ -15,7 +14,6 @@ const HTTP_STATUS_MESSAGES: Record<string, string> = {
   502: 'Bad Gateway',
   504: 'Gateway Timeout',
 }
-
 
 export function httpStatusMessage(status: number): string {
   return HTTP_STATUS_MESSAGES[status] || 'Unknown error'

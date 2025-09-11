@@ -1,7 +1,11 @@
-import {IndexedEvents} from './IndexedEvents.js';
+import { IndexedEvents } from './IndexedEvents.js'
 
-
-type ChangeEventHandler = (dir: string, name: string, value: any, oldValue: any) => void
+type ChangeEventHandler = (
+  dir: string,
+  name: string,
+  value: any,
+  oldValue: any
+) => void
 
 export interface MemStorageBase {
   readonly changeEvent: IndexedEvents<ChangeEventHandler>
@@ -13,20 +17,16 @@ export interface MemStorageBase {
   clear(dir: string): Promise<void>
 }
 
-
 /**
- * It is storage in memory.
- * It means that all the data will be lost on system stop.
+ * It is storage in memory. It means that all the data will be lost on system
+ * stop.
  */
 export class MemStorage implements MemStorageBase {
   readonly changeEvent = new IndexedEvents<ChangeEventHandler>()
 
   private storage: Record<string, Record<string, any>> = {}
 
-
-  /**
-   * If need you can init storage for example loaded from file
-   */
+  /** If need you can init storage for example loaded from file */
   async initStorage(storage: Record<string, Record<string, any>>) {
     this.storage = storage
   }
@@ -68,5 +68,4 @@ export class MemStorage implements MemStorageBase {
       this.changeEvent.emit(dir, name, undefined, oldDir[name])
     }
   }
-
 }

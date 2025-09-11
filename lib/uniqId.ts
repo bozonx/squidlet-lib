@@ -1,51 +1,44 @@
-import hashSum from './hashSum.js';
+import hashSum from './hashSum.js'
 
-
-let counter: number = Number.MIN_SAFE_INTEGER + Math.floor(Math.random() * (Number.MAX_SAFE_INTEGER));
-let instanceId: string | undefined;
-
+let counter: number =
+  Number.MIN_SAFE_INTEGER + Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)
+let instanceId: string | undefined
 
 function randomInt(): number {
-  return Math.floor(Math.random() * (Number.MAX_SAFE_INTEGER));
+  return Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)
 }
 
-
 /**
- * Generate unique number.
- * It increments a counter on each call.
- * Counter is initialized with a random value.
+ * Generate unique number. It increments a counter on each call. Counter is
+ * initialized with a random value.
  */
 export function makeUniqNumber(): number {
-  counter++;
+  counter++
 
   if (counter === Number.MAX_SAFE_INTEGER) {
-    counter = Number.MIN_SAFE_INTEGER;
+    counter = Number.MIN_SAFE_INTEGER
   }
 
-  return counter;
+  return counter
 }
 
 /**
- * It returns id of runtime. This id is generating on first call of this function.
- * This id will never changed while runtime.
- * It contains of 8 chars.
+ * It returns id of runtime. This id is generating on first call of this
+ * function. This id will never changed while runtime. It contains of 8 chars.
  */
 export function getRuntimeId(): string {
   if (typeof instanceId === 'undefined') {
-    instanceId = hashSum( String(randomInt()) + String(randomInt()) );
+    instanceId = hashSum(String(randomInt()) + String(randomInt()))
   }
 
-  return instanceId as string;
+  return instanceId as string
 }
 
-/**
- * Make always a unique id which contains of 8 chars.
- */
+/** Make always a unique id which contains of 8 chars. */
 export function makeUniqId(bytes: number = 8): string {
-
   // TODO: добавить задание числа байт
 
-  const str: string = getRuntimeId() + String(makeUniqNumber());
+  const str: string = getRuntimeId() + String(makeUniqNumber())
 
-  return hashSum(str);
+  return hashSum(str)
 }

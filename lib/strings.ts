@@ -104,6 +104,7 @@ export function padStart(srcString: string, length: number = 0, chars: string = 
   let result = '';
   const repeats = length - srcString.length;
 
+  
   if (repeats <= 0) return srcString;
 
   for (let i = 0; i < repeats; i ++) result += chars;

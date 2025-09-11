@@ -2,6 +2,7 @@ import type {Primitives} from './interfaces/Types.js';
 import {parseValue} from './common.js';
 
 
+
 /**
  * Parse cookie like "param1=value1; param2=value2;" to { param1: 'value1', param2: 'value2' }
  * example - lang=ru-RU; gdpr-cookie-consent=accepted;

@@ -2,6 +2,7 @@ import {isEqualUint8Array} from './binaryHelpers.js';
 import {concatUniqStrArrays} from './arrays.js';
 import { type Logger, LogLevels } from "./interfaces/Logger.js";
 
+
 export function isNil(val: any): boolean {
   return typeof val === "undefined" || val === null;
 }

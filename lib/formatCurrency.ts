@@ -12,6 +12,7 @@ export const PRECISIONS_BY_TICKER = {
   BTC: 8,
   LTC: 8,
 }
+
 export const CURRENCY_COLLATION = {
   USD: '$',
   EUR: '€',
@@ -30,11 +31,9 @@ export const CURRENCY_COLLATION = {
   LTC: 'Ł',
 }
 
-
 function precise(value: number, precision: number): string {
-  return Number(value).toFixed(precision);
+  return Number(value).toFixed(precision)
 }
-
 
 export function formatCurrency(
   value: string | number | undefined,
@@ -43,16 +42,16 @@ export function formatCurrency(
   showPositiveSign: boolean = false
 ): string {
   if (!value) {
-    return precise(0, precision);
+    return precise(0, precision)
   }
 
-  let finalValue: number = parseInt(value as string);
+  let finalValue: number = parseInt(value as string)
 
-  if (negative && finalValue > 0) finalValue = finalValue - (finalValue * 2);
+  if (negative && finalValue > 0) finalValue = finalValue - finalValue * 2
 
-  let result = precise(finalValue, precision);
+  let result = precise(finalValue, precision)
 
-  if (showPositiveSign && !negative &&  finalValue > 0) result = `+${result}`;
+  if (showPositiveSign && !negative && finalValue > 0) result = `+${result}`
 
-  return result;
+  return result
 }
