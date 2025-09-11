@@ -1,5 +1,5 @@
-import type {JsonTypes} from './interfaces/Types';
-import {omitUndefined} from './objects';
+import type {JsonTypes} from './interfaces/Types.js';
+import {omitUndefined} from './objects.js';
 
 
 export const URL_DELIMITER = '/';

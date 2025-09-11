@@ -1,5 +1,5 @@
-import {pathDirname, pathBasename, pathIsAbsolute, PATH_SEP} from './paths'
-import {trimCharEnd} from './strings'
+import {pathDirname, pathBasename, pathIsAbsolute, PATH_SEP} from './paths.js'
+import {trimCharEnd} from './strings.js'
 
 
 export async function mkdirPLogic (

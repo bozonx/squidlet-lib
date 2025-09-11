@@ -1,4 +1,4 @@
-import hashSum from './hashSum';
+import hashSum from './hashSum.js';
 
 
 let counter: number = Number.MIN_SAFE_INTEGER + Math.floor(Math.random() * (Number.MAX_SAFE_INTEGER));

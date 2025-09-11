@@ -1,4 +1,4 @@
-import { trimCharStart } from './strings'
+import { trimCharStart } from './strings.js'
 import {
   arrayKeys,
   cloneDeepArray,
@@ -7,9 +7,9 @@ import {
   lastItem,
   withoutFirstItem,
   withoutLastItem,
-} from './arrays'
-import { cloneDeepObject } from './deepObjects'
-import { isPlainObject } from './objects'
+} from './arrays.js'
+import { cloneDeepObject } from './deepObjects.js'
+import { isPlainObject } from './objects.js'
 
 const DEEP_PATH_SEPARATOR = '.'
 export const DONT_GO_DEEPER = Symbol('DONT_GO_DEEPER')

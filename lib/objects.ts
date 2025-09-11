@@ -1,6 +1,6 @@
-import {deepGet} from './deepManipulate';
-import {removeItemFromArray} from './arrays';
-import {trimChar} from './strings';
+import {deepGet} from './deepManipulate.js';
+import {removeItemFromArray} from './arrays.js';
+import {trimChar} from './strings.js';
 
 
 /**

@@ -1,5 +1,5 @@
 /** Are arrays equal. If one of them not Array then it returns false. */
-import { cloneDeepObject } from './deepObjects'
+import { cloneDeepObject } from './deepObjects.js'
 
 // shift when you calculates length
 export const ARRAY_INDEX_SHIFT = 1
