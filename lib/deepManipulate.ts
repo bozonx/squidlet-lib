@@ -28,7 +28,7 @@ export function splitDeepPath(pathTo?: string): (string | number)[] {
     DEEP_PATH_SEPARATOR
   )
 
-  splatDots.forEach((el: string) => {
+  for (const el of splatDots) {
     if (el.indexOf('[') === 0) {
       // it is only array index - [0] or [-1] or [abc]
       const match = el.match(/^\[(-?\d+)\]$/)
@@ -38,20 +38,22 @@ export function splitDeepPath(pathTo?: string): (string | number)[] {
         if (index >= 0) {
           res.push(index)
         } else {
-          // Отрицательные индексы не поддерживаются
+          // Отрицательные индексы не поддерживаются, но считаем путь корректным
           console.warn(`Negative array index not supported: ${el}`)
-          return // Прерываем обработку, чтобы не добавлять неправильный индекс
+          // Добавляем специальный маркер для отрицательных индексов
+          res.push('__NEGATIVE_INDEX__')
         }
       } else {
         // Нечисловые индексы не поддерживаются
         console.warn(`Invalid array index format: ${el}`)
-        return // Прерываем обработку, чтобы не добавлять неправильный индекс
+        // Возвращаем пустой массив, чтобы указать на ошибку
+        return []
       }
     } else {
       // only key as string
       res.push(el)
     }
-  })
+  }
 
   return res
 }
@@ -83,6 +85,19 @@ export function joinDeepPath(
 }
 
 /**
+ * Check if path is valid (can be parsed correctly)
+ *
+ * @param pathTo - Path to check
+ * @returns True if path is valid, false otherwise
+ */
+export function isPathValid(pathTo?: string): boolean {
+  if (!pathTo || typeof pathTo !== 'string') return false
+
+  const splatPath = splitDeepPath(pathTo)
+  return splatPath.length > 0
+}
+
+/**
  * Get value deeply from object or array.
  *
  * @param src - Object or array
@@ -99,7 +114,7 @@ export function deepGet(
   else if (typeof pathTo !== 'string') return defaultValue
 
   const splatPath = splitDeepPath(pathTo)
-  // Если путь не удалось разобрать, возвращаем defaultValue
+  // Если путь не удалось разобрать или содержит некорректные индексы, возвращаем defaultValue
   if (splatPath.length === 0) return defaultValue
 
   // Проверяем, содержит ли исходный путь некорректные индексы массивов
@@ -115,7 +130,14 @@ export function deepGet(
 
   if (Array.isArray(src)) {
     // means wrong path
-    if (typeof splatPath[0] !== 'number') return defaultValue
+    if (
+      typeof splatPath[0] !== 'number' &&
+      splatPath[0] !== '__NEGATIVE_INDEX__'
+    )
+      return defaultValue
+
+    // Если это отрицательный индекс, возвращаем defaultValue
+    if (splatPath[0] === '__NEGATIVE_INDEX__') return defaultValue
 
     const arrIndex: number = splatPath[0]
 

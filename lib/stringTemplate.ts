@@ -1,5 +1,4 @@
-import { deepGet } from './deepManipulate.js'
-
+import { deepGet, isPathValid } from './deepManipulate.js'
 
 /**
  * Обрабатывает mustache шаблоны с синтаксисом {{value.child}}
@@ -26,6 +25,15 @@ export function mustacheTemplate(
     // Экранируем специальные символы для безопасного использования в регулярном выражении
     const escapedKey = key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
     const replaceRegex = new RegExp(`\\{\\{${escapedKey}\\}\\}`, 'g')
+
+    // Проверяем, является ли путь корректным
+    if (!isPathValid(key)) {
+      // Если путь некорректный, возвращаем исходный шаблон
+      const stringValue = match[0]
+      res = res.replace(replaceRegex, stringValue)
+      continue
+    }
+
     // Получаем значение по пути с точками
     const value = deepGet(data, key)
 
@@ -65,6 +73,14 @@ export function standardTemplate(
     // Экранируем специальные символы для безопасного использования в регулярном выражении
     const escapedKey = key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
     const replaceRegex = new RegExp(`\\$\\{${escapedKey}\\}`, 'g')
+
+    // Проверяем, является ли путь корректным
+    if (!isPathValid(key)) {
+      // Если путь некорректный, возвращаем исходный шаблон
+      const stringValue = match[0]
+      res = res.replace(replaceRegex, stringValue)
+      continue
+    }
 
     // Получаем значение по пути с точками
     const value = deepGet(data, key)
