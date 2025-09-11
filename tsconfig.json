@@ -54,7 +54,7 @@
 
     /* Modern features */
     "verbatimModuleSyntax": false,
-    "rootDir": "."
+    "rootDir": "./lib"
   },
   "include": ["lib/**/*.ts"],
   "exclude": ["distr", "notUsed", "node_modules", "test"]
