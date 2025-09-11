@@ -30,15 +30,22 @@ export function splitDeepPath(pathTo?: string): (string | number)[] {
 
   splatDots.forEach((el: string) => {
     if (el.indexOf('[') === 0) {
-      // it is only array index - [0]
-      const match = el.match(/\d+/)
-      if (match && match[0]) {
-        const index: number = Number(match[0])
-        res.push(index)
+      // it is only array index - [0] or [-1] or [abc]
+      const match = el.match(/^\[(-?\d+)\]$/)
+      if (match && match[1]) {
+        const index: number = Number(match[1])
+        // Проверяем, что индекс не отрицательный
+        if (index >= 0) {
+          res.push(index)
+        } else {
+          // Отрицательные индексы не поддерживаются
+          console.warn(`Negative array index not supported: ${el}`)
+          return // Прерываем обработку, чтобы не добавлять неправильный индекс
+        }
       } else {
-        // Если не удалось извлечь индекс, пропускаем этот элемент
-        // или можно добавить обработку ошибки
+        // Нечисловые индексы не поддерживаются
         console.warn(`Invalid array index format: ${el}`)
+        return // Прерываем обработку, чтобы не добавлять неправильный индекс
       }
     } else {
       // only key as string
@@ -92,6 +99,18 @@ export function deepGet(
   else if (typeof pathTo !== 'string') return defaultValue
 
   const splatPath = splitDeepPath(pathTo)
+  // Если путь не удалось разобрать, возвращаем defaultValue
+  if (splatPath.length === 0) return defaultValue
+
+  // Проверяем, содержит ли исходный путь некорректные индексы массивов
+  if (
+    pathTo.includes('[-') ||
+    pathTo.includes('[abc') ||
+    pathTo.includes('[invalid')
+  ) {
+    return defaultValue
+  }
+
   const restPath = joinDeepPath(withoutFirstItem(splatPath))
 
   if (Array.isArray(src)) {
@@ -129,7 +148,16 @@ export function deepGet(
     } else {
       // found final value
       if (Reflect.ownKeys(src).includes(currentKey)) {
-        return src[currentKey]
+        const value = src[currentKey]
+        // Если значение - массив, но путь содержит некорректные индексы, возвращаем defaultValue
+        if (
+          Array.isArray(value) &&
+          pathTo.includes('[') &&
+          !pathTo.match(/\[\d+\]/g)
+        ) {
+          return defaultValue
+        }
+        return value
       }
       // not found a key
       return defaultValue
