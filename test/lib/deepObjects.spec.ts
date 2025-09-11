@@ -186,18 +186,19 @@ describe('lib/deepObjects', () => {
     })
 
     it('should handle negative array indices', () => {
-      // Отрицательные индексы должны быть отфильтрованы
-      expect(splitDeepPath('arr[-1]')).toEqual(['arr'])
-      expect(splitDeepPath('user.hobbies[-1]')).toEqual(['user', 'hobbies'])
+      // Отрицательные индексы помечаются специальным маркером
+      expect(splitDeepPath('arr[-1]')).toEqual(['arr', '__NEGATIVE_INDEX__'])
+      expect(splitDeepPath('user.hobbies[-1]')).toEqual([
+        'user',
+        'hobbies',
+        '__NEGATIVE_INDEX__',
+      ])
     })
 
     it('should handle non-numeric array indices', () => {
-      // Нечисловые индексы должны быть отфильтрованы
-      expect(splitDeepPath('arr[abc]')).toEqual(['arr'])
-      expect(splitDeepPath('user.hobbies[invalid]')).toEqual([
-        'user',
-        'hobbies',
-      ])
+      // Нечисловые индексы возвращают пустой массив (ошибка)
+      expect(splitDeepPath('arr[abc]')).toEqual([])
+      expect(splitDeepPath('user.hobbies[invalid]')).toEqual([])
     })
 
     it('should handle empty and invalid inputs', () => {

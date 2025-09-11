@@ -50,41 +50,56 @@ function safeEval(expression: string, data: Record<string, any>): any {
  *
  * @param {string | null | undefined} tmpl - Шаблон для обработки
  * @param {object | null | undefined} data - Данные для подстановки
+ * @param {object} options - Опции обработки
+ * @param {boolean} options.eval - Если true, то содержимое шаблона выполняется
+ *   как выражение
  * @returns {string} - Обработанный шаблон
  */
 export function mustacheTemplate(
   tmpl: string | null | undefined,
-  data: Record<string, any> | null | undefined
+  data: Record<string, any> | null | undefined,
+  options: { eval?: boolean } = { eval: false }
 ): string {
   // Проверяем входные параметры на null и undefined
   if (tmpl === null || tmpl === undefined) return ''
   if (data === null || data === undefined) return tmpl
 
   let res = tmpl
-  const mustacheRegex = /\{\{([^}]+)\}\}/g
+  const mustacheRegex = /\{\{([^}]*)\}\}/g
   let match
 
   while ((match = mustacheRegex.exec(tmpl)) !== null) {
-    const key = match[1].trim() // содержимое внутри скобок, например "PROPS.t.links.recent"
+    const originalKey = match[1] // содержимое внутри скобок, например "PROPS.t.links.recent"
+    const key = originalKey.trim()
 
     // Экранируем специальные символы для безопасного использования в регулярном выражении
-    const escapedKey = key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+    const escapedKey = originalKey.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
     const replaceRegex = new RegExp(`\\{\\{${escapedKey}\\}\\}`, 'g')
 
-    // Проверяем, является ли путь корректным
-    if (!isPathValid(key)) {
-      // Если путь некорректный, возвращаем исходный шаблон
-      const stringValue = match[0]
-      res = res.replace(replaceRegex, stringValue)
-      continue
+    let stringValue: string
+
+    if (options.eval) {
+      // Если включен eval, выполняем выражение безопасно
+      if (!key || !key.trim()) {
+        // Если выражение пустое, возвращаем пустую строку
+        stringValue = ''
+      } else {
+        const result = safeEval(key, data)
+        stringValue =
+          result === null || result === undefined ? '' : String(result)
+      }
+    } else {
+      // Обычная обработка - проверяем путь и получаем значение
+      if (!isPathValid(key)) {
+        // Если путь некорректный, возвращаем исходный шаблон
+        stringValue = match[0]
+      } else {
+        // Получаем значение по пути с точками
+        const value = deepGet(data, key)
+        // Безопасное преобразование значения в строку
+        stringValue = value === null || value === undefined ? '' : String(value)
+      }
     }
-
-    // Получаем значение по пути с точками
-    const value = deepGet(data, key)
-
-    // Безопасное преобразование значения в строку
-    const stringValue =
-      value === null || value === undefined ? '' : String(value)
 
     // Заменяем все вхождения
     res = res.replace(replaceRegex, stringValue)

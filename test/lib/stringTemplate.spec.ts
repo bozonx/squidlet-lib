@@ -135,9 +135,7 @@ describe('lib/stringTemplate', () => {
 
     it('should handle whitespace in template keys', () => {
       const template = 'Name: {{ user.name }}, Age: {{user.age }}'
-      expect(mustacheTemplate(template, testData)).toBe(
-        'Name: {{ user.name }}, Age: {{user.age }}'
-      )
+      expect(mustacheTemplate(template, testData)).toBe('Name: John, Age: 30')
     })
 
     it('should handle nested arrays', () => {
@@ -194,6 +192,220 @@ describe('lib/stringTemplate', () => {
       expect(mustacheTemplate(template, mixedData)).toBe(
         'Item: item1, Tag: tag3'
       )
+    })
+
+    describe('eval option', () => {
+      const evalTestData = {
+        a: 10,
+        b: 20,
+        name: 'John',
+        age: 30,
+        items: [1, 2, 3, 4, 5],
+        user: { score: 100, active: true },
+        prices: { apple: 1.5, banana: 2.0 },
+      }
+
+      it('should evaluate arithmetic expressions', () => {
+        expect(
+          mustacheTemplate('{{a + b}}', evalTestData, { eval: true })
+        ).toBe('30')
+        expect(
+          mustacheTemplate('{{a * b}}', evalTestData, { eval: true })
+        ).toBe('200')
+        expect(
+          mustacheTemplate('{{b - a}}', evalTestData, { eval: true })
+        ).toBe('10')
+        expect(
+          mustacheTemplate('{{b / a}}', evalTestData, { eval: true })
+        ).toBe('2')
+        expect(
+          mustacheTemplate('{{a % 3}}', evalTestData, { eval: true })
+        ).toBe('1')
+      })
+
+      it('should evaluate comparison expressions', () => {
+        expect(
+          mustacheTemplate('{{a > b}}', evalTestData, { eval: true })
+        ).toBe('false')
+        expect(
+          mustacheTemplate('{{a < b}}', evalTestData, { eval: true })
+        ).toBe('true')
+        expect(
+          mustacheTemplate('{{a === 10}}', evalTestData, { eval: true })
+        ).toBe('true')
+        expect(
+          mustacheTemplate('{{a !== b}}', evalTestData, { eval: true })
+        ).toBe('true')
+        expect(
+          mustacheTemplate('{{a >= 10}}', evalTestData, { eval: true })
+        ).toBe('true')
+        expect(
+          mustacheTemplate('{{a <= 10}}', evalTestData, { eval: true })
+        ).toBe('true')
+      })
+
+      it('should evaluate logical expressions', () => {
+        expect(
+          mustacheTemplate('{{a > 5 && b > 15}}', evalTestData, { eval: true })
+        ).toBe('true')
+        expect(
+          mustacheTemplate('{{a > 15 || b > 15}}', evalTestData, { eval: true })
+        ).toBe('true')
+        expect(
+          mustacheTemplate('{{!user.active}}', evalTestData, { eval: true })
+        ).toBe('false')
+      })
+
+      it('should evaluate ternary operator', () => {
+        expect(
+          mustacheTemplate('{{a > b ? "bigger" : "smaller"}}', evalTestData, {
+            eval: true,
+          })
+        ).toBe('smaller')
+        expect(
+          mustacheTemplate(
+            '{{user.active ? "active" : "inactive"}}',
+            evalTestData,
+            { eval: true }
+          )
+        ).toBe('active')
+      })
+
+      it('should evaluate array access with expressions', () => {
+        expect(
+          mustacheTemplate('{{items[0]}}', evalTestData, { eval: true })
+        ).toBe('1')
+        expect(
+          mustacheTemplate('{{items[a - 9]}}', evalTestData, { eval: true })
+        ).toBe('2')
+        expect(
+          mustacheTemplate('{{items.length}}', evalTestData, { eval: true })
+        ).toBe('5')
+      })
+
+      it('should evaluate object property access', () => {
+        expect(
+          mustacheTemplate('{{user.score}}', evalTestData, { eval: true })
+        ).toBe('100')
+        expect(
+          mustacheTemplate('{{user.active}}', evalTestData, { eval: true })
+        ).toBe('true')
+      })
+
+      it('should evaluate complex expressions', () => {
+        expect(
+          mustacheTemplate('{{(a + b) * 2}}', evalTestData, { eval: true })
+        ).toBe('60')
+        expect(
+          mustacheTemplate(
+            '{{user.score > 50 ? "high" : "low"}}',
+            evalTestData,
+            { eval: true }
+          )
+        ).toBe('high')
+        expect(
+          mustacheTemplate('{{items[0] + items[1]}}', evalTestData, {
+            eval: true,
+          })
+        ).toBe('3')
+      })
+
+      it('should handle string concatenation', () => {
+        expect(
+          mustacheTemplate('{{name + " is " + age}}', evalTestData, {
+            eval: true,
+          })
+        ).toBe('John is 30')
+        expect(
+          mustacheTemplate('{{"Hello " + name}}', evalTestData, { eval: true })
+        ).toBe('Hello John')
+      })
+
+      it('should handle type conversion', () => {
+        expect(
+          mustacheTemplate('{{String(a)}}', evalTestData, { eval: true })
+        ).toBe('10')
+        expect(
+          mustacheTemplate('{{Number("20")}}', evalTestData, { eval: true })
+        ).toBe('20')
+        expect(
+          mustacheTemplate('{{Boolean(0)}}', evalTestData, { eval: true })
+        ).toBe('false')
+      })
+
+      it('should handle invalid expressions gracefully', () => {
+        expect(
+          mustacheTemplate('{{invalidVariable}}', evalTestData, { eval: true })
+        ).toBe('')
+        expect(
+          mustacheTemplate('{{items[10]}}', evalTestData, { eval: true })
+        ).toBe('')
+        expect(
+          mustacheTemplate('{{user.nonexistent}}', evalTestData, { eval: true })
+        ).toBe('')
+        expect(
+          mustacheTemplate('{{syntax error}}', evalTestData, { eval: true })
+        ).toBe('')
+      })
+
+      it('should handle empty expressions', () => {
+        expect(mustacheTemplate('{{}}', evalTestData, { eval: true })).toBe('')
+        expect(mustacheTemplate('{{ }}', evalTestData, { eval: true })).toBe('')
+      })
+
+      it('should work with mixed eval and non-eval templates', () => {
+        const template = 'Name: {{name}}, Sum: {{a + b}}, Age: {{age}}'
+        expect(mustacheTemplate(template, evalTestData, { eval: true })).toBe(
+          'Name: John, Sum: 30, Age: 30'
+        )
+      })
+
+      it('should handle null and undefined values in expressions', () => {
+        const nullData = { a: null, b: undefined, c: 10 }
+        expect(mustacheTemplate('{{a}}', nullData, { eval: true })).toBe('')
+        expect(mustacheTemplate('{{b}}', nullData, { eval: true })).toBe('')
+        expect(mustacheTemplate('{{c}}', nullData, { eval: true })).toBe('10')
+        expect(mustacheTemplate('{{a || c}}', nullData, { eval: true })).toBe(
+          '10'
+        )
+      })
+
+      it('should handle mathematical functions', () => {
+        expect(
+          mustacheTemplate('{{Math.max(a, b)}}', evalTestData, { eval: true })
+        ).toBe('20')
+        expect(
+          mustacheTemplate('{{Math.min(a, b)}}', evalTestData, { eval: true })
+        ).toBe('10')
+        expect(
+          mustacheTemplate('{{Math.round(3.7)}}', evalTestData, { eval: true })
+        ).toBe('4')
+      })
+
+      it('should handle array methods', () => {
+        expect(
+          mustacheTemplate('{{items.join(",")}}', evalTestData, { eval: true })
+        ).toBe('1,2,3,4,5')
+        expect(
+          mustacheTemplate('{{items.slice(0, 2).join("-")}}', evalTestData, {
+            eval: true,
+          })
+        ).toBe('1-2')
+      })
+
+      it('should handle string methods', () => {
+        expect(
+          mustacheTemplate('{{name.toUpperCase()}}', evalTestData, {
+            eval: true,
+          })
+        ).toBe('JOHN')
+        expect(
+          mustacheTemplate('{{name.length}}', evalTestData, { eval: true })
+        ).toBe('4')
+        expect(
+          mustacheTemplate('{{name.charAt(0)}}', evalTestData, { eval: true })
+        ).toBe('J')
+      })
     })
   })
 

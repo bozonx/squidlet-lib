@@ -128,5 +128,78 @@ function safeEval(expression: string, data: Record<string, any>): any {
 
 ## Файлы изменены
 
-- `lib/stringTemplate.ts` - добавлена функция `safeEval` и поддержка опции `eval`
+- `lib/stringTemplate.ts` - добавлена функция `safeEval` и поддержка опции `eval` для обеих функций
 - `test/lib/stringTemplate.spec.ts` - добавлены тесты для новой функциональности
+
+## Обновление: Поддержка eval в mustacheTemplate
+
+### Дата: 2024-12-19 (обновление)
+
+Добавлена поддержка опции `eval` в функцию `mustacheTemplate` с аналогичной функциональностью.
+
+### Примеры использования mustacheTemplate с eval
+
+```typescript
+const data = {
+  a: 10,
+  b: 20,
+  name: 'John',
+  age: 30,
+  items: [1, 2, 3, 4, 5],
+  user: { score: 100, active: true },
+}
+
+// Арифметические операции
+mustacheTemplate('{{a + b}}', data, { eval: true }) // "30"
+mustacheTemplate('{{a * b}}', data, { eval: true }) // "200"
+
+// Сравнения
+mustacheTemplate('{{a > b}}', data, { eval: true }) // "false"
+mustacheTemplate('{{a < b}}', data, { eval: true }) // "true"
+
+// Логические операции
+mustacheTemplate('{{a > 5 && b > 15}}', data, { eval: true }) // "true"
+
+// Тернарный оператор
+mustacheTemplate('{{a > b ? "bigger" : "smaller"}}', data, { eval: true }) // "smaller"
+
+// Доступ к массивам
+mustacheTemplate('{{items[0]}}', data, { eval: true }) // "1"
+mustacheTemplate('{{items.length}}', data, { eval: true }) // "5"
+
+// Методы объектов
+mustacheTemplate('{{name.toUpperCase()}}', data, { eval: true }) // "JOHN"
+mustacheTemplate('{{items.join(",")}}', data, { eval: true }) // "1,2,3,4,5"
+
+// Математические функции
+mustacheTemplate('{{Math.max(a, b)}}', data, { eval: true }) // "20"
+```
+
+### Улучшения в обработке пробелов
+
+Исправлена обработка пробелов в ключах шаблонов:
+
+- `{{ user.name }}` теперь корректно обрабатывается как `{{user.name}}`
+- Пробелы автоматически обрезаются при обработке ключей
+- Пустые выражения `{{}}` и `{{ }}` корректно обрабатываются
+
+### Тестирование
+
+Добавлено 16 новых тестов для `mustacheTemplate` с опцией `eval`, покрывающих те же сценарии, что и для `standardTemplate`:
+
+- Арифметические операции
+- Операции сравнения
+- Логические операции
+- Тернарный оператор
+- Доступ к массивам и объектам
+- Сложные выражения
+- Конкатенацию строк
+- Преобразование типов
+- Обработку ошибок
+- Пустые выражения
+- Смешанные шаблоны
+- Null/undefined значения
+- Математические функции
+- Методы массивов и строк
+
+Всего в проекте теперь 77 тестов, все проходят успешно.

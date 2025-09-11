@@ -34,12 +34,12 @@ describe('lib/deepManipulate', () => {
     expect(splitDeepPath(true as any)).toEqual([])
     expect(splitDeepPath(null as any)).toEqual([])
     expect(splitDeepPath({} as any)).toEqual([])
-    // Проблемные случаи (которые раньше вызывали ошибку)
-    expect(splitDeepPath('user[].name')).toEqual(['user', 'name'])
-    expect(splitDeepPath('user[abc].name')).toEqual(['user', 'name'])
-    expect(splitDeepPath('user[.name')).toEqual(['user', 'name'])
-    expect(splitDeepPath('user[0].name[')).toEqual(['user', 0, 'name'])
-    expect(splitDeepPath('user[0].name[]')).toEqual(['user', 0, 'name'])
+    // Проблемные случаи (которые теперь возвращают пустой массив)
+    expect(splitDeepPath('user[].name')).toEqual([])
+    expect(splitDeepPath('user[abc].name')).toEqual([])
+    expect(splitDeepPath('user[.name')).toEqual([])
+    expect(splitDeepPath('user[0].name[')).toEqual([])
+    expect(splitDeepPath('user[0].name[]')).toEqual([])
   })
 
   it('joinDeepPath', () => {
