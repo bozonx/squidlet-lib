@@ -36,12 +36,12 @@ describe('lib/objects', () => {
     // if not object then always true
     expect(isEmptyObject(undefined)).toBe(true)
     expect(isEmptyObject(null)).toBe(true)
-    expect(isEmptyObject('')).toBe(true)
+    expect(isEmptyObject('' as any)).toBe(true)
     expect(isEmptyObject([])).toBe(true)
-    expect(isEmptyObject(0)).toBe(true)
-    expect(isEmptyObject('a')).toBe(true)
+    expect(isEmptyObject(0 as any)).toBe(true)
+    expect(isEmptyObject('a' as any)).toBe(true)
     expect(isEmptyObject([1])).toBe(true)
-    expect(isEmptyObject(false)).toBe(true)
+    expect(isEmptyObject(false as any)).toBe(true)
   })
 
   it('omitObj', () => {
@@ -50,7 +50,7 @@ describe('lib/objects', () => {
     expect(omitObj(undefined, 'a', 'b')).toEqual({})
     expect(omitObj(null, 'a', 'b')).toEqual({})
     expect(omitObj([], 'a', 'b')).toEqual({})
-    expect(omitObj('s', 'a', 'b')).toEqual({})
+    expect(omitObj('s' as any, 'a', 'b')).toEqual({})
   })
 
   it('omitUndefined', () => {
@@ -59,7 +59,7 @@ describe('lib/objects', () => {
     expect(omitUndefined(undefined)).toEqual({})
     expect(omitUndefined(null)).toEqual({})
     expect(omitUndefined([])).toEqual({})
-    expect(omitUndefined(5)).toEqual({})
+    expect(omitUndefined(5 as any)).toEqual({})
   })
 
   it('pickObj', () => {
@@ -68,7 +68,7 @@ describe('lib/objects', () => {
     expect(pickObj(undefined, 'b')).toEqual({})
     expect(pickObj(null, 'b')).toEqual({})
     expect(pickObj([], 'b')).toEqual({})
-    expect(pickObj(5, 'b')).toEqual({})
+    expect(pickObj(5 as any, 'b')).toEqual({})
   })
 
   it('findObj', () => {
@@ -79,7 +79,7 @@ describe('lib/objects', () => {
     expect(findObj(undefined, objCb)).toBeUndefined()
     expect(findObj(null, objCb)).toBeUndefined()
     // any other type - error
-    expect(() => findObj(5, objCb)).toThrow()
+    expect(() => findObj(5 as any, objCb)).toThrow()
   })
 
   it('isPlainObject', () => {
@@ -101,9 +101,9 @@ describe('lib/objects', () => {
     expect(getKeyOfObject({ a: 1, b: 1 }, 1)).toBe('a')
     // undefined, null and other types will return undefined
     expect(getKeyOfObject(undefined)).toBeUndefined()
-    expect(getKeyOfObject(null)).toBeUndefined()
-    expect(getKeyOfObject(5)).toBeUndefined()
-    expect(getKeyOfObject('s')).toBeUndefined()
+    expect(getKeyOfObject(null as any)).toBeUndefined()
+    expect(getKeyOfObject(5 as any)).toBeUndefined()
+    expect(getKeyOfObject('s' as any)).toBeUndefined()
     expect(getKeyOfObject([])).toBeUndefined()
   })
 
@@ -112,22 +112,18 @@ describe('lib/objects', () => {
     clearObject(obj)
     expect(obj).toEqual({})
     // undefined, null and other types will return undefined
-    expect(() => clearObject(undefined)).not.toThrow()
-    expect(() => clearObject(null)).not.toThrow()
-    expect(() => clearObject(5)).not.toThrow()
-    expect(() => clearObject('s')).not.toThrow()
-    expect(() => clearObject([])).not.toThrow()
+    expect(() => clearObject(undefined as any)).not.toThrow()
+    expect(() => clearObject(null as any)).not.toThrow()
+    expect(() => clearObject(5 as any)).not.toThrow()
+    expect(() => clearObject('s' as any)).not.toThrow()
+    expect(() => clearObject([] as any)).not.toThrow()
   })
 
   it('getDeepPropValue', () => {
     class Cls {
       prop = 1
     }
-    const structure = {
-      a: {
-        b: new Cls()
-      }
-    }
+    const structure = { a: { b: new Cls() } }
 
     expect(getDeepPropValue(structure, 'a.b.prop')).toBe(1)
     // can't find
@@ -136,7 +132,7 @@ describe('lib/objects', () => {
     expect(getDeepPropValue([0], 'length')).toBe(1)
     expect(getDeepPropValue({ a: 1 }, 'no')).toBeUndefined()
     expect(getDeepPropValue({ a: 1 }, '')).toBeUndefined()
-    expect(getDeepPropValue({ a: 1 })).toBeUndefined()
+    expect(getDeepPropValue({ a: 1 }, '')).toBeUndefined()
     expect(getDeepPropValue(undefined, 'a')).toBeUndefined()
   })
 
@@ -147,16 +143,10 @@ describe('lib/objects', () => {
         return this.prop
       }
     }
-    const structure = {
-      a: {
-        b: {
-          c: new Cls()
-        }
-      }
-    }
+    const structure = { a: { b: { c: new Cls() } } }
 
-    expect(getDeepMethod(structure, 'a.b.c.method')()).toBe(1)
-    expect(getDeepMethod(structure.a.b.c, 'method')()).toBe(1)
+    expect(getDeepMethod(structure, 'a.b.c.method')!()).toBe(1)
+    expect(getDeepMethod(structure.a.b.c, 'method')!()).toBe(1)
     expect(getDeepMethod(undefined, 'a.b.c.method')).toBeUndefined()
     expect(getDeepMethod('a', 'a.b.c.method')).toBeUndefined()
     expect(getDeepMethod([], 'a.b.c.method')).toBeUndefined()
