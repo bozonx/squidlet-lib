@@ -1,4 +1,4 @@
-import {IndexedEvents} from './IndexedEvents.js';
+import {IndexedEvents} from './IndexedEvents';
 
 
 type ChangeEventHandler = (dir: string, name: string, value: any, oldValue: any) => void

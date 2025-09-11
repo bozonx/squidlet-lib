@@ -1,7 +1,7 @@
 /** @type {import('jest').Config} */
 module.exports = {
-  // Используем ts-jest для поддержки TypeScript
-  preset: 'ts-jest',
+  // Современная конфигурация Jest для ES модулей
+  preset: 'ts-jest/presets/default-esm',
 
   // Расширения файлов для тестов
   testMatch: ['**/test/**/*.spec.ts'],
@@ -12,17 +12,23 @@ module.exports = {
   // Директории для поиска модулей
   moduleDirectories: ['node_modules', 'lib'],
 
+  // Настройки для ES модулей
+  extensionsToTreatAsEsm: ['.ts'],
+
   // Настройки трансформации
   transform: {
     '^.+\\.ts$': [
       'ts-jest',
       {
+        useESM: true,
         tsconfig: {
           verbatimModuleSyntax: false,
           allowSyntheticDefaultImports: true,
           esModuleInterop: true,
           isolatedModules: true,
-          module: 'commonjs',
+          module: 'ESNext',
+          moduleResolution: 'bundler',
+          target: 'ES2022',
         },
       },
     ],
@@ -57,4 +63,8 @@ module.exports = {
 
   // Таймаут для тестов (в миллисекундах)
   testTimeout: 10000,
+
+  // Современные настройки Jest
+  setupFilesAfterEnv: [],
+  testEnvironmentOptions: { url: 'http://localhost' },
 }

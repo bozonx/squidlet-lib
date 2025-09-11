@@ -1,4 +1,4 @@
-import {parseValue} from './common.js'
+import {parseValue} from './common'
 
 
 /**

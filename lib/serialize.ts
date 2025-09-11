@@ -1,4 +1,4 @@
-import { int32ToUint8Arr, uint8ToNum } from './binaryHelpers.js'
+import { int32ToUint8Arr, uint8ToNum } from './binaryHelpers'
 
 const BIN_MARK = '!BIN!'
 const UNDEFINED_MARK = '!UNDEF!'

@@ -1,5 +1,5 @@
-import {padStart} from './strings.js';
-import {ASCII_NUMERIC_OFFSET, BITS_IN_BYTE} from './constants.js';
+import {padStart} from './strings';
+import {ASCII_NUMERIC_OFFSET, BITS_IN_BYTE} from './constants';
 
 
 /**

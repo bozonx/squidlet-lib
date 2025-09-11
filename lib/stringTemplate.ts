@@ -1,4 +1,4 @@
-import { deepGet } from './deepManipulate.js'
+import { deepGet } from './deepManipulate'
 
 /**
  * Обрабатывает mustache шаблоны с синтаксисом {{value.child}}

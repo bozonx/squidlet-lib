@@ -1,5 +1,5 @@
-import {cloneDeepArray} from './arrays.js';
-import {isPlainObject} from './objects.js';
+import {cloneDeepArray} from './arrays';
+import {isPlainObject} from './objects';
 
 
 // TODO: да наверное не особо нужно - есть deepMerge()

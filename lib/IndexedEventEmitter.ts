@@ -1,4 +1,4 @@
-import {isPromise} from './common.js'
+import {isPromise} from './common'
 
 export type DefaultHandler = (...args: any[]) => void
 

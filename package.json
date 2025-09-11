@@ -4,6 +4,7 @@
   "description": "Common lib for squidlet projects",
   "author": "Ivan Kozyrin <ipkozyrin@gmail.com>",
   "repository": "git@github.com:bozonx/squidlet-lib.git",
+  "type": "module",
   "main": "./distr/lib/index.js",
   "module": "./distr/lib/index.js",
   "types": "./distr/types/index.d.ts",
@@ -11,8 +12,9 @@
     ".": {
       "types": "./distr/types/index.d.ts",
       "import": "./distr/lib/index.js",
-      "require": "./distr/lib/index.js"
-    }
+      "require": "./distr/lib/index.cjs"
+    },
+    "./package.json": "./package.json"
   },
   "files": [
     "distr"
@@ -25,21 +27,23 @@
       ".": {
         "types": "./distr/types/index.d.ts",
         "import": "./distr/lib/index.js",
-        "require": "./distr/lib/index.js"
-      }
+        "require": "./distr/lib/index.cjs"
+      },
+      "./package.json": "./package.json"
     }
   },
-  "type": "module",
   "license": "MIT",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && npm run build:cjs",
+    "build:cjs": "tsc --project tsconfig.cjs.json",
     "test": "jest",
+    "test:watch": "jest --watch",
     "coverage": "jest --coverage",
+    "lint": "tsc --noEmit",
     "prepublishOnly": "npm run build"
   },
-  "directories": {
-    "lib": "./lib",
-    "test": "./test"
+  "engines": {
+    "node": ">=18.0.0"
   },
   "devDependencies": {
     "@types/jest": "^29.5.12",

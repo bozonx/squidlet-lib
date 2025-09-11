@@ -1,7 +1,7 @@
-import {URL_DELIMITER} from './url.js';
-import {trimCharEnd, trimCharStart} from './strings.js';
-import type {Primitives} from './interfaces/Types.js';
-import {parseValue} from './common.js';
+import {URL_DELIMITER} from './url';
+import {trimCharEnd, trimCharStart} from './strings';
+import type {Primitives} from './interfaces/Types';
+import {parseValue} from './common';
 
 
 const PARAM_MARK = ':';
