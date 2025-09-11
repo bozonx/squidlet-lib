@@ -3,13 +3,13 @@ import { deepGet } from './deepManipulate.js'
 /**
  * Обрабатывает mustache шаблоны с синтаксисом {{value.child}}
  *
- * @param {string} tmpl - Шаблон для обработки
- * @param {object} data - Данные для подстановки
+ * @param {string | null | undefined} tmpl - Шаблон для обработки
+ * @param {object | null | undefined} data - Данные для подстановки
  * @returns {string} - Обработанный шаблон
  */
 export function mustacheTemplate(
-  tmpl: string,
-  data: Record<string, any>
+  tmpl: string | null | undefined,
+  data: Record<string, any> | null | undefined
 ): string {
   // Проверяем входные параметры на null и undefined
   if (tmpl === null || tmpl === undefined) return ''
@@ -42,13 +42,13 @@ export function mustacheTemplate(
 /**
  * Обрабатывает стандартные шаблоны с синтаксисом ${value.child}
  *
- * @param {string} tmpl - Шаблон для обработки
- * @param {object} data - Данные для подстановки
+ * @param {string | null | undefined} tmpl - Шаблон для обработки
+ * @param {object | null | undefined} data - Данные для подстановки
  * @returns {string} - Обработанный шаблон
  */
 export function standardTemplate(
-  tmpl: string,
-  data: Record<string, any>
+  tmpl: string | null | undefined,
+  data: Record<string, any> | null | undefined
 ): string {
   // Проверяем входные параметры на null и undefined
   if (tmpl === null || tmpl === undefined) return ''

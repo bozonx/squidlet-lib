@@ -16,42 +16,37 @@ describe('lib/stringTemplate', () => {
 
   describe('mustacheTemplate', () => {
     it('should handle null template', () => {
-      assert.equal(mustacheTemplate(null, testData), '')
-      assert.equal(mustacheTemplate(undefined, testData), '')
+      expect(mustacheTemplate(null, testData)).toBe('')
+      expect(mustacheTemplate(undefined, testData)).toBe('')
     })
 
     it('should handle null data', () => {
       const template = 'Hello {{user.name}}'
-      assert.equal(mustacheTemplate(template, null), template)
-      assert.equal(mustacheTemplate(template, undefined), template)
+      expect(mustacheTemplate(template, null)).toBe(template)
+      expect(mustacheTemplate(template, undefined)).toBe(template)
     })
 
     it('should handle null values in data', () => {
       const template =
         'Address: {{user.address.street}}, Settings: {{user.settings.enabled}}'
-      assert.equal(
-        mustacheTemplate(template, testData),
-        'Address: , Settings: '
-      )
+      expect(mustacheTemplate(template, testData)).toBe('Address: , Settings: ')
     })
 
     it('should handle null in arrays', () => {
       const template = 'Hobby: {{user.hobbies[1]}}'
-      assert.equal(mustacheTemplate(template, testData), 'Hobby: ')
+      expect(mustacheTemplate(template, testData)).toBe('Hobby: ')
     })
 
     it('should handle falsy values correctly', () => {
       const template = 'Count: {{count}}, Active: {{active}}, Empty: {{empty}}'
-      assert.equal(
-        mustacheTemplate(template, testData),
+      expect(mustacheTemplate(template, testData)).toBe(
         'Count: 0, Active: false, Empty: '
       )
     })
 
     it('should handle normal cases', () => {
       const template = 'Hello {{user.name}} from {{user.address.city}}'
-      assert.equal(
-        mustacheTemplate(template, testData),
+      expect(mustacheTemplate(template, testData)).toBe(
         'Hello John from New York'
       )
     })
@@ -62,8 +57,7 @@ describe('lib/stringTemplate', () => {
       }
       const template =
         'Value: {{level1.level2.someProperty}}, Test: {{level1.level3.value}}'
-      assert.equal(
-        mustacheTemplate(template, complexData),
+      expect(mustacheTemplate(template, complexData)).toBe(
         'Value: , Test: test'
       )
     })
@@ -71,42 +65,37 @@ describe('lib/stringTemplate', () => {
 
   describe('standardTemplate', () => {
     it('should handle null template', () => {
-      assert.equal(standardTemplate(null, testData), '')
-      assert.equal(standardTemplate(undefined, testData), '')
+      expect(standardTemplate(null, testData)).toBe('')
+      expect(standardTemplate(undefined, testData)).toBe('')
     })
 
     it('should handle null data', () => {
       const template = 'Hello ${user.name}'
-      assert.equal(standardTemplate(template, null), template)
-      assert.equal(standardTemplate(template, undefined), template)
+      expect(standardTemplate(template, null)).toBe(template)
+      expect(standardTemplate(template, undefined)).toBe(template)
     })
 
     it('should handle null values in data', () => {
       const template =
         'Address: ${user.address.street}, Settings: ${user.settings.enabled}'
-      assert.equal(
-        standardTemplate(template, testData),
-        'Address: , Settings: '
-      )
+      expect(standardTemplate(template, testData)).toBe('Address: , Settings: ')
     })
 
     it('should handle null in arrays', () => {
       const template = 'Hobby: ${user.hobbies[1]}'
-      assert.equal(standardTemplate(template, testData), 'Hobby: ')
+      expect(standardTemplate(template, testData)).toBe('Hobby: ')
     })
 
     it('should handle falsy values correctly', () => {
       const template = 'Count: ${count}, Active: ${active}, Empty: ${empty}'
-      assert.equal(
-        standardTemplate(template, testData),
+      expect(standardTemplate(template, testData)).toBe(
         'Count: 0, Active: false, Empty: '
       )
     })
 
     it('should handle normal cases', () => {
       const template = 'Hello ${user.name} from ${user.address.city}'
-      assert.equal(
-        standardTemplate(template, testData),
+      expect(standardTemplate(template, testData)).toBe(
         'Hello John from New York'
       )
     })
@@ -117,8 +106,7 @@ describe('lib/stringTemplate', () => {
       }
       const template =
         'Value: ${level1.level2.someProperty}, Test: ${level1.level3.value}'
-      assert.equal(
-        standardTemplate(template, complexData),
+      expect(standardTemplate(template, complexData)).toBe(
         'Value: , Test: test'
       )
     })
