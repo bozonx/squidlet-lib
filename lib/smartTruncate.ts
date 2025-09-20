@@ -22,8 +22,10 @@ interface SmartTruncateOptions {
   removeReturns?: boolean
 }
 
+const minLength = 4
+
 export const smartTruncate = (
-  string: string,
+  rawString: string,
   length: number,
   {
     mark = '\u2026', // ellipsis = …
@@ -32,38 +34,41 @@ export const smartTruncate = (
     removeReturns = true,
   }: SmartTruncateOptions = {}
 ): string => {
-  if (typeof mark !== 'string') return string
+  if (
+    typeof mark !== 'string' ||
+    typeof rawString !== 'string' ||
+    length <= minLength
+  )
+    return rawString
 
   const markOffset = mark.length
-  const minLength = 4
-
-  let str = string
-
-  if (typeof str === 'string') {
-    str = str.trim()
-  }
+  let str = rawString
 
   if (removeReturns) {
     str = str.replace(/\n/g, ' ')
   }
 
-  // replace multiple spaces with one
-  str = str.replace(/\s+/g, ' ')
+  // replace multiple spaces with one (but preserve newlines if removeReturns is false)
+  if (removeReturns) {
+    str = str.replace(/\s+/g, ' ').trim()
+  } else {
+    str = str.replace(/[ \t]+/g, ' ').trim()
+  }
 
-  const invalid =
-    typeof str !== 'string' ||
-    str.length < minLength ||
-    typeof length !== 'number' ||
-    length <= minLength ||
-    length >= str.length - markOffset
-
-  if (invalid) return string
+  if (str.length < minLength || length >= str.length) return str
 
   // Если включено уважение к границам слов, используем улучшенную логику
   if (respectWords) {
     return smartTruncateWithWordBoundaries(str, length, mark)
   }
 
+  // Если позиция больше или равна длине строки, обрезаем в конце
+  if (position >= str.length) {
+    const start = str.substring(0, length - markOffset)
+    return `${start}${mark}`
+  }
+
+  // Если позиция больше или равна длине результата минус маркер, обрезаем в конце
   if (position >= length - markOffset) {
     const start = str.substring(0, length - markOffset)
     return `${start}${mark}`
@@ -94,7 +99,7 @@ export const smartTruncateWithWordBoundaries = (
   // Вычисляем максимальную длину текста без маркера
   const maxTextLength = length - mark.length
 
-  // Если максимальная длина текста слишком мала, возвращаем маркер
+  // Если максимальная длина текста слишком мала, возвращаем только маркер
   if (maxTextLength <= 0) return mark
 
   // Обрезаем строку до максимальной длины
