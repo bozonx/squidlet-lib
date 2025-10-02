@@ -20,6 +20,8 @@ interface SmartTruncateOptions {
   /** Whether to respect word boundaries. Default is false */
   respectWords?: boolean
   removeReturns?: boolean
+  /** Whether to place mark at the end. Default is true */
+  markAtTheEnd?: boolean
 }
 
 const minLength = 4
@@ -32,6 +34,7 @@ export const smartTruncate = (
     position = length - 1,
     respectWords = false,
     removeReturns = true,
+    markAtTheEnd = true,
   }: SmartTruncateOptions = {}
 ): string => {
   if (
@@ -57,9 +60,14 @@ export const smartTruncate = (
 
   if (str.length < minLength || length >= str.length) return str
 
+  // Если markAtTheEnd отключен, просто обрезаем строку без маркера
+  if (!markAtTheEnd) {
+    return str.substring(0, length)
+  }
+
   // Если включено уважение к границам слов, используем улучшенную логику
   if (respectWords) {
-    return smartTruncateWithWordBoundaries(str, length, mark)
+    return smartTruncateWithWordBoundaries(str, length, mark, markAtTheEnd)
   }
 
   // Если позиция больше или равна длине строки, обрезаем в конце
@@ -86,15 +94,22 @@ export const smartTruncate = (
  * @param {string} str - Строка для обрезания
  * @param {number} length - Максимальная длина результата
  * @param {string} mark - Маркер обрезания
+ * @param {boolean} markAtTheEnd - Размещать ли маркер в конце
  * @returns {string} - Обрезанная строка с учетом границ слов
  */
 export const smartTruncateWithWordBoundaries = (
   str: string,
   length: number,
-  mark: string = '\u2026'
+  mark: string = '\u2026',
+  markAtTheEnd: boolean = true
 ): string => {
   // Если строка короче или равна целевой длине, возвращаем как есть
   if (str.length <= length) return str
+
+  // Если markAtTheEnd отключен, просто обрезаем строку без маркера
+  if (!markAtTheEnd) {
+    return str.substring(0, length)
+  }
 
   // Вычисляем максимальную длину текста без маркера
   const maxTextLength = length - mark.length
@@ -128,12 +143,15 @@ export const smartTruncateWithWordBoundaries = (
  * @param {string} str - Строка для обрезания
  * @param {number} length - Максимальная длина результата
  * @param {string} mark - Маркер обрезания (по умолчанию '…')
+ * @param {boolean} markAtTheEnd - Размещать ли маркер в конце (по умолчанию
+ *   true)
  * @returns {string} - Обрезанная строка с учетом границ слов
  */
 export const smartTruncateWords = (
   str: string,
   length: number,
-  mark: string = '\u2026'
+  mark: string = '\u2026',
+  markAtTheEnd: boolean = true
 ): string => {
-  return smartTruncateWithWordBoundaries(str, length, mark)
+  return smartTruncateWithWordBoundaries(str, length, mark, markAtTheEnd)
 }

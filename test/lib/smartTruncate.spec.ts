@@ -52,6 +52,22 @@ describe('smartTruncate', () => {
         'Hello\nW…'
       )
     })
+
+    test('should not add mark when markAtTheEnd is false', () => {
+      expect(smartTruncate('Hello World', 8, { markAtTheEnd: false })).toBe(
+        'Hello Wo'
+      )
+      expect(smartTruncate('Steve Miller', 8, { markAtTheEnd: false })).toBe(
+        'Steve Mi'
+      )
+    })
+
+    test('should add mark when markAtTheEnd is true (default)', () => {
+      expect(smartTruncate('Hello World', 8, { markAtTheEnd: true })).toBe(
+        'Hello W…'
+      )
+      expect(smartTruncate('Hello World', 8)).toBe('Hello W…')
+    })
   })
 
   describe('edge cases', () => {
@@ -91,6 +107,21 @@ describe('smartTruncate', () => {
         'HelloWo…'
       )
     })
+
+    test('should respect word boundaries without mark when markAtTheEnd is false', () => {
+      expect(
+        smartTruncate('Hello World Test', 10, {
+          respectWords: true,
+          markAtTheEnd: false,
+        })
+      ).toBe('Hello Worl')
+      expect(
+        smartTruncate('This is a test', 9, {
+          respectWords: true,
+          markAtTheEnd: false,
+        })
+      ).toBe('This is a')
+    })
   })
 })
 
@@ -126,12 +157,40 @@ describe('smartTruncateWithWordBoundaries', () => {
   test('should handle space at beginning', () => {
     expect(smartTruncateWithWordBoundaries(' Hello World', 8)).toBe(' Hello…')
   })
+
+  test('should not add mark when markAtTheEnd is false', () => {
+    expect(
+      smartTruncateWithWordBoundaries('Hello World Test', 10, '…', false)
+    ).toBe('Hello Worl')
+    expect(
+      smartTruncateWithWordBoundaries('This is a test', 9, '…', false)
+    ).toBe('This is a')
+  })
+
+  test('should add mark when markAtTheEnd is true (default)', () => {
+    expect(
+      smartTruncateWithWordBoundaries('Hello World Test', 10, '…', true)
+    ).toBe('Hello…')
+    expect(smartTruncateWithWordBoundaries('Hello World Test', 10)).toBe(
+      'Hello…'
+    )
+  })
 })
 
 describe('smartTruncateWords', () => {
   test('should work as alias for smartTruncateWithWordBoundaries', () => {
     expect(smartTruncateWords('Hello World Test', 10)).toBe('Hello…')
     expect(smartTruncateWords('This is a test', 9)).toBe('This is…')
+  })
+
+  test('should support markAtTheEnd parameter', () => {
+    expect(smartTruncateWords('Hello World Test', 10, '…', false)).toBe(
+      'Hello Worl'
+    )
+    expect(smartTruncateWords('This is a test', 9, '…', false)).toBe(
+      'This is a'
+    )
+    expect(smartTruncateWords('Hello World Test', 10, '…', true)).toBe('Hello…')
   })
 })
 
@@ -415,6 +474,101 @@ describe('Extended test cases', () => {
           position: 5,
         })
       ).toBe('Hello...')
+    })
+
+    test('should combine markAtTheEnd with other options', () => {
+      expect(
+        smartTruncate('Hello World Test', 10, {
+          markAtTheEnd: false,
+          respectWords: true,
+        })
+      ).toBe('Hello Worl')
+      expect(
+        smartTruncate('Hello World', 8, { markAtTheEnd: false, position: 4 })
+      ).toBe('Hello Wo')
+      expect(
+        smartTruncate('Hello World', 8, { markAtTheEnd: false, mark: '...' })
+      ).toBe('Hello Wo')
+    })
+  })
+
+  describe('markAtTheEnd option tests', () => {
+    test('should truncate without mark when markAtTheEnd is false', () => {
+      expect(smartTruncate('Hello World', 8, { markAtTheEnd: false })).toBe(
+        'Hello Wo'
+      )
+      expect(smartTruncate('This is a test', 10, { markAtTheEnd: false })).toBe(
+        'This is a '
+      )
+      expect(smartTruncate('Programming', 6, { markAtTheEnd: false })).toBe(
+        'Progra'
+      )
+    })
+
+    test('should work with custom marks when markAtTheEnd is false', () => {
+      expect(
+        smartTruncate('Hello World', 8, { markAtTheEnd: false, mark: '...' })
+      ).toBe('Hello Wo')
+      expect(
+        smartTruncate('Test String', 7, { markAtTheEnd: false, mark: '---' })
+      ).toBe('Test St')
+    })
+
+    test('should work with position when markAtTheEnd is false', () => {
+      expect(
+        smartTruncate('Hello World', 8, { markAtTheEnd: false, position: 4 })
+      ).toBe('Hello Wo')
+      expect(
+        smartTruncate('Test String', 7, { markAtTheEnd: false, position: 2 })
+      ).toBe('Test St')
+    })
+
+    test('should work with respectWords when markAtTheEnd is false', () => {
+      expect(
+        smartTruncate('Hello World Test', 10, {
+          markAtTheEnd: false,
+          respectWords: true,
+        })
+      ).toBe('Hello Worl')
+      expect(
+        smartTruncate('This is a test', 9, {
+          markAtTheEnd: false,
+          respectWords: true,
+        })
+      ).toBe('This is a')
+    })
+
+    test('should work with removeReturns when markAtTheEnd is false', () => {
+      expect(
+        smartTruncate('Hello\nWorld', 8, {
+          markAtTheEnd: false,
+          removeReturns: true,
+        })
+      ).toBe('Hello Wo')
+      expect(
+        smartTruncate('Test\nString', 7, {
+          markAtTheEnd: false,
+          removeReturns: false,
+        })
+      ).toBe('Test\nSt')
+    })
+
+    test('should handle edge cases with markAtTheEnd false', () => {
+      expect(smartTruncate('Hi', 10, { markAtTheEnd: false })).toBe('Hi')
+      expect(smartTruncate('', 10, { markAtTheEnd: false })).toBe('')
+      expect(smartTruncate('Hello', 5, { markAtTheEnd: false })).toBe('Hello')
+    })
+
+    test('should handle very short target lengths with markAtTheEnd false', () => {
+      expect(smartTruncate('Hello World', 3, { markAtTheEnd: false })).toBe(
+        'Hello World'
+      )
+      expect(smartTruncate('Test String', 1, { markAtTheEnd: false })).toBe(
+        'Test String'
+      )
+      expect(smartTruncate('Hello World', 0, { markAtTheEnd: false })).toBe(
+        'Hello World'
+      )
     })
   })
 
